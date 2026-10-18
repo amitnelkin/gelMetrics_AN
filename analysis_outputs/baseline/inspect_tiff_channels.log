@@ -1,0 +1,23 @@
+Channel 1 (25 time points sampled):
+  min        (min/med/max over frames): [193 197 200]
+  0.1 pct    : [222 225 230]
+  1 pct      : [260 264 273]
+  median     : [493 503 524]
+  lowest-2% pixels: mode 277, median 265, 5th pct 225
+Channel 2 (25 time points sampled):
+  min        (min/med/max over frames): [1435 1567 1827]
+  0.1 pct    : [2323 2576 2890]
+  1 pct      : [3600 3645 3900]
+  median     : [6747 6821 7278]
+  lowest-2% pixels: mode 3829, median 3666, 5th pct 2548.85
+
+Stored trace lengths (repo .mat files):
+  protein_RNA_100_1_data.mat   n=  57  max=360  n(>=360)=20  n(>361)=0  n(>=180)=31  min=24
+  protein_RNA_10_1_data.mat    n=  90  max=360  n(>=360)=21  n(>361)=0  n(>=180)=37  min=24
+  protein_RNA_1_1_data.mat     n=  78  max=360  n(>=360)=23  n(>361)=0  n(>=180)=45  min=24
+  10Qb_data.mat                n= 431  max=360  n(>=360)=153  n(>361)=0  n(>=180)=247  min=24
+  30PP7-FUS_data.mat           n= 498  max=360  n(>=360)=5  n(>361)=0  n(>=180)=88  min=24
+  30PP7_data.mat               n= 670  max=360  n(>=360)=3  n(>361)=0  n(>=180)=100  min=24
+  4PP7-FUS_data.mat            n= 370  max=360  n(>=360)=45  n(>361)=0  n(>=180)=90  min=24
+  4PP7_data.mat                n= 360  max=360  n(>=360)=12  n(>361)=0  n(>=180)=67  min=24
+  5Qb_data.mat                 n= 292  max=360  n(>=360)=127  n(>361)=0  n(>=180)=189  min=24

@@ -1,0 +1,6 @@
+ImageJ=
+hyperstack=true
+images=722
+channels=2
+slices=1
+frames=361

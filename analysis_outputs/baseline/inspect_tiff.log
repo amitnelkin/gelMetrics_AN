@@ -1,0 +1,8 @@
+Frames (IFDs): 722, size 512x512, BitDepth 16
+ImageDescription length: 65 characters
+
+Per-frame min (min/median/max): [194 824 1824]
+Per-frame 0.1 pct: [222 1279 2893]
+Per-frame median: [493 3641 6956]
+Lowest-5% pixels: mode 308, median 321, sd 1816.5
+ERROR: MATLAB error Exit Status: 0x00000001

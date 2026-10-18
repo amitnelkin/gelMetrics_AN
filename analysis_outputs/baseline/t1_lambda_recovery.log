@@ -1,0 +1,64 @@
+fix=0 lamTrue=1 seed=0 | pos: lam=1 k0=78 | neg: lam=3 k0=34
+fix=0 lamTrue=1 seed=1 | pos: lam=2 k0=49 | neg: lam=2 k0=49
+fix=0 lamTrue=1 seed=2 | pos: lam=2 k0=48 | neg: lam=3 k0=35
+fix=0 lamTrue=2 seed=0 | pos: lam=4 k0=44 | neg: lam=1 k0=108
+fix=0 lamTrue=2 seed=1 | pos: lam=2 k0=79 | neg: lam=2 k0=68
+fix=0 lamTrue=2 seed=2 | pos: lam=2 k0=68 | neg: lam=1 k0=104
+fix=0 lamTrue=3 seed=0 | pos: lam=2 k0=92 | neg: lam=1 k0=135
+fix=0 lamTrue=3 seed=1 | pos: lam=2 k0=98 | neg: lam=2 k0=91
+fix=0 lamTrue=3 seed=2 | pos: lam=1 k0=139 | neg: lam=3 k0=60
+fix=0 lamTrue=4 seed=0 | pos: lam=1 k0=190 | neg: lam=2 k0=109
+fix=0 lamTrue=4 seed=1 | pos: lam=4 k0=72 | neg: lam=2 k0=110
+fix=0 lamTrue=4 seed=2 | pos: lam=3 k0=90 | neg: lam=3 k0=81
+fix=0 lamTrue=5 seed=0 | pos: lam=3 k0=104 | neg: lam=4 k0=80
+fix=0 lamTrue=5 seed=1 | pos: lam=4 k0=85 | neg: lam=4 k0=79
+fix=0 lamTrue=5 seed=2 | pos: lam=5 k0=70 | neg: lam=4 k0=80
+fix=1 lamTrue=1 seed=0 | pos: lam=1 k0=78 | neg: lam=3 k0=35
+fix=1 lamTrue=1 seed=1 | pos: lam=4 k0=29 | neg: lam=1 k0=78
+fix=1 lamTrue=1 seed=2 | pos: lam=1 k0=81 | neg: lam=1 k0=71
+fix=1 lamTrue=2 seed=0 | pos: lam=2 k0=66 | neg: lam=1 k0=113
+fix=1 lamTrue=2 seed=1 | pos: lam=1 k0=116 | neg: lam=4 k0=42
+fix=1 lamTrue=2 seed=2 | pos: lam=2 k0=62 | neg: lam=1 k0=108
+fix=1 lamTrue=3 seed=0 | pos: lam=3 k0=67 | neg: lam=1 k0=148
+fix=1 lamTrue=3 seed=1 | pos: lam=2 k0=96 | neg: lam=1 k0=148
+fix=1 lamTrue=3 seed=2 | pos: lam=2 k0=86 | neg: lam=3 k0=65
+fix=1 lamTrue=4 seed=0 | pos: lam=2 k0=112 | neg: lam=3 k0=83
+fix=1 lamTrue=4 seed=1 | pos: lam=3 k0=86 | neg: lam=3 k0=84
+fix=1 lamTrue=4 seed=2 | pos: lam=3 k0=91 | neg: lam=2 k0=119
+fix=1 lamTrue=5 seed=0 | pos: lam=3 k0=102 | neg: lam=5 k0=70
+fix=1 lamTrue=5 seed=1 | pos: lam=3 k0=103 | neg: lam=5 k0=67
+fix=1 lamTrue=5 seed=2 | pos: lam=4 k0=83 | neg: lam=3 k0=99
+    fixedSim    lamTrue    seed    nPos    lamPos    k0Pos    lamK0Pos    nNeg    lamNeg    k0Neg    lamK0Neg
+    ________    _______    ____    ____    ______    _____    ________    ____    ______    _____    ________
+
+     false         1        0      369       1         78        78       377       3         34       102   
+     false         1        1      414       2         49        98       399       2         49        98   
+     false         1        2      379       2         48        96       396       3         35       105   
+     false         2        0      503       4         44       176       528       1        108       108   
+     false         2        1      501       2         79       158       568       2         68       136   
+     false         2        2      544       2         68       136       573       1        104       104   
+     false         3        0      568       2         92       184       644       1        135       135   
+     false         3        1      557       2         98       196       655       2         91       182   
+     false         3        2      571       1        139       139       615       3         60       180   
+     false         4        0      624       1        190       190       689       2        109       218   
+     false         4        1      585       4         72       288       702       2        110       220   
+     false         4        2      622       3         90       270       709       3         81       243   
+     false         5        0      629       3        104       312       674       4         80       320   
+     false         5        1      613       4         85       340       661       4         79       316   
+     false         5        2      606       5         70       350       702       4         80       320   
+     true          1        0      344       1         78        78       368       3         35       105   
+     true          1        1      395       4         29       116       376       1         78        78   
+     true          1        2      365       1         81        81       386       1         71        71   
+     true          2        0      506       2         66       132       515       1        113       113   
+     true          2        1      503       1        116       116       507       4         42       168   
+     true          2        2      517       2         62       124       557       1        108       108   
+     true          3        0      599       3         67       201       602       1        148       148   
+     true          3        1      568       2         96       192       605       1        148       148   
+     true          3        2      620       2         86       172       580       3         65       195   
+     true          4        0      627       2        112       224       625       3         83       249   
+     true          4        1      619       3         86       258       616       3         84       252   
+     true          4        2      616       3         91       273       647       2        119       238   
+     true          5        0      661       3        102       306       620       5         70       350   
+     true          5        1      637       3        103       309       608       5         67       335   
+     true          5        2      610       4         83       332       649       3         99       297   
+

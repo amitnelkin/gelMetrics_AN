@@ -1,0 +1,16 @@
+
+30PP7-FUS (88 traces, SP=12, GOF=10, top 10% trimmed, 40 resamples)
+  lambda=1 wins 35/40
+  lambda=2 wins 3/40
+  lambda=3 wins 2/40
+  lambda=4 wins 0/40
+  lambda=5 wins 0/40
+  k0 2.5 / 50 / 97.5 percentiles: [61 125 168]
+
+30PP7 (100 traces, SP=12, GOF=10, top 10% trimmed, 40 resamples)
+  lambda=1 wins 35/40
+  lambda=2 wins 5/40
+  lambda=3 wins 0/40
+  lambda=4 wins 0/40
+  lambda=5 wins 0/40
+  k0 2.5 / 50 / 97.5 percentiles: [63 184 400]
