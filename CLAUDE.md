@@ -58,8 +58,8 @@ The goal of the code work is to fix real bugs, then produce the analyses that an
    )
    ```
    (As written it only echoes the new names. The actual rename was presumably a `ren` in place of the `echo`.)
-4. `read_tables.m` produced the `*_xy.mat` files. The original code saved them as `name(1:3)_xy.mat`: **if movie names share their first 3 characters, the xy files overwrote each other.** `Collect_intensity_data.m` then paired `tiff_files(f)` with `mat_files(f)` purely by directory order, and the `*.mat` pattern also picked up `data.mat`/`background.mat`. Check the actual movie names: a TIFF/xy mismatch would put tracks from one movie onto another movie's images.
-5. `Collect_intensity_data.m` produced `data.mat` / `background.mat`. These were renamed to `<dataset>_data.mat` / `_background.mat` in the repo. It reads the interleaved 2-channel TIFF page by page (`generate_movArray.m`), so `movArray(frame)` is a red or a DIC page depending on how Mosaic numbered frames (step 2). This is the prime suspect for the PP7 zigzag traces.
+4. `read_tables.m` produced the `*_xy.mat` files, run unchanged. Naming convention: each dataset is its own folder of movies named `001.nd2` … `0NN.nd2` (8-15 per dataset). `name(1:3)` therefore gives unique `001_xy.mat` … names, and directory order pairs `0NN.tif` with `0NN_xy.mat` correctly. No collision or mismatch (also confirmed: no dataset contains a repeated track-length list).
+5. `Collect_intensity_data.m` produced `data.mat` / `background.mat`. The user edited the output names locally per dataset run, giving the repo's `<dataset>_data.mat` / `_background.mat`. It reads the interleaved 2-channel TIFF page by page (`generate_movArray.m`), so `movArray(frame)` is a red or a DIC page depending on how Mosaic numbered frames (step 2). This is the prime suspect for the PP7 zigzag traces.
 
 The repo's own comment (`ExperimentalAnalysis.m` line 12) lists per-dataset settings: SP = 10, 12 or 14 and GOF = 10 or 15. Treat this as a known reviewer issue to resolve with one shared setting plus a sensitivity analysis, not as something to preserve.
 
