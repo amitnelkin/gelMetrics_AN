@@ -111,7 +111,15 @@ Line numbers refer to the original files.
   - Appendix A committed ("Bug fixes from review"). It includes a crash fix: `modelCDF.m` computes the Poisson pmf in log space because `poisspdf` underflowed.
   - Appendix B committed one change per commit: zero-truncation, symmetric bursts, bleaching, k0 grid, filloutliers.
   - The appendices were removed from this file after that.
-- **Not applied:** the camera-offset + fixed-aperture change in `Collect_intensity_data.m`. The aperture part needs re-extraction and the raw TIFFs are not available. The offset part could be applied to the stored traces (traces are pixel means, so mean(px - c) = mean(px) - c). Ask the user first, since it changes the data pipeline.
+- **Extraction fixed and re-run (lab PC, 2026-10-18, user-approved), one commit each:**
+  - R1 (c694551): `BatchParticleTracker.ijm` tracks only the fluorescence channel, which it saves as `<name>.tif` in `outputFolder`. `generate_movArray.m` reads only that channel. `Collect_intensity_data.m` is now a wrapper around `collect_intensity.m`, which maps page = frame+1 and column/row = x+1/y+1 (Mosaic is 0-based; spot centroid − Mosaic = +0.87 col / +0.80 row) and pairs TIFF with `_xy.mat` by name.
+  - R2 (c259610): camera offset 200 subtracted.
+  - R3 (e450505): 5 px circular aperture for the spot (cell measure unchanged).
+  - `collect_intensity(path, struct('offset',0|200,'aperture',0|5))` reproduces each stage.
+  - Re-extracted data (PP7 only) are in `in_vivo_reextracted/<after_R1_redchannel|after_R2_offset|after_R3_aperture>/`, made by `checks/reextract_pp7.m`. The repo `.mat` files are untouched.
+  - Working files are in `..\zigzag_scratch\reextract\<dataset>\` (`tif` = bfconvert output, `track` = Fiji/Mosaic, `work` = hard links + renamed CSVs).
+- **Qβ not re-extracted.** The user says the Qβ .nd2 files are not available. `Raw_Results\Naor_Data-All_night_induction\5Qb` and `10Qb` exist on the lab PC (2-channel); it is unconfirmed whether they are the source of the stored Qβ data.
+- **Likelihood fitter (analysis 2) done**: `analysis/gelmetricsMLE.m` and helpers, validated (RESULTS.md section 5). On the full pipeline, λ is ~25% high and the profile CIs undercover; use the granule-bootstrap CIs. `opts.fitSigma` exists but is too slow as implemented (~8 min per fit) and gave open CIs: not used.
 - `expConst` in the simulation is 0.0026 /min, the median of per-dataset bleaching fits (`checks/fit_bleaching.py`). It is not the 0.005 placeholder.
 - The baseline wrappers reproduce every negative-burst number in MS.pdf (lambda, burst counts, k0 within 2). The manuscript fits negative bursts only.
 - Per-stage outputs: `analysis_outputs/<stage>/`. Before/after table: `analysis_outputs/lambda_k0_before_after.md`. Narrative: `analysis_outputs/RESULTS.md`.
@@ -159,10 +167,11 @@ Output each analysis as CSV tables and saved figures in an `analysis_outputs/` f
 - With re-extraction possible, the deferred [model] change (camera offset ~200 subtraction + fixed circular aperture, radius matched to the PSF of 5 px) can be applied, together with a reader that loads only the red channel. Each of these is a pipeline change: ask first, and report its effect on lambda/k0 like the other model changes. Offset alone, applied to the stored traces, changes amplitudes by < 1% in vivo and 3-10% in vitro (late in the movie).
 - Still open: is there a fixed-sample or known-liquid control dataset?
 
-## Next session (on the lab PC)
-1. Check that the `revision` branch is present (`git log --oneline -15` should show "CLAUDE.md: lab-PC handoff ..." at the top) and that MATLAB R2025b with the same toolboxes is installed.
-2. Resolve the PP7 zigzag flag with the .nd2 files (see above). Agree with the user on re-extraction (red channel only, offset, aperture) before changing `Collect_intensity_data.m` / `generate_movArray.m`.
-3. Then start "Analyses to produce" from item 2 (likelihood fitter), validating on simulations first.
+## Next session
+1. Done on the lab PC (2026-10-18): zigzag resolved (RESULTS.md section 4), PP7 re-extracted (R1-R3), likelihood fitter built and validated (section 5).
+2. Run the likelihood fitter on the real datasets: point estimates, profile CIs, granule-bootstrap CIs and the λ-k0 surface. Use the R3 re-extracted PP7 data, and the repo data for in vitro and Qβ. Compare with the grid method.
+3. Then "Analyses to produce" items 3-7 (SNR recovery grid, noise floor, sensitivity, bootstrap/time halves, window sensitivity).
+4. Open questions for the user: are the Naor Qβ .nd2 files the source of the stored Qβ data (if so, re-extract them)? Is there a fixed/crosslinked control dataset?
 
 ## Working style
 - Before changing a result-affecting line, say what will change and why.

@@ -199,3 +199,93 @@ Every one of these needs the likelihood fit with CIs (analysis 2) before it can 
 That makes 30PP7 and 30PP7-FUS invalid in full, and 4PP7 apart from movie 005 (19 of 360 traces). 4PP7-FUS is unaffected. Every λ/k0 number for 4PP7, 30PP7 and 30PP7-FUS in sections 1-3, and the manuscript's PP7 comparisons that use them, must be redone from re-extracted data. Open: the Qβ movies checked are also 2-channel, yet their traces show no zigzag. Either they were tracked differently or the even-only/odd-only failure applies to them silently. This must be checked before any Qβ number is trusted.
 
 **Reviewer points.** General data validity, and R2 5 (replicates/variance): the PP7 results cannot be defended until re-extraction.
+
+## 5. Likelihood fitter (analysis 2): validation on simulations
+`analysis/gelmetricsMLE.m` (+ `gm_mle_nll.m`, `gm_fit_dataset.m`, `gm_amplitudes_by_trace.m`, `gm_sigma_from_ampvar.m`). Checks: `checks/mle_unit_test.m`, `checks/mle_sim_validation.m`, `checks/plot_mle_validation.py`. Outputs: `analysis_outputs/mle_validation/`.
+
+**Model.**
+- Amplitude A ~ Σ_{n≥1} ZTP(n | λ) · N(n·k0, σ²), with continuous λ and k0.
+- σ = robust SD (1.4826·MAD) of the quiescent-segment amplitudes (`ampVar`).
+- It fits the same amplitudes as the grid method (|A| after the top-10% trim, left-truncated at the 15th percentile); both cuts are modelled in the normaliser.
+- Optimisation: a 40×40 seed grid, then fmincon in log space.
+- CIs come from the profile likelihood (2ΔNLL ≤ 3.84) and from a granule bootstrap that resamples traces, never bursts. σ is re-estimated in every resample.
+- The grid-score method (current `modifiedPoissonFit.m` scoring) is run alongside.
+
+**Numerical fix found during validation.** The truncation-window mass Φ(z_max) − Φ(z_min) cancelled to 0 when both z were large, which made the NLL spuriously very negative at λ→0, k0→0. It is now computed from upper tails.
+
+**Unit test (amplitudes drawn from the model itself, 300 per fit, 5 seeds; `unit_test.csv`).**
+- At k0/σ = 4: median λ̂ is within 5% of the truth for λ = 0.5 to 5 (including 1.5), and k0 is 59.6–60.4. The k0 profile CI covers in 35/35 fits.
+- At k0/σ = 2: λ < 1.5 is not identified (true 0.5 gives λ̂ = 2.9, k0 = 20, along the λ·k0 ridge), but the CIs still cover it.
+
+**Full-pipeline validation** (generateSim → analysis.m, one trace at a time → fit). 150 tracks of 361 frames; noise 40; k0 = 60; λ_true ∈ {0.5, 1, 1.5, 2, 3, 4, 5}; 3 seeds; 100 bootstrap resamples on negative bursts only. Same settings as the experimental runner, with SP = 15. Figure: `sim_validation.png`.
+- **λ is resolved by the MLE and not by the grid method.**
+  - The grid method returns λ = 1 in 17/21 negative and 14/21 positive fits, whatever the true λ.
+  - The MLE λ rises with the truth, but is biased high: median λ̂/λ = 1.29 (negative) and 1.22 (positive).
+  - At λ_true = 2: MLE 2.58, 2.37, 2.03 (negative); grid 1, 1, 3.
+- **k0.** MLE median 58 (IQR 51–72) for negative bursts and 70 for positive bursts. The grid k0 absorbs λ (k0 ≈ λ·k0 when λ = 1), up to 280.
+- **Coverage of the 95% CIs** (all λ):
+
+  | | λ, profile | λ, bootstrap | k0, profile | k0, bootstrap |
+  |---|---|---|---|---|
+  | negative bursts | 0.38 | 0.62 | 0.24 | 0.81 |
+  | positive bursts | 0.57 | – | 0.29 | – |
+
+**Interpretation.** The likelihood fit answers the integer-λ objection: λ is estimated continuously, and it follows the true λ where the grid score cannot. But the detection pipeline does not deliver amplitudes of the form n·k0 + N(0, σ_quiescent²):
+- smoothing and per-segment line fits distort amplitudes;
+- σ from `ampVar` underestimates the noise on a burst amplitude.
+
+So λ comes out about 25% high, and the profile CIs are too narrow. The granule-bootstrap CIs are closer to nominal (k0 0.81) and should be the ones reported, with the pipeline bias stated. This supports R2 4b (integer λ, 2 vs 4) for the MLE over the grid method, but it does not give exact recovery. Next to test: σ fitted as a free parameter, more seeds, and an SNR grid (analysis 3).
+## 6. Re-extraction of the PP7 datasets (Step 2): effect on λ and k0
+**What was run.**
+- All 37 PP7 movies were processed:
+  - 4PP7: 9 movies;
+  - 4PP7-FUS: 12;
+  - 30PP7: 8;
+  - 30PP7-FUS: 8.
+- Each movie was converted with plain bfconvert, re-tracked with the R1 `BatchParticleTracker.ijm` (fluorescence channel only), and re-extracted by `checks/reextract_pp7.m` at three stages, one commit each:
+  - R1: fluorescence channel only, page = frame+1, xy+1;
+  - R2: + offset 200;
+  - R3: + 5 px aperture.
+- Output: `in_vivo_reextracted/<stage>/` (new files; the repo .mat files are untouched).
+- The runners were rerun with `run_runners(stage, true, false, dataFolders)` with unchanged per-dataset paper settings. The simulation and the non-PP7 datasets are unaffected, so their B5 values carry forward ('=' in the table).
+- Qβ was not re-extracted: no source .nd2 (see CLAUDE.md).
+
+**Data checks.**
+- Alternating (zigzag) traces ≥ 180 frames, old → new:
+  - 4PP7: 38 → 0;
+  - 30PP7: 29 → 0;
+  - 30PP7-FUS: 22 → 0;
+  - 4PP7-FUS: 0 → 0.
+- Traces ≥ 180 frames, old → new: 4PP7 67 → 76, 4PP7-FUS 90 → 94, 30PP7 100 → 145, 30PP7-FUS 88 → 111.
+- Median spot level (R1, before offset):
+  - 4PP7: 6903 → 5725;
+  - 30PP7: 7043 → 4198;
+  - 30PP7-FUS: 6782 → 3636. The old values were inflated by DIC pages.
+  - 4PP7-FUS: 3242 → 3236. This is the 1-channel control, where only the ±1 mapping changed.
+- **Movie 4PP7 012-recovered-after-corruption has an empty dark 2nd channel, not DIC.** The first channel rule picked the dark channel (7290 junk tracks, 0 traces). It was replaced by a contrast rule (commit b2345cc); that movie now gives 54 traces, and the channel choice is unchanged for the other 36 movies.
+
+**λ / k0 (grid-score method, rank 1; λ·k0 in brackets; n = fitted amplitudes).**
+
+| dataset | sign | B5 (stored data) | R1 red channel | R2 offset | R3 aperture |
+|---|---|---|---|---|---|
+| 4PP7 | Neg | 1/196 [196] (140) | 1/148 [148] (160) | 1/148 [148] (158) | 2/30 [60] (192) |
+| | Pos | 2/126 [252] (145) | 1/101 [101] (149) | 1/103 [103] (150) | 1/48 [48] (200) |
+| 4PP7-FUS | Neg | 1/83 [83] (188) | 2/49 [98] (189) | 1/80 [80] (188) | 2/25 [50] (259) |
+| | Pos | 1/77 [77] (183) | 3/38 [114] (184) | 2/53 [106] (184) | 1/33 [33] (234) |
+| 30PP7 | Neg | 2/91 [182] (159) | 1/140 [140] (203) | 1/141 [141] (203) | 1/44 [44] (275) |
+| | Pos | 1/238 [238] (156) | 1/155 [155] (192) | 1/156 [156] (191) | 1/38 [38] (248) |
+| 30PP7-FUS | Neg | 2/96 [192] (112) | 1/147 [147] (145) | 1/146 [146] (140) | 1/33 [33] (206) |
+| | Pos | 2/108 [216] (112) | 1/134 [134] (141) | 1/130 [130] (146) | 2/19 [38] (214) |
+
+**Interpretation.**
+- **R1 is the real correction.** In 4PP7, 30PP7 and 30PP7-FUS, λ·k0 for negative bursts falls by 25% or more (196 → 148, 182 → 140, 192 → 147), and the number of fitted bursts rises by 15-30%. The B5 values for these three datasets came largely from DIC pages and should not be used.
+- **R2 (offset) barely moves anything in vivo** (λ·k0 within 2%), as predicted. The 4PP7-FUS λ flip (2 → 1) is the grid score's instability, not an effect of the offset.
+- **R3 (aperture) rescales the amplitudes about 3-4×** (λ·k0 140 → 44 for 30PP7 negative bursts), and the burst counts rise by about 35%.
+  - The aperture mean includes dimmer edge pixels, so S/B − 1 is smaller.
+  - Absolute k0 values from R3 are therefore not comparable with the stored data or with Qβ/in-vitro numbers extracted the old way. Only within-extraction comparisons are valid.
+- **Manuscript PP7 claims, negative bursts, R3:**
+  - "FUS shifts λ up and k0 down for 4x": λ 2 vs 2 (no shift), k0 30 vs 25, λ·k0 60 vs 50.
+  - "No FUS effect for 30x": 1/44 vs 1/33, λ·k0 44 vs 33.
+
+  These are grid-score point estimates without CIs. The grid method returns λ = 1 almost regardless of the true λ on simulations (section 5), so its λ comparisons carry no information. The MLE with granule-bootstrap CIs on the R3 data is the next step.
+- **PP7 vs Qβ (λ 4 vs 1 in the manuscript) can no longer be compared** until Qβ is re-extracted the same way.
