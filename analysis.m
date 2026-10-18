@@ -50,7 +50,7 @@ for i = 1:size(signals,1)
     [f,gof,output] = fit(timeVec',currentBackground','poly3');
     currentBackground = feval(f,timeVec);
     % Deal with outliers (mostly results of experimental noise)
-    currentSignal = filloutliers(currentSignal,'nearest','mean');
+    currentSignal = filloutliers(currentSignal,'nearest','movmedian',3*movingAverageWindowSpan); % local outliers only (global mean could clip real plateaus)
     % Apply moving average filter on the signal
     currentSignal = smoothdata(currentSignal, 'movmean', movingAverageWindowSpan);
     % Remove background and denoise from photobleaching component
