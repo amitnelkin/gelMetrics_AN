@@ -8,6 +8,7 @@ clear; close all;
 repoDir = '..';   % repo root when this script lives in checks/
 addpath(repoDir);
 ws = warning('off', 'all');
+fprintf('Scorer: %s (set env GM_SCORER=orig|patched; see gm_score.m)\n', gm_scorer());
 
 datasets = { ...   % name, folder, SP, GOF
     '30PP7-FUS', 'in_vivo_experiments', 12, 10;
@@ -25,7 +26,7 @@ for d = 1:size(datasets, 1)
         [~, ~, ap] = analysis(S(idx), B(idx), tVec, win, SP, 0, 0);
         ap = ap(2:end);
         a = rmoutliers(ap, "percentiles", [0, 90]);
-        [lo, kb] = gm_mpfit(a, lamGrid, K0Vector, 10, G);
+        [lo, kb] = gm_score(a, lamGrid, K0Vector, 10, G);
         lamB(b) = lo(1); kB(b) = kb(1);
     end
     fprintf('\n%s (%d traces, SP=%d, GOF=%d, top 10%% trimmed, %d resamples)\n', ...

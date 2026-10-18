@@ -1,0 +1,17 @@
+Scorer: patched (set env GM_SCORER=orig|patched; see gm_score.m)
+
+30PP7-FUS (88 traces, SP=12, GOF=10, top 10% trimmed, 40 resamples)
+  lambda=1 wins 40/40
+  lambda=2 wins 0/40
+  lambda=3 wins 0/40
+  lambda=4 wins 0/40
+  lambda=5 wins 0/40
+  k0 2.5 / 50 / 97.5 percentiles: [122 171 242]
+
+30PP7 (100 traces, SP=12, GOF=10, top 10% trimmed, 40 resamples)
+  lambda=1 wins 40/40
+  lambda=2 wins 0/40
+  lambda=3 wins 0/40
+  lambda=4 wins 0/40
+  lambda=5 wins 0/40
+  k0 2.5 / 50 / 97.5 percentiles: [120 144 316]

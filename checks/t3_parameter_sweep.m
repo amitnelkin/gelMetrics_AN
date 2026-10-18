@@ -7,6 +7,7 @@ clear; close all;
 repoDir = '..';   % repo root when this script lives in checks/
 addpath(repoDir);
 ws = warning('off', 'all');
+fprintf('Scorer: %s (set env GM_SCORER=orig|patched; see gm_score.m)\n', gm_scorer());
 
 datasets = { ...   % name, folder, SP and GOF listed in ExperimentalAnalysis.m
     '4PP7',            'in_vivo_experiments',  10, 15;
@@ -32,7 +33,7 @@ for d = 1:size(datasets, 1)
             for tt = topTrims
                 a = ap;
                 if tt > 0, a = rmoutliers(ap, "percentiles", [0, 100 - tt]); end
-                [lo, kb] = gm_mpfit(a, lamGrid, K0Vector, 10, g);
+                [lo, kb] = gm_score(a, lamGrid, K0Vector, 10, g);
                 fprintf(' g%d/t%d:lam%d,k%d', g, tt, lo(1), kb(1));
                 rows(end+1, :) = {datasets{d,1}, SP, numel(ap), g, tt, lo(1), kb(1)}; %#ok<SAGROW>
             end
@@ -43,4 +44,4 @@ end
 warning(ws);
 
 T = cell2table(rows, 'VariableNames', {'dataset','SP','nPos','GOFpct','topTrimPct','lamBest','k0Best'});
-writetable(T, 't3_parameter_sweep.csv');
+writetable(T, ['t3_parameter_sweep_' gm_scorer() '.csv']);

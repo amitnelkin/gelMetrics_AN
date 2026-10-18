@@ -9,6 +9,7 @@ clear; close all;
 repoDir = '..';   % repo root when this script lives in checks/
 addpath(repoDir);
 ws = warning('off', 'all');
+fprintf('Scorer: %s (set env GM_SCORER=orig|patched; see gm_score.m)\n', gm_scorer());
 
 nTracks = 300; seeds = 0:2; lamSims = 1:5; lamGrid = 1:5;
 win = 13; SP = 15; truncPct = 15; tVec = linspace(0, 60, 360);
@@ -22,8 +23,8 @@ for fixBleach = [false true]
             [S, B] = gm_generateSim(nTracks, 3, 0.0005, 40, lamTrue, fixBleach, negFrac);
             [~, ~, ap, an] = analysis(S, B, tVec, win, SP, 0, 0);
             ap = ap(2:end); an = abs(an(2:end));
-            [lp, kp] = gm_mpfit(ap, lamGrid, k0grid(ap), 10, truncPct);
-            [ln, kn] = gm_mpfit(an, lamGrid, k0grid(an), 10, truncPct);
+            [lp, kp] = gm_score(ap, lamGrid, k0grid(ap), 10, truncPct);
+            [ln, kn] = gm_score(an, lamGrid, k0grid(an), 10, truncPct);
             rows(end+1, :) = {fixBleach, lamTrue, s, numel(ap), lp(1), kp(1), lp(1)*kp(1), ...
                               numel(an), ln(1), kn(1), ln(1)*kn(1)}; %#ok<SAGROW>
             fprintf('fix=%d lamTrue=%d seed=%d | pos: lam=%d k0=%d | neg: lam=%d k0=%d\n', ...
@@ -36,7 +37,7 @@ warning(ws);
 T = cell2table(rows, 'VariableNames', {'fixedSim','lamTrue','seed', ...
     'nPos','lamPos','k0Pos','lamK0Pos','nNeg','lamNeg','k0Neg','lamK0Neg'});
 disp(T);
-writetable(T, 't1_lambda_recovery.csv');
+writetable(T, ['t1_lambda_recovery_' gm_scorer() '.csv']);
 
 function K = k0grid(a)
     a = abs(a(:));
