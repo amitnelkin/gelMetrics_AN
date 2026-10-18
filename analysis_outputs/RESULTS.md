@@ -160,3 +160,42 @@ Every one of these needs the likelihood fit with CIs (analysis 2) before it can 
 - **R2 6 (noise floor):** supported. The false-burst rate is comparable to the real-burst rate at SP ≤ 12.
 
 **B5 caveat.** Local outlier filling roughly doubles the burst counts in 4PP7, 30PP7 and 30PP7-FUS, and only there. These are the same datasets flagged for frame-to-frame alternation (section 2). The global 'mean' criterion was probably flattening those traces. Their results should be treated as provisional until the alternation is explained.
+
+## 4. Cause of the PP7 zigzag traces (lab PC, .nd2 re-tracking)
+`analysis_outputs/zigzag_diagnosis/` (figure `zigzag_mechanism.png`, `per_trace.csv`, `page_stats.csv`, `nd2_dims.csv`, plus the driver scripts). The working files are in `..\zigzag_scratch\`, outside the repo.
+
+**What was run.**
+- 4PP7 movies 005 and 007 (`Raw_Results\Genescript-PCP4x-QCP5x_K133-tdPP7-mCherry\New`):
+  - converted with plain `bfconvert` (as the user did);
+  - tracked with the repo `BatchParticleTracker.ijm`, unchanged except for the input folder and a final exit;
+  - run through the ORIGINAL `read_tables.m` + `Collect_intensity_data.m` (f7eded0, unchanged; a `uigetdir` shim supplies the folder).
+- The channel count of every .nd2 in the four PP7 datasets was read with `showinf`.
+
+**Numbers.**
+- **Channels per movie:**
+  - 4PP7: 005 = 1, 006-013 = 2.
+  - 4PP7-FUS: all 12 = 1.
+  - 30PP7: all 8 = 2.
+  - 30PP7-FUS: all 8 = 2.
+  - Naor 5Qb / 10Qb / 4pp7 001: 2.
+- **Mosaic frame numbering.**
+  - On 007 (2 channels, 722 planes), Mosaic reports frames 0-360, and track steps are 2 (4792) or 1 (1933).
+  - Frame f is raw plane f+1 (interleaved red, DIC, ...). This covers only time points 0-180.
+  - 4130 of the 6901 detections are on odd frames, which are DIC planes.
+  - On 005 (1 channel), steps are 1 (2581) or 2 (71), with no parity structure.
+- **TIFF pages:** in 007, odd pages are red (median ~605, min ~200) and even pages are DIC (median ~6900). `Collect_intensity_data.m` reads page f.
+- **Three kinds of trace in a 2-channel movie (007, 40 traces):**
+  - even frames only: every point read from a DIC page (median spot ~7500-9400);
+  - odd frames only: detected on a DIC plane, read on a red page;
+  - mixed parity: alternating red/DIC, the zigzag; 8/40 are flagged, all of this kind.
+- **005: 0/19 traces flagged.**
+- **Match to stored data:** the 59 re-extracted traces equal stored 4PP7 traces 1-19 (005) and 49-88 (007) **bit-exactly**.
+
+**Interpretation.** The zigzag is a frame-to-page mapping artefact of 2-channel movies. It is not biology, and the cause is not alternating illumination. It is worse than the alternation flag suggested. In every 2-channel movie:
+- no trace measures a red condensate correctly;
+- even "clean" traces are pure DIC, or red at DIC-detected positions;
+- every trace covers only the first ~30 min.
+
+That makes 30PP7 and 30PP7-FUS invalid in full, and 4PP7 apart from movie 005 (19 of 360 traces). 4PP7-FUS is unaffected. Every λ/k0 number for 4PP7, 30PP7 and 30PP7-FUS in sections 1-3, and the manuscript's PP7 comparisons that use them, must be redone from re-extracted data. Open: the Qβ movies checked are also 2-channel, yet their traces show no zigzag. Either they were tracked differently or the even-only/odd-only failure applies to them silently. This must be checked before any Qβ number is trusted.
+
+**Reviewer points.** General data validity, and R2 5 (replicates/variance): the PP7 results cannot be defended until re-extraction.
