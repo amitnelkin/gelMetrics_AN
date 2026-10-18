@@ -29,7 +29,7 @@ The goal of the code work is to fix real bugs, then produce the analyses that an
 - Work on a branch, not `main`. Commit bug fixes and model changes separately (see below), so the effect of each on λ and k0 can be reported to the reviewer.
 - Seed every simulation with `rng(...)`.
 - No figures pop up in batch runs: save figures to files and write tables to CSV.
-- **MATLAB figure rendering hangs on this machine** (batch and normal mode: `exportgraphics`, `print`, `drawnow`, `heatmap` never return). Never render in MATLAB. Save data and plot in Python (matplotlib, scipy, pandas available via `py -3`). Use `checks/gm_noplot.m` (copy of `modifiedPoissonFit.m` without its plotting section) and `checks/gm_strip_plot_lines.m` when running repo code that plots.
+- **MATLAB figure rendering hung on the user's laptop** (batch and normal mode: `exportgraphics`, `print`, `drawnow`, `heatmap` never return). Never render in MATLAB. Save data and plot in Python (matplotlib, scipy, pandas available via `py -3`). Use `checks/gm_noplot.m` (copy of `modifiedPoissonFit.m` without its plotting section) and `checks/gm_strip_plot_lines.m` when running repo code that plots. On another machine (e.g. the lab PC), test once with `matlab -batch "f=figure('Visible','off'); plot(1:3); exportgraphics(f, fullfile(tempdir,'t.png'))"` (kill it if it does not return within 1 min); if it works, MATLAB figures may be used there.
 - Run the runners without editing them through `checks/run_runners.m` (`run_runners(stage, doExp, doSim)`). It uses the per-dataset paper settings and writes `analysis_outputs/<stage>/lambda_k0_table.csv` + `*_run.mat`. Figures: `py -3 checks/plot_runner_outputs.py <stage>`. Cumulative table: `py -3 checks/build_lambda_k0_table.py`. Checks: `bash checks/run_checks.sh <stage> "<orig|patched>" "<scripts>"`.
 - Commits use `git -c user.name=amitnelkin -c user.email=amit.nelkin@gmail.com` (no global git identity is configured).
 
@@ -123,10 +123,21 @@ Output each analysis as CSV tables and saved figures in an `analysis_outputs/` f
 - Mosaic frames are 0-based. CSV columns 4/5 are x = image column, y = image row (user). There is no CSV in the repo to verify against a TIFF.
 - PSF / spot radius 5 px (BatchParticleTracker.ijm).
 - Camera: Andor iXon Ultra EMCCD. Dark offset is about 200: the ExampleTIF channel-1 floor is 193-200 per frame, and no pixel is below 193. A closed-shutter frame would pin it exactly.
-- Raw TIFFs are not available for re-extraction (only ExampleTIF.tif).
+- Raw TIFFs are not on the laptop, but the original **.nd2 files are on the user's lab PC**, so re-extraction is possible there. The user offered them; the work moves to the lab PC.
+- ExampleTIF.tif is one of the TIFFs actually used in the original analysis (red fluorescence + DIC, 2 channels x 361 frames, interleaved red, DIC, red, ...). Channel 1 = red fluorescence (floor ~200), channel 2 = DIC (~6800 everywhere, no dark pixels). The user says all movies were exported the same way, and tracking (FIJI/Mosaic) was run on the red channel only.
+- Each `<name>_data.mat` aggregates ~8-15 movies (`*_xy.mat` files), appended movie by movie, so many traces share a movie.
 - Manuscript claims to test: those raised by the reviewers. The list of difference and similarity claims is in RESULTS.md / the MS summary.
-- **Open data-quality flag.** In 4PP7, 30PP7 and 30PP7-FUS, 21-40% of the traces with at least 180 frames alternate frame to frame (sign-flip fraction about 1 instead of about 0.67; `checks/check_interleave.py`). This is consistent with an interleaved 2-channel stack being read page-by-page by `generate_movArray.m`. The other datasets are clean. Unresolved; ask the user.
+- **Open data-quality flag (cause unknown).** In 4PP7, 30PP7 and 30PP7-FUS, 21-40% of the traces with >= 180 frames jump between two levels on every point for the whole trace. Example: 4PP7 trace 21 goes 4819, 8928, 4340, 8776, ...; the jump is 50-70% of the level, vs ~5% for clean traces (`checks/check_interleave.py`, `analysis_outputs/baseline/data_quality/zigzag_example.png`). Flagged traces come in contiguous index blocks (i.e. particular movies). In vitro, Qb and 4PP7-FUS have none.
+  - `generate_movArray.m` reads every TIFF page as a time point, so on a red/DIC interleaved TIFF every other page is DIC. That fits the zigzag (red ~4500 / DIC ~8500), but then why most traces are clean is unexplained.
+  - One hypothesis to test, not established: Mosaic run on the 2-channel stack may number all 722 planes as frames. With `linkrange = 2`, a track can link red-to-red every 2 planes (clean trace, max 360 points) or alternate red/DIC on consecutive planes (zigzag).
+  - **First thing to do on the lab PC:** re-run tracking on one PP7 movie and on ExampleTIF's movie. Look at the Mosaic CSV frame numbers (0-360 or 0-721? steps of 1 or 2?). Then run `Collect_intensity_data.m` and see which traces zigzag. Do not change the extraction pipeline without the user's OK.
+- With re-extraction possible, the deferred [model] change (camera offset ~200 subtraction + fixed circular aperture, radius matched to the PSF of 5 px) can be applied, together with a reader that loads only the red channel. Each of these is a pipeline change: ask first, and report its effect on lambda/k0 like the other model changes. Offset alone, applied to the stored traces, changes amplitudes by < 1% in vivo and 3-10% in vitro (late in the movie).
 - Still open: is there a fixed-sample or known-liquid control dataset?
+
+## Next session (on the lab PC)
+1. Check that the `revision` branch is present (`git log --oneline -15` should show "CLAUDE.md: lab-PC handoff ..." at the top) and that MATLAB R2025b with the same toolboxes is installed.
+2. Resolve the PP7 zigzag flag with the .nd2 files (see above). Agree with the user on re-extraction (red channel only, offset, aperture) before changing `Collect_intensity_data.m` / `generate_movArray.m`.
+3. Then start "Analyses to produce" from item 2 (likelihood fitter), validating on simulations first.
 
 ## Working style
 - Before changing a result-affecting line, say what will change and why.
