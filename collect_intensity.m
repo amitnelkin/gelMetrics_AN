@@ -17,9 +17,18 @@ function [intensity, background, info] = collect_intensity(file_path, opts)
 %               (default 200: Andor iXon EMCCD, fluorescence floor 193-200 in
 %               ExampleTIF.tif). The pixel classes are computed on the raw
 %               pixels, so only the levels change. 0 = no subtraction (R1).
+% opts.aperture - radius (px) of a fixed circular aperture centred on the
+%               Mosaic sub-pixel position; the spot intensity is the mean of
+%               the pixels whose centres lie within it. Default 5 (PSF radius,
+%               BatchParticleTracker.ijm). It replaces the mean of the top
+%               two multithresh classes, whose pixel set changes with the
+%               brightness, so it is not additive in molecule number.
+%               0 = thresholded spot mean (R1/R2). The cell (background)
+%               measure is unchanged.
 
 if nargin < 2, opts = struct(); end
 if ~isfield(opts,'offset'), opts.offset = 200; end
+if ~isfield(opts,'aperture'), opts.aperture = 5; end
 file_path = [char(file_path), filesep];
 tiff_files = dir([file_path,'*.tif']);
 
@@ -67,7 +76,17 @@ for f = 1:numel(tiff_files)
                spot_frame = sub_frame>=th(3);
                cell_frame = sub_frame>=th(1) & sub_frame<th(3);
 
-               spot_intensity(frameIdx(n),1) = mean(sub_frame(spot_frame)) - opts.offset;
+               if opts.aperture > 0
+                   R = ceil(opts.aperture) + 1;
+                   cols = max(floor(spot_x(n))-R,1):min(ceil(spot_x(n))+R,size(frame,2));
+                   rows = max(floor(spot_y(n))-R,1):min(ceil(spot_y(n))+R,size(frame,1));
+                   [cc, rr] = meshgrid(cols, rows);
+                   inAp = (cc - spot_x(n)).^2 + (rr - spot_y(n)).^2 <= opts.aperture^2;
+                   win = double(frame(rows, cols));
+                   spot_intensity(frameIdx(n),1) = mean(win(inAp)) - opts.offset;
+               else
+                   spot_intensity(frameIdx(n),1) = mean(sub_frame(spot_frame)) - opts.offset;
+               end
                background_intensity(frameIdx(n),1) = mean(sub_frame(cell_frame)) - opts.offset;
             end
 
