@@ -1,9 +1,13 @@
-function T = run_runners(stage, doExp, doSim)
+function T = run_runners(stage, doExp, doSim, dataFolders)
 % RUN_RUNNERS  Runs ExperimentalAnalysis.m on every dataset (paper settings
 % from the comment on its line 12) and SimulationRunWithAnalysis.m, and
 % writes analysis_outputs/<stage>/lambda_k0_table.csv.
+% dataFolders (optional) = {name, folder; ...}: run only these datasets,
+% loading <folder>/<name>_data.mat (folder relative to the repo), e.g. the
+% re-extracted PP7 data in in_vivo_reextracted/<stage>. Settings unchanged.
 if nargin < 2, doExp = true; end
 if nargin < 3, doSim = true; end
+if nargin < 4, dataFolders = {}; end
 checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);
 outDir = fullfile(repoDir, 'analysis_outputs', stage);
@@ -20,6 +24,12 @@ datasets = { ...
     '30PP7-FUS',         'in_vivo_experiments',  12, 10;
     '5Qb',               'in_vivo_experiments',  14, 15;
     '10Qb',              'in_vivo_experiments',  14, 15};
+
+if ~isempty(dataFolders)
+    [keep, loc] = ismember(datasets(:,1), dataFolders(:,1));
+    datasets(keep,2) = dataFolders(loc(keep),2);
+    datasets = datasets(keep,:);
+end
 
 rows = {};
 if doExp

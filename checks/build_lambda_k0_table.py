@@ -12,7 +12,8 @@ import os
 import pandas as pd
 
 STAGES = ['baseline', 'after_bugfixes', 'after_B1_zerotrunc', 'after_B2_symbursts',
-          'after_B3_bleach', 'after_B4_k0grid', 'after_B5_filloutliers']
+          'after_B3_bleach', 'after_B4_k0grid', 'after_B5_filloutliers',
+          'after_R1_redchannel', 'after_R2_offset', 'after_R3_aperture']  # R*: re-extracted PP7 only
 PAPER_NEG = {  # MS.pdf pp. 7-10 (lambda, k0 or None, n bursts)
     'protein_RNA_1_1': (1, 39, 91), 'protein_RNA_10_1': (1, 63, 96),
     'protein_RNA_100_1': (1, 139, 103), '4PP7': (1, None, 63), '30PP7': (1, None, 112),

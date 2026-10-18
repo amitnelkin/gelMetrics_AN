@@ -6,7 +6,7 @@ clc;
 movingAverageWindowSpan = 13;             % Moving average window span for signal denoising
 stringencyParameter = 14;                 % Parameter for burst events detection
 frameInterval_min = 10/60;                % frame interval in minutes - set to your acquisition interval
-timeVecTotal = (0:359) * frameInterval_min; % Time steps vector (was linspace(0,60,360): dt = 60/359 min)
+timeVecTotal = (0:360) * frameInterval_min; % Time steps vector (was linspace(0,60,360): dt = 60/359 min); 361 = movie length (re-extracted traces can span frames 0-360)
 
 % Load signal and background data
 % StringencyParameter (SP) and truncation percentile (GOF) for replicating the exact plots: 
