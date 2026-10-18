@@ -1,5 +1,6 @@
 close all;   % Close all open figure windows
 clear;       % Clear workspace
+rng(1);      % fixed seed so simulation figures are reproducible
 
 % Algorithm Parameters
 movingAverageWindowSpan = 13;             % Moving average window span for signal denoising
@@ -100,7 +101,7 @@ for SP = 1:length(stringencyParameter)
     khat_SEhat_coeff = sqrt(2)/sqrt(length(ampPos)) ;
     khat_SEhat = khat * khat_SEhat_coeff;
     K0Vector = floor(khat - 8 * khat_SEhat):ceil(khat + 18 * khat_SEhat); % The k0 lookup grid is integers spanning >20 standard errors from the k0 estimator, the grid is not symmetrical since we noticed bias towards higher lambdas during simulations
-    modifiedPoissonFit(ampPos,lambda,K0Vector,10,'Positive amplitudes');
+    modifiedPoissonFit(rmoutliers(ampPos,"percentiles",[0,90]),lambda,K0Vector,10,'Positive amplitudes',15); % same trim and truncation as ExperimentalAnalysis.m
     
     
     % Poisson analysis on negative amplitudes
@@ -108,7 +109,7 @@ for SP = 1:length(stringencyParameter)
     khat_SEhat_coeff = sqrt(2)/sqrt(length(ampNeg)) ;
     khat_SEhat = khat * khat_SEhat_coeff;
     K0Vector = floor(khat - 8 * khat_SEhat):ceil(khat + 18 * khat_SEhat); % The k0 lookup grid is integers spanning >20 standard errors from the k0 estimator, the grid is not symmetrical since we noticed bias towards higher lambdas during simulations
-    modifiedPoissonFit(abs(ampNeg),lambda,K0Vector,10,'Negative amplitudes');
+    modifiedPoissonFit(rmoutliers(abs(ampNeg),"percentiles",[0,90]),lambda,K0Vector,10,'Negative amplitudes',15); % same trim and truncation as ExperimentalAnalysis.m
 
 end
 

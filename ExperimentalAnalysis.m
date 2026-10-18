@@ -5,7 +5,8 @@ clc;
 % Algorithm Parameters
 movingAverageWindowSpan = 13;             % Moving average window span for signal denoising
 stringencyParameter = 14;                 % Parameter for burst events detection
-timeVecTotal = linspace(0, 60, 360);      % Time steps vector
+frameInterval_min = 10/60;                % frame interval in minutes - set to your acquisition interval
+timeVecTotal = (0:359) * frameInterval_min; % Time steps vector (was linspace(0,60,360): dt = 60/359 min)
 
 % Load signal and background data
 % StringencyParameter (SP) and truncation percentile (GOF) for replicating the exact plots: 
@@ -124,13 +125,18 @@ title('Time between burst events');
 
 lambda = 1:5;
 K0Vector = 1:500; % Experimental data is noisy by nature, using standard errors will lead to unreasonably large grids
+truncPercent = 15; % left-truncation percentile, passed explicitly to modifiedPoissonFit
 
 % Poisson analysis on positive amplitudes
-[~, ~, ~, ~, ~, w_score] = modifiedPoissonFit(rmoutliers(ampPos,"percentiles",[0,90]),lambda,K0Vector,10,'Positive amplitudes');
+[~, ~, ~, ~, ~, w_score] = modifiedPoissonFit(rmoutliers(ampPos,"percentiles",[0,90]),lambda,K0Vector,10,'Positive amplitudes',truncPercent);
 
 % Final ranking of lambdas
 for ll = 1:length(lambda)
     [min_w_vec{ll}, min_w_k0{ll}] = min(w_score(ll,:));
+    min_w_k0{ll} = K0Vector(min_w_k0{ll}); % convert index to k0 value (only equal when K0Vector = 1:N)
+end
+if any(cell2mat(min_w_k0) == K0Vector(1) | cell2mat(min_w_k0) == K0Vector(end))
+    warning('Best k0 is at the edge of K0Vector - extend the grid');
 end
 
 [min_w_scores, min_w_idx] = sort(cell2mat(min_w_vec));
@@ -143,11 +149,15 @@ for ww = 1:length(lambda)
 end
 
 % Poisson analysis on negative amplitudes
-[~, ~, ~, ~, ~, w_score] = modifiedPoissonFit(rmoutliers(abs(ampNeg),"percentiles",[0,90]),lambda,K0Vector,10,'Negative amplitudes');
+[~, ~, ~, ~, ~, w_score] = modifiedPoissonFit(rmoutliers(abs(ampNeg),"percentiles",[0,90]),lambda,K0Vector,10,'Negative amplitudes',truncPercent);
 
 % Final ranking of lambdas
 for ll = 1:length(lambda)
     [min_w_vec{ll}, min_w_k0{ll}] = min(w_score(ll,:));
+    min_w_k0{ll} = K0Vector(min_w_k0{ll}); % convert index to k0 value (only equal when K0Vector = 1:N)
+end
+if any(cell2mat(min_w_k0) == K0Vector(1) | cell2mat(min_w_k0) == K0Vector(end))
+    warning('Best k0 is at the edge of K0Vector - extend the grid');
 end
 
 [min_w_scores, min_w_idx] = sort(cell2mat(min_w_vec));

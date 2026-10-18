@@ -16,9 +16,9 @@ for tt = 1:length(startPosValid)
         lengthsValid(tt)+1);
     y = polyval(p{tt},x);
     if y(end)>=y(1)
-        plot(x*(timeVec(2)-timeVec(1)),y,'g','LineWidth',1.2);
+        plot((x-1)*(timeVec(2)-timeVec(1)),y,'g','LineWidth',1.2);
     else
-        plot(x*(timeVec(2)-timeVec(1)),y,'r','LineWidth',1.2);
+        plot((x-1)*(timeVec(2)-timeVec(1)),y,'r','LineWidth',1.2);
     end
 end
 % Plot blue linear line overlayed on quiescent segments
@@ -29,7 +29,7 @@ for tt = 1:length(startPosValid)-1
         continue;
     end
     yVar = polyval(pVar{tt},xVar);
-    plot(xVar*(timeVec(2)-timeVec(1)),yVar,'b','LineWidth',1.2);   
+    plot((xVar-1)*(timeVec(2)-timeVec(1)),yVar,'b','LineWidth',1.2);   
 end
 
 return

@@ -35,7 +35,7 @@ for i = 1:size(signals,1)
         currentBackground = currentBackground';
     end
     
-    % Discard experimental signals with less than 15 minutes of data
+    % Discard experimental signals with less than 180 frames (30 min at 10 s/frame)
     if length(currentSignal) < 180
         continue;
     end
@@ -95,7 +95,7 @@ for i = 1:size(signals,1)
         end
         if xVar(end)>length(data)
             xVar = xVar(1:end-1);
-            pVar{tt} = polyfit(xVar,data(startPosValid(tt)+lengthsValid(tt)+1:startPosValid(tt+1))-1,1);
+            pVar{tt} = polyfit(xVar,data(startPosValid(tt)+lengthsValid(tt)+1:startPosValid(tt+1)-2),1);
         else
             pVar{tt} = polyfit(xVar,data(startPosValid(tt)+lengthsValid(tt)+1:startPosValid(tt+1)-1),1);
         end

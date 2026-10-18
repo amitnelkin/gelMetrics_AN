@@ -23,5 +23,5 @@ for f = 1:numel(files)
     x = x(2:end);
     y = y(2:end);
     frame = frame(2:end);
-    save([files(f).name(1:3),'_xy.mat'],'x','y','frame');
+    save([files(f).name(1:end-4),'_xy.mat'],'x','y','frame'); % full name (was first 3 characters: files could overwrite each other)
 end
