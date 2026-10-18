@@ -1,4 +1,4 @@
-function [intensity, background, info] = collect_intensity(file_path)
+function [intensity, background, info] = collect_intensity(file_path, opts)
 % COLLECT_INTENSITY  Body of Collect_intensity_data.m as a function, so the
 % extraction can be rerun headless. For every <name>.tif in file_path it
 % loads <name>_xy.mat (read_tables.m output) and returns, per track of >= 24
@@ -12,7 +12,14 @@ function [intensity, background, info] = collect_intensity(file_path)
 %   - Mosaic x/y are 0-based pixel coordinates: MATLAB column = x + 1,
 %     row = y + 1 (measured: spot centroid - Mosaic = +0.87 col, +0.80 row).
 %   - TIFF and _xy.mat are paired by name, not by directory order.
+%
+% opts.offset - camera dark offset subtracted from the spot and cell means
+%               (default 200: Andor iXon EMCCD, fluorescence floor 193-200 in
+%               ExampleTIF.tif). The pixel classes are computed on the raw
+%               pixels, so only the levels change. 0 = no subtraction (R1).
 
+if nargin < 2, opts = struct(); end
+if ~isfield(opts,'offset'), opts.offset = 200; end
 file_path = [char(file_path), filesep];
 tiff_files = dir([file_path,'*.tif']);
 
@@ -60,8 +67,8 @@ for f = 1:numel(tiff_files)
                spot_frame = sub_frame>=th(3);
                cell_frame = sub_frame>=th(1) & sub_frame<th(3);
 
-               spot_intensity(frameIdx(n),1) = mean(sub_frame(spot_frame));
-               background_intensity(frameIdx(n),1) = mean(sub_frame(cell_frame));
+               spot_intensity(frameIdx(n),1) = mean(sub_frame(spot_frame)) - opts.offset;
+               background_intensity(frameIdx(n),1) = mean(sub_frame(cell_frame)) - opts.offset;
             end
 
             spot_intensity = fillmissing(spot_intensity,'linear');           % fill skipped frames
