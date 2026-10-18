@@ -23,12 +23,11 @@ repoDir = fileparts(checksDir);
 addpath(repoDir);
 datasets = {'4PP7','4PP7-FUS','30PP7','30PP7-FUS'};
 
+here = pwd;
 for d = 1:numel(datasets)
-    work = fullfile(workRoot, datasets{d}, 'work');
-    here = pwd; cd(work);
-    read_tables;                       % script: clears its workspace, writes <movie>_xy.mat
-    cd(here);
+    runReadTables(fullfile(workRoot, datasets{d}, 'work'));
 end
+cd(here);
 
 for s = 1:size(stages,1)
     outDir = fullfile(repoDir, 'in_vivo_reextracted', stages{s,1});
@@ -46,4 +45,10 @@ for s = 1:size(stages,1)
     end
     writetable(allInfo, fullfile(outDir, 'extraction_info.csv'));
 end
+end
+
+function runReadTables(work)
+% read_tables.m is a script that calls clear: run it in its own workspace
+cd(work);
+read_tables;                           % writes <movie>_xy.mat next to <movie>.csv
 end

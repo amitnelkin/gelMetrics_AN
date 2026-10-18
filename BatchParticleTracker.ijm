@@ -12,9 +12,11 @@ percentile   = 0.1;
 linkrange    = 2;
 displacement = 10;
 
-// Multi-channel .nd2 movies (red fluorescence + DIC) are reduced to the
-// fluorescence channel before tracking: the channel with the lowest pixel
-// minimum (EMCCD offset ~200; DIC never below ~1400). Tracking the opened
+// Multi-channel .nd2 movies (red fluorescence + DIC, or + an empty dark
+// channel) are reduced to the fluorescence channel before tracking: the
+// channel with the highest max/mean contrast on its first frame (red ~15,
+// DIC ~3.5, dark ~2; the lowest-minimum rule picked the dark channel of
+// 4PP7 012-recovered-after-corruption). Tracking the opened
 // 2-channel hyperstack made Mosaic walk the raw interleaved planes, so its
 // "frames" 0-360 were red/DIC planes of only the first 180 time points and it
 // detected particles on DIC (analysis_outputs/zigzag_diagnosis). The channel
@@ -31,11 +33,11 @@ for (i = 0; i < list.length; i++) {
 	getDimensions(w, h, c, z, t);
 	red = 1;
 	if (c > 1) {
-	    best = 1e12;
+	    best = -1;
 	    for (k = 1; k <= c; k++) {
 	        Stack.setChannel(k);
 	        getStatistics(area, mean, min, max);
-	        if (min < best) { best = min; red = k; }
+	        if (max / mean > best) { best = max / mean; red = k; }
 	    }
 	    run("Duplicate...", "title=red duplicate channels=" + red);
 	}

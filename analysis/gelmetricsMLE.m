@@ -37,6 +37,7 @@ opts = setdef(opts, 'surface', false);
 opts = setdef(opts, 'nGrid', 60);
 opts = setdef(opts, 'scanN', 40);       % seed-grid size per axis
 opts = setdef(opts, 'start', []);       % extra start [lambda k0] (bootstrap warm start)
+opts = setdef(opts, 'fitSigma', false); % true: sigma is a free parameter (sigma input = start)
 
 A = abs(A(:));
 A = A(isfinite(A));
@@ -55,7 +56,14 @@ if numel(A) < 5, return, end
 
 lb = [log(0.02), log(max(A)/400)];
 ub = [log(50),   log(2*max(A))];
-f = @(th) gm_mle_nll(exp(th(1)), exp(th(2)), A, sigma, Amin, Amax);
+if opts.fitSigma
+    % sigma free: profiled out inside the objective (log sigma within a factor
+    % 4.5 of the ampVar estimate), so CIs on lambda and k0 include its uncertainty
+    sgLo = log(sigma) - 1.5; sgHi = log(sigma) + 1.5;
+    f = @(th) sigmaProfiled(exp(th(1)), exp(th(2)), A, Amin, Amax, sgLo, sgHi);
+else
+    f = @(th) gm_mle_nll(exp(th(1)), exp(th(2)), A, sigma, Amin, Amax);
+end
 
 % grid scan
 ns = opts.scanN;
@@ -86,6 +94,11 @@ end
 R.lambda = exp(best.th(1)); R.k0 = exp(best.th(2)); R.lamK0 = R.lambda * R.k0;
 R.nll = best.nll; R.exitflag = best.ef;
 R.lamAtBound = any(abs(best.th(1) - [lb(1) ub(1)]) < 1e-3);
+if opts.fitSigma
+    [~, R.sigma] = sigmaProfiled(R.lambda, R.k0, A, Amin, Amax, sgLo, sgHi);
+    R.sigmaAmpVar = sigma;
+    sigma = R.sigma;     % surface below at the fitted sigma
+end
 
 crit = chi2inv(0.95, 1) / 2;      % 1.92
 if opts.profile
@@ -160,6 +173,12 @@ if gmin < v
     [q2, v2] = fminbnd(@g, a, b, optimset('TolX', 1e-7));
     if v2 < v, v = v2; qv = q2; end
 end
+end
+
+function [v, sg] = sigmaProfiled(lam, k0, A, Amin, Amax, lo, hi)
+g = @(ls) gm_mle_nll(lam, k0, A, exp(ls), Amin, Amax);
+[ls, v] = fminbnd(g, lo, hi, optimset('TolX', 1e-4));
+sg = exp(ls);
 end
 
 function s = setdef(s, f, v)
