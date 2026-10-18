@@ -41,6 +41,26 @@ The goal of the code work is to fix real bugs, then produce the analyses that an
 - `modifiedPoissonFit.m`: grid search over λ = 1:5 and k0 using a weighted rank score (0.5 MSE, 0.25 QQ, 0.25 KS).
 - `ExperimentalAnalysis.m` and `SimulationRunWithAnalysis.m`: the runners. `generateSim.m` generates the simulations.
 
+### Extraction pipeline as actually run (from the user, 2026-10-18)
+1. Each .nd2 (NIS-Elements; red fluorescence + DIC) was converted to TIFF with bftools, e.g. in a Windows cmd folder of .nd2 files:
+   `for %i in (*.nd2) do ..ftoolsfconvert "%i" "%~dpni.tif"`
+   The result is a 2-channel interleaved TIFF (red, DIC, red, DIC, ...), like ExampleTIF.tif.
+2. Particle tracking with the repo macro `BatchParticleTracker.ijm`. Note that the macro opens the **.nd2** (Bio-Formats, hyperstack), not the TIFF, and tracks it as opened. It has no channel split or selection. The user says tracking was on the red channel. Verify how Mosaic numbered the frames: 0-360 per channel, or 0-721 over all planes.
+3. The Mosaic CSVs `Traj_<name>.nd2.csv` were renamed to `<name>.csv` to match the TIFF names. The user's cmd snippet:
+   ```
+   for %i in (Traj_*.nd2.csv) do (
+       set "fname=%~ni"
+       setlocal enabledelayedexpansion
+       set "newname=!fname:Traj_=!"
+       set "newname=!newname:.nd2=!"
+       echo "%i" -> "!newname!.csv"
+       endlocal
+   )
+   ```
+   (As written it only echoes the new names. The actual rename was presumably a `ren` in place of the `echo`.)
+4. `read_tables.m` produced the `*_xy.mat` files. The original code saved them as `name(1:3)_xy.mat`: **if movie names share their first 3 characters, the xy files overwrote each other.** `Collect_intensity_data.m` then paired `tiff_files(f)` with `mat_files(f)` purely by directory order, and the `*.mat` pattern also picked up `data.mat`/`background.mat`. Check the actual movie names: a TIFF/xy mismatch would put tracks from one movie onto another movie's images.
+5. `Collect_intensity_data.m` produced `data.mat` / `background.mat`. These were renamed to `<dataset>_data.mat` / `_background.mat` in the repo. It reads the interleaved 2-channel TIFF page by page (`generate_movArray.m`), so `movArray(frame)` is a red or a DIC page depending on how Mosaic numbered frames (step 2). This is the prime suspect for the PP7 zigzag traces.
+
 The repo's own comment (`ExperimentalAnalysis.m` line 12) lists per-dataset settings: SP = 10, 12 or 14 and GOF = 10 or 15. Treat this as a known reviewer issue to resolve with one shared setting plus a sensitivity analysis, not as something to preserve.
 
 ## Known issues
