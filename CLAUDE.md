@@ -169,8 +169,8 @@ Output each analysis as CSV tables and saved figures in an `analysis_outputs/` f
 
 ## Next session
 1. Done on the lab PC (2026-10-18): zigzag resolved (RESULTS.md section 4), PP7 re-extracted (R1-R3), likelihood fitter built and validated (section 5).
-2. Run the likelihood fitter on the real datasets: point estimates, profile CIs, granule-bootstrap CIs and the λ-k0 surface. Use the R3 re-extracted PP7 data, and the repo data for in vitro and Qβ. Compare with the grid method.
-3. Then "Analyses to produce" items 3-7 (SNR recovery grid, noise floor, sensitivity, bootstrap/time halves, window sensitivity).
+2. Done: likelihood fit on the real data (RESULTS.md section 7, `checks/mle_real_data.m`). In vitro λ ≠ 1 (100:1: 3.47 [1.83–6.28]). Qβ λ is not identified (σ ≈ 10× the other datasets). No FUS effect is detectable for 4x.
+3. Next: "Analyses to produce" items 3-7 (SNR recovery grid, noise floor, sensitivity, bootstrap/time halves, window sensitivity).
 4. Open questions for the user: are the Naor Qβ .nd2 files the source of the stored Qβ data (if so, re-extract them)? Is there a fixed/crosslinked control dataset?
 
 ## Working style

@@ -289,3 +289,45 @@ So λ comes out about 25% high, and the profile CIs are too narrow. The granule-
 
   These are grid-score point estimates without CIs. The grid method returns λ = 1 almost regardless of the true λ on simulations (section 5), so its λ comparisons carry no information. The MLE with granule-bootstrap CIs on the R3 data is the next step.
 - **PP7 vs Qβ (λ 4 vs 1 in the manuscript) can no longer be compared** until Qβ is re-extracted the same way.
+## 7. Likelihood fit on the real data (analysis 2, real data)
+`checks/mle_real_data.m`, `checks/plot_mle_real.py`.
+- Outputs (`analysis_outputs/mle_real/`):
+  - `mle_real.csv`;
+  - `mle_real_estimates.png/pdf` (estimates and CIs);
+  - `mle_real_surfaces.png/pdf` (λ-k0 surfaces);
+  - `boot.mat`, `surfaces.mat`.
+- PP7 uses the R3 re-extraction; in vitro and Qβ use the stored data.
+- Settings: the per-dataset paper SP and truncation, 13-frame window, 10% top trim.
+- 200 granule-bootstrap resamples per dataset and sign, seeded. A rerun reproduces every number exactly.
+
+Negative bursts. Bootstrap CIs are the ones to report (section 5: profile CIs undercover; λ is ~25% high on simulations).
+
+| dataset | n fitted | σ | MLE λ [boot 95%] | MLE k0 [boot 95%] | λ·k0 [boot 95%] | grid λ/k0 |
+|---|---|---|---|---|---|---|
+| in vitro 1:1 | 72 | 15 | 1.53 [1.07–2.21] | 29 [20–40] | 45 [23–72] | 1/28 |
+| in vitro 10:1 | 76 | 26 | 1.44 [0.78–2.50] | 84 [51–107] | 120 [42–236] | 2/42 |
+| in vitro 100:1 | 86 | 18 | 3.47 [1.83–6.28] | 64 [35–106] | 223 [107–460] | 2/59 |
+| 4PP7 (R3) | 163 | 30 | 0.84 [0.18–4.97] | 46 [11–71] | 39 [10–64] | 2/30 |
+| 4PP7-FUS (R3) | 220 | 23 | 0.96 [0.68–1.45] | 37 [26–49] | 35 [28–52] | 2/25 |
+| 30PP7 (R3) | 248 | 34 | 1.21 [1.01–1.47] | 38 [26–50] | 46 [33–59] | 1/44 |
+| 30PP7-FUS (R3) | 185 | 25 | 1.38 [0.63–2.03] | 22 [16–36] | 30 [18–39] | 1/33 |
+| 5Qb | 103 | 262 | 0.93 [0.02–4.05] | 137 [44–294] | 128 [3–240] | 2/155 |
+| 10Qb | 141 | 321 | 0.02 [0.02–7.62] | 369 [50–486] | 7 [6–355] | 3/153 |
+
+**Interpretation**
+- **Identifiability.**
+  - In vitro: the λ-k0 surfaces are closed and compact (`mle_real_surfaces.png`).
+  - PP7: the surfaces are elongated along λ·k0 = const, closed for 4PP7-FUS and 30PP7, nearly open for 4PP7 and 30PP7-FUS.
+  - Qβ: the surfaces are open bands, so λ is not identified. The quiescent noise σ (262–321) is about 10× that of every other dataset and comparable to k0.
+- **Manuscript claims, tested with bootstrap CIs:**
+  - **"λ = 1 for all in vitro cases": fails.** 100:1 gives λ = 3.47 [1.83–6.28], which excludes 1, and 1:1 gives 1.53 [1.07–2.21]. Even allowing for the ~25% upward bias found on simulations, 100:1 is not 1.
+  - **"k0 increases with protein:RNA ratio" (39 → 63 → 139): not supported as stated.** k0 is 29 → 84 → 64, and the 10:1 and 100:1 CIs overlap. 1:1 is lower than both.
+  - **"Qβ λ = 4 vs PP7 λ = 1": not testable.** Qβ λ is not identified (CIs span the whole search range), and Qβ was extracted the old way.
+  - **"FUS shifts λ up and k0 down for 4x": not supported.** λ is 0.84 [0.18–4.97] vs 0.96 [0.68–1.45], and k0 is 46 [11–71] vs 37 [26–49]; both overlap fully.
+  - **"No FUS effect for 30x": consistent for λ** (1.21 [1.01–1.47] vs 1.38 [0.63–2.03]). k0 is 38 [26–50] vs 22 [16–36]: the CIs overlap only marginally, so a k0 decrease with FUS cannot be excluded.
+- **Grid vs MLE.** The grid λ (1-3) is often inside the MLE CIs, but on simulations the grid does not track λ (section 5). Its agreement here is not evidence.
+- **Reviewer points.**
+  - R2 4a (error bars): now provided.
+  - R2 4b: λ is continuous, and the pipeline bias is quantified.
+  - R2 5: the granule bootstrap is in place; FOV/replicate nesting is not yet done.
+  - These results undermine several of the manuscript's difference claims.

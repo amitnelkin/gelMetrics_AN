@@ -113,7 +113,7 @@ if opts.profile
 end
 if opts.surface
     lamS = exp(linspace(lb(1), ub(1), opts.nGrid));
-    k0S = exp(linspace(log(R.lamK0/60), log(min(R.lamK0*4, 2*max(A))), opts.nGrid));
+    k0S = exp(linspace(lb(2), ub(2), opts.nGrid));       % full k0 search range
     S = zeros(numel(lamS), numel(k0S));
     for i = 1:numel(lamS)
         for j = 1:numel(k0S)
