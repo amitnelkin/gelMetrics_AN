@@ -47,8 +47,8 @@ function [signals, backgroundSignals] = generateSim(numTracks, trackLength, type
                         % We noticed a positive bias in our simulated signals
                         % we counter this by giving a higher chance for a
                         % negative burst which reduces signal intensity
-                        if rand < 0.6 
-                            change = -change; % 60% chance of being negative
+                        if rand < 0.5
+                            change = -change; % symmetric: 50% chance of being negative
                         end
                         currentLevel = currentLevel + change;
                     end
