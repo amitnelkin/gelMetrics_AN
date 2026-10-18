@@ -1,0 +1,3 @@
+dataset,SP,GOF,sign,nAmpAll,nFit,lam1,k0_1,lamK0_1,score1,lam2,k0_2,score2,k0AtGridEdge,nTraces,nTraces180,stage
+"SIM(lam=2,k0=60)",15,15,Pos,1665,1499,2,74,148,0.0158450704225352,3,50,0.0272887323943662,0,1000,1000,after_B4_k0grid
+"SIM(lam=2,k0=60)",15,15,Neg,1756,1580,4,39,156,0.0120817843866171,3,52,0.0306691449814126,0,1000,1000,after_B4_k0grid

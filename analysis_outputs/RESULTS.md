@@ -79,3 +79,84 @@ The baseline check scripts (t1–t4, original scoring) confirm the indicative Py
   - in vitro: 0.0026–0.011/min.
   - Median of the dataset medians: **0.0026/min (14.5%)**, used for the simulation.
   - The original simulation used 0.0005 (3%).
+
+## 3. Bug fixes and model changes: effect on λ and k0
+**What was run.**
+- The runners were rerun after every commit (per-dataset paper settings). The simulation runner uses `rng(1)`, true λ=2, k0=60.
+- Changes B2–B4 touch only the simulation, so for those stages only the simulation runner was rerun. Experimental values carry forward unchanged.
+- Check scripts were rerun where affected, with both scorers. Logs: `analysis_outputs/<stage>/checks_<scorer>/`.
+- Full table: `lambda_k0_before_after.md`.
+- Stages:
+  - A = bug fixes.
+  - B1 = zero-truncated Poisson.
+  - B2 = symmetric simulated bursts.
+  - B3 = expConst 0.0026.
+  - B4 = symmetric k0 grid.
+  - B5 = movmedian filloutliers.
+
+Rank-1 λ / k0 (`*` = k0 at a grid edge):
+
+| dataset | sign | paper | base | A | B1 | B2–B4 | B5 (final) | n base → final | λ·k0 base → final |
+|---|---|---|---|---|---|---|---|---|---|
+| in vitro 1:1 | Neg | 1/39 | 1/39 | 1/35 | 1/31 | = | 1/28 | 91 → 94 | 39 → 28 |
+| | Pos | – | 1/53 | 1/39 | 1/35 | = | 1/33 | 71 → 77 | 53 → 33 |
+| in vitro 10:1 | Neg | 1/63 | 1/62 | 1/62 | **2/39** | = | 2/42 | 96 → 93 | 62 → 84 |
+| | Pos | – | 1/139 | 1/88 | 1/74 | = | 1/79 | 78 → 74 | 139 → 79 |
+| in vitro 100:1 | Neg | 1/139 | 1/139 | 1/110 | **2/59** | = | 2/59 | 103 → 105 | 139 → 118 |
+| | Pos | – | 1/145 | 1/121 | 2/60 | = | 2/60 | 63 → 63 | 145 → 120 |
+| 4PP7 | Neg | 1/– | 1/188 | 1/199 | 1/180 | = | 1/196 | 63 → **155** | 188 → 196 |
+| | Pos | – | 1/379 | 1/212 | 1/176 | = | 2/126 | 66 → **161** | 379 → 252 |
+| 4PP7-FUS | Neg | 2/– | 2/51 | 2/53 | 2/53 | = | **1/83** | 210 → 209 | 102 → 83 |
+| | Pos | – | 1/73 | 1/79 | 1/79 | = | 1/77 | 207 → 203 | 73 → 77 |
+| 30PP7 | Neg | 1/– | 1/192 | 1/204 | 2/102 | = | 2/91 | 112 → **177** | 192 → 182 |
+| | Pos | – | 1/138 | 1/135 | 2/85 | = | 1/238 | 87 → **173** | 138 → 238 |
+| 30PP7-FUS | Neg | 1/– | 1/97 | 1/118 | 1/115 | = | 2/96 | 86 → 124 | 97 → 192 |
+| | Pos | – | 1/117 | 1/163 | 1/144 | = | 2/108 | 86 → 124 | 117 → 216 |
+| 5Qb | Neg | 4/90 | 4/90 | 3/116 | 3/116 | = | **2/155** | 134 → 134 | 360 → 310 |
+| | Pos | – | 1/270 | 1/322 | 1/316 | = | 1/325 | 155 → 158 | 270 → 325 |
+| 10Qb | Neg | 4/110 | 4/112 | 5/103 | **1/383** | = | 3/153 | 181 → 184 | 448 → 459 |
+| | Pos | – | 3/181 | 4/148 | 4/148 | = | 1/438 | 177 → 172 | 543 → 438 |
+| SIM λ=2, k0=60 | Neg | 4/– (λsim 2) | 2/63 | 4/41* | 4/41* | 3/51 → 3/52 → 4/39 | 4/39 | | 126 → 156 |
+| | Pos | – | 2/72 | 1/107 | 2/64 | 2/72 → 2/74 → 2/74 | 2/72 | | 144 → 144 |
+
+(n = negative/positive bursts found before the top-10% trim.)
+
+**Checks, final code (B5).**
+- **t1** (fixed simulation, true k0=60, 3 seeds; λ_true counts as recovered when both signs agree):
+  - Original scoring recovers λ_true in 2/18 fits at λ_true ≥ 3.
+  - Patched scoring:
+    - λ_true = 4 and 5: correct in 11/12 fits, with k0 biased high (69–85).
+    - λ_true = 2: wrong in 5/6 fits (estimates 1–4).
+    - λ_true = 1: estimate 2 in 3/6 fits.
+- **t2 noise floor:** false bursts per flat trace 4.73, 3.12, 1.43 and 0.98 at SP = 10, 12, 14 and 15. A real λ=2 trace gives 4.20 at SP=15. So at SP=10–12, most detected "bursts" in a λ=2-like trace could be noise.
+- **t4 granule bootstrap** (40 resamples, 30PP7-FUS vs 30PP7):
+
+  | Scoring | 30PP7-FUS: λ=1 wins | 30PP7-FUS: k0 95% | 30PP7: λ=1 wins | 30PP7: k0 95% |
+  |---|---|---|---|---|
+  | original | 30/40 | 76–500 | 25/40 | 280–500 |
+  | patched | 8/40 | 95–245 | 30/40 | 122–358 |
+
+  Upper ends at 500 are the grid edge. Intervals are wide and overlap.
+
+**Interpretation.**
+- The individual λ and k0 values are not stable under the fixes. λ changes for 8 of the 9 datasets on at least one sign (all except in vitro 1:1), and k0 moves by factors of up to 3.
+- λ·k0 (about the mean amplitude) is much more stable. For example, 10Qb negative goes 448 → 459 while λ goes 4 → 5 → 1 → 3. This is the λ–k0 degeneracy, and it is visible directly in every score surface (`figs/*.png`, bottom rows).
+- The simulation still returns λ=4 for true λ=2 (k0 39 vs 60) after all fixes. The reviewer's 2-vs-4 point is therefore not a bug artefact: the grid-score estimator cannot resolve λ=2 at this SNR.
+
+**Manuscript claims at the final code** (negative bursts, no error bars yet):
+
+| Claim | Status |
+|---|---|
+| "λ_est = 1 for all three in vitro cases" | **Fails.** 10:1 and 100:1 give λ=2 from the zero-truncation step onwards. |
+| k0 increases with protein ratio (39 → 63 → 139) | k0 alone is 28 / 42 / 59, but λ differs, so the k0s are not comparable. λ·k0 still increases: 28 / 84 / 118. |
+| Qβ (λ=4) differs from PP7 (λ=1) | **Much weaker.** Qβ 2–3 vs PP7 1–2. Only λ·k0 separates them clearly (Qβ ~310–460 vs PP7 ~180–200). |
+| FUS shifts λ up and k0 down for the 4x RNA | **λ part fails** (4PP7 1/196 vs 4PP7-FUS 1/83). The k0 decrease holds as a point estimate. |
+| No FUS effect for 30x | Holds as point estimates (2/91 vs 2/96). |
+
+Every one of these needs the likelihood fit with CIs (analysis 2) before it can be stated.
+
+**Reviewer points.**
+- **R2 4a (thresholds and error bars) and 4b (integer λ, 2 vs 4):** supported. The current estimator is unstable and degenerate.
+- **R2 6 (noise floor):** supported. The false-burst rate is comparable to the real-burst rate at SP ≤ 12.
+
+**B5 caveat.** Local outlier filling roughly doubles the burst counts in 4PP7, 30PP7 and 30PP7-FUS, and only there. These are the same datasets flagged for frame-to-frame alternation (section 2). The global 'mean' criterion was probably flattening those traces. Their results should be treated as provisional until the alternation is explained.

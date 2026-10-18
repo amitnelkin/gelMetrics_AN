@@ -1,0 +1,13 @@
+
+(a) Flat signals, no bursts (noise sd = 40):
+  SP=10  events/trace=4.64  pos=677  neg=698  median|amp|=31.2
+  SP=12  events/trace=3.09  pos=444  neg=462  median|amp|=34.0
+  SP=14  events/trace=1.34  pos=171  neg=175  median|amp|=39.9
+  SP=15  events/trace=0.93  pos=116  neg=130  median|amp|=41.2
+  Reference, bursty lambda=2, SP=15: events/trace=4.18  median pos amp=154.3
+
+(b) Symmetric bursts (50/50), SP = 15:
+  fixedSim=0 expConst=0.0005 (3% bleach/60 min): nPos=563 nNeg=550 meanPos=159 meanNeg=156
+  fixedSim=0 expConst=0.005  (26% bleach/60 min): nPos=474 nNeg=509 meanPos=645 meanNeg=107
+  fixedSim=1 expConst=0.0005 (3% bleach/60 min): nPos=517 nNeg=557 meanPos=163 meanNeg=159
+  fixedSim=1 expConst=0.005  (26% bleach/60 min): nPos=474 nNeg=537 meanPos=172 meanNeg=164

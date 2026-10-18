@@ -1,0 +1,65 @@
+Scorer: patched (set env GM_SCORER=orig|patched; see gm_score.m)
+fix=0 lamTrue=1 seed=0 | pos: lam=1 k0=66 | neg: lam=3 k0=36
+fix=0 lamTrue=1 seed=1 | pos: lam=1 k0=67 | neg: lam=2 k0=49
+fix=0 lamTrue=1 seed=2 | pos: lam=1 k0=66 | neg: lam=2 k0=48
+fix=0 lamTrue=2 seed=0 | pos: lam=2 k0=74 | neg: lam=3 k0=53
+fix=0 lamTrue=2 seed=1 | pos: lam=2 k0=74 | neg: lam=4 k0=43
+fix=0 lamTrue=2 seed=2 | pos: lam=2 k0=72 | neg: lam=1 k0=107
+fix=0 lamTrue=3 seed=0 | pos: lam=3 k0=71 | neg: lam=1 k0=139
+fix=0 lamTrue=3 seed=1 | pos: lam=2 k0=99 | neg: lam=3 k0=71
+fix=0 lamTrue=3 seed=2 | pos: lam=1 k0=143 | neg: lam=3 k0=66
+fix=0 lamTrue=4 seed=0 | pos: lam=1 k0=182 | neg: lam=3 k0=83
+fix=0 lamTrue=4 seed=1 | pos: lam=2 k0=123 | neg: lam=4 k0=69
+fix=0 lamTrue=4 seed=2 | pos: lam=3 k0=92 | neg: lam=4 k0=68
+fix=0 lamTrue=5 seed=0 | pos: lam=4 k0=87 | neg: lam=5 k0=69
+fix=0 lamTrue=5 seed=1 | pos: lam=3 k0=102 | neg: lam=5 k0=70
+fix=0 lamTrue=5 seed=2 | pos: lam=4 k0=85 | neg: lam=5 k0=69
+fix=1 lamTrue=1 seed=0 | pos: lam=1 k0=73 | neg: lam=2 k0=50
+fix=1 lamTrue=1 seed=1 | pos: lam=1 k0=70 | neg: lam=2 k0=51
+fix=1 lamTrue=1 seed=2 | pos: lam=2 k0=48 | neg: lam=1 k0=72
+fix=1 lamTrue=2 seed=0 | pos: lam=4 k0=41 | neg: lam=2 k0=74
+fix=1 lamTrue=2 seed=1 | pos: lam=3 k0=54 | neg: lam=3 k0=58
+fix=1 lamTrue=2 seed=2 | pos: lam=4 k0=43 | neg: lam=1 k0=113
+fix=1 lamTrue=3 seed=0 | pos: lam=4 k0=56 | neg: lam=1 k0=153
+fix=1 lamTrue=3 seed=1 | pos: lam=3 k0=73 | neg: lam=1 k0=147
+fix=1 lamTrue=3 seed=2 | pos: lam=4 k0=54 | neg: lam=4 k0=55
+fix=1 lamTrue=4 seed=0 | pos: lam=4 k0=70 | neg: lam=4 k0=69
+fix=1 lamTrue=4 seed=1 | pos: lam=4 k0=74 | neg: lam=4 k0=71
+fix=1 lamTrue=4 seed=2 | pos: lam=4 k0=73 | neg: lam=4 k0=71
+fix=1 lamTrue=5 seed=0 | pos: lam=5 k0=70 | neg: lam=5 k0=73
+fix=1 lamTrue=5 seed=1 | pos: lam=5 k0=70 | neg: lam=5 k0=73
+fix=1 lamTrue=5 seed=2 | pos: lam=5 k0=70 | neg: lam=4 k0=85
+    fixedSim    lamTrue    seed    nPos    lamPos    k0Pos    lamK0Pos    nNeg    lamNeg    k0Neg    lamK0Neg
+    ________    _______    ____    ____    ______    _____    ________    ____    ______    _____    ________
+
+     false         1        0      372       1         66        66       380       3         36       108   
+     false         1        1      407       1         67        67       404       2         49        98   
+     false         1        2      387       1         66        66       393       2         48        96   
+     false         2        0      512       2         74       148       530       3         53       159   
+     false         2        1      496       2         74       148       569       4         43       172   
+     false         2        2      545       2         72       144       570       1        107       107   
+     false         3        0      570       3         71       213       645       1        139       139   
+     false         3        1      553       2         99       198       652       3         71       213   
+     false         3        2      576       1        143       143       617       3         66       198   
+     false         4        0      628       1        182       182       686       3         83       249   
+     false         4        1      579       2        123       246       707       4         69       276   
+     false         4        2      620       3         92       276       706       4         68       272   
+     false         5        0      625       4         87       348       676       5         69       345   
+     false         5        1      617       3        102       306       671       5         70       350   
+     false         5        2      613       4         85       340       707       5         69       345   
+     true          1        0      344       1         73        73       375       2         50       100   
+     true          1        1      398       1         70        70       379       2         51       102   
+     true          1        2      367       2         48        96       385       1         72        72   
+     true          2        0      512       4         41       164       513       2         74       148   
+     true          2        1      505       3         54       162       508       3         58       174   
+     true          2        2      514       4         43       172       558       1        113       113   
+     true          3        0      598       4         56       224       598       1        153       153   
+     true          3        1      567       3         73       219       609       1        147       147   
+     true          3        2      623       4         54       216       579       4         55       220   
+     true          4        0      625       4         70       280       627       4         69       276   
+     true          4        1      615       4         74       296       617       4         71       284   
+     true          4        2      616       4         73       292       645       4         71       284   
+     true          5        0      666       5         70       350       621       5         73       365   
+     true          5        1      626       5         70       350       614       5         73       365   
+     true          5        2      617       5         70       350       657       4         85       340   
+

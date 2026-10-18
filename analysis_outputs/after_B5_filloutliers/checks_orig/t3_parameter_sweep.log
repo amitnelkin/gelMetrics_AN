@@ -1,0 +1,16 @@
+Scorer: orig (set env GM_SCORER=orig|patched; see gm_score.m)
+
+== 4PP7: 360 traces, 67 with >= 180 frames (repo settings SP=10, GOF=15)
+  SP=10  nPos=161 | g0/t0:lam1,k500 g0/t10:lam1,k217 g0/t20:lam1,k165 g10/t0:lam5,k500 g10/t10:lam1,k191 g10/t20:lam1,k142 g15/t0:lam5,k500 g15/t10:lam1,k306 g15/t20:lam1,k178 g25/t0:lam5,k500 g25/t10:lam1,k491 g25/t20:lam2,k190
+  SP=12  nPos=122 | g0/t0:lam2,k363 g0/t10:lam1,k205 g0/t20:lam1,k226 g10/t0:lam5,k500 g10/t10:lam1,k276 g10/t20:lam1,k212 g15/t0:lam5,k500 g15/t10:lam1,k367 g15/t20:lam1,k241 g25/t0:lam5,k500 g25/t10:lam2,k356 g25/t20:lam1,k298
+  SP=14  nPos=86 | g0/t0:lam2,k363 g0/t10:lam1,k311 g0/t20:lam1,k227 g10/t0:lam5,k500 g10/t10:lam1,k336 g10/t20:lam1,k290 g15/t0:lam5,k500 g15/t10:lam1,k468 g15/t20:lam1,k290 g25/t0:lam5,k500 g25/t10:lam2,k381 g25/t20:lam5,k111
+
+== 30PP7-FUS: 498 traces, 88 with >= 180 frames (repo settings SP=12, GOF=10)
+  SP=10  nPos=159 | g0/t0:lam1,k282 g0/t10:lam1,k92 g0/t20:lam1,k127 g10/t0:lam3,k421 g10/t10:lam1,k211 g10/t20:lam1,k131 g15/t0:lam4,k494 g15/t10:lam1,k500 g15/t20:lam1,k168 g25/t0:lam5,k474 g25/t10:lam2,k412 g25/t20:lam1,k244
+  SP=12  nPos=124 | g0/t0:lam1,k289 g0/t10:lam1,k111 g0/t20:lam1,k146 g10/t0:lam3,k448 g10/t10:lam1,k265 g10/t20:lam1,k191 g15/t0:lam4,k471 g15/t10:lam2,k429 g15/t20:lam1,k187 g25/t0:lam5,k490 g25/t10:lam2,k429 g25/t20:lam1,k273
+  SP=14  nPos=85 | g0/t0:lam1,k321 g0/t10:lam1,k122 g0/t20:lam1,k185 g10/t0:lam3,k387 g10/t10:lam1,k289 g10/t20:lam1,k148 g15/t0:lam4,k500 g15/t10:lam3,k335 g15/t20:lam1,k218 g25/t0:lam5,k500 g25/t10:lam2,k471 g25/t20:lam2,k332
+
+== protein_RNA_1_1: 78 traces, 45 with >= 180 frames (repo settings SP=12, GOF=15)
+  SP=10  nPos=111 | g0/t0:lam1,k6 g0/t10:lam1,k20 g0/t20:lam2,k14 g10/t0:lam1,k1 g10/t10:lam1,k26 g10/t20:lam1,k22 g15/t0:lam1,k6 g15/t10:lam1,k30 g15/t20:lam1,k24 g25/t0:lam1,k9 g25/t10:lam2,k30 g25/t20:lam1,k22
+  SP=12  nPos=77 | g0/t0:lam1,k6 g0/t10:lam2,k20 g0/t20:lam2,k15 g10/t0:lam1,k1 g10/t10:lam1,k32 g10/t20:lam1,k24 g15/t0:lam1,k6 g15/t10:lam1,k36 g15/t20:lam1,k25 g25/t0:lam1,k9 g25/t10:lam2,k39 g25/t20:lam1,k25
+  SP=14  nPos=44 | g0/t0:lam1,k6 g0/t10:lam2,k34 g0/t20:lam2,k26 g10/t0:lam1,k1 g10/t10:lam1,k45 g10/t20:lam1,k48 g15/t0:lam1,k7 g15/t10:lam1,k61 g15/t20:lam1,k48 g25/t0:lam1,k10 g25/t10:lam1,k82 g25/t20:lam5,k16

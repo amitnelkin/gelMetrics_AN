@@ -32,6 +32,12 @@ L['cell'] = (L['lam1'].astype(str) + ' / ' + L['k0_1'].astype(str)
 order = list(dict.fromkeys(L['dataset']))
 W = L.pivot_table(index=['dataset', 'sign'], columns='stage', values='cell', aggfunc='first')
 W = W[[s for s in STAGES if s in W.columns]]
+# Stages that only reran the simulation (the change did not touch the
+# experimental code path) carry the previous value forward, marked '='.
+cols = list(W.columns)
+for a, b in zip(cols[:-1], cols[1:]):
+    miss = W[b].isna() & W[a].notna()
+    W.loc[miss, b] = '= ' + W.loc[miss, a].astype(str).str.replace('= ', '', regex=False)
 W = W.reindex(sorted(W.index, key=lambda ix: (order.index(ix[0]), ix[1] != 'Neg')))
 
 
