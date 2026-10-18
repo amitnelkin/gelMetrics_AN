@@ -6,8 +6,10 @@
 % expConst - constant for photobleaching exponential component
 % noiseStd - standard deviation of the gaussian noise component
 % lambda - Poisson parameter for the bursty signals
+% k0 - (optional) intensity of one exchanged unit, default 60
 
-function [signals, backgroundSignals] = generateSim(numTracks, trackLength, type, expConst, noiseStd, lambda)
+function [signals, backgroundSignals] = generateSim(numTracks, trackLength, type, expConst, noiseStd, lambda, k0)
+    if nargin < 7, k0 = 60; end
     % Initialize the time vector
     t = linspace(0, 60, trackLength)';
     
@@ -35,7 +37,7 @@ function [signals, backgroundSignals] = generateSim(numTracks, trackLength, type
             end 
         case 3
             % Intermittent bursts signals with exponential component and gaussian noise
-            k = 60; % Assuming a constant k
+            k = k0; % intensity of one unit (default 60)
             for i = 1:numTracks
                 currentBurstPos = -10;
                 currentLevel = 0;
