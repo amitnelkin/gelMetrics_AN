@@ -12,7 +12,7 @@ simType = 3;                                     % Simulation type
 numTracks = 1000;                                % Number of tracks to simulate
 t = linspace(0, 60, 360);                        % Time vector for simulation
 noiseStd = 40;                                   % Standard deviation of noise
-expConst = 0.0005;                               % Exponential constant for photobleaching
+expConst = 0.0026;                               % Exponential constant for photobleaching [1/min]: median of per-dataset fits to the real backgrounds, offset 200 removed (checks/fit_bleaching.py); was 0.0005 = 3% over 60 min
 lambda_sim = 2;                                  % Poisson parameter
 
 % generateSim function generates simulated trajectories
