@@ -10,6 +10,7 @@ yy = poisspdf(xx, lambda_val);
 lp = xx.*log(lambda_val) - lambda_val - gammaln(xx+1);
 inRange = xx >= floor(threshold/k0) & xx <= ceil(a_max/k0)+1;
 yy = exp(lp - max(lp(inRange)));
+yy(1) = 0;                                % zero-truncated: no 0-unit bursts
 dens = interp1(xx, yy, a_grid./k0);
 F_model = cumtrapz(a_grid, dens);
 F_model = F_model ./ F_model(end);

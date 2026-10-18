@@ -43,6 +43,7 @@ for j = 1:length(lambda)
         % Generate a theoretical Poisson distribution using the normalized
         % x axis and the current lambda from the lambda vector
         yy = poisspdf(xx,lambda(j));
+        yy(1) = 0; % zero-truncated Poisson: a burst of 0 units cannot be detected
         yq = interp1(xx,yy./max(yy),hist_x_axis./normalizer); % model evaluated at the data's own bin centres
         
         % Calcualte goodness of fit between the truncated data and the theoretical function
@@ -110,6 +111,7 @@ for i = 1:length(lambda)
     normalizer = x_axis(1,K_idx(i));
     xx = 0:max(hist_x_axis)/normalizer+1;
     yy = poisspdf(xx,lambda_single);
+    yy(1) = 0; % zero-truncated Poisson, as in the fitting loop
     yq = interp1(xx,yy./max(yy),hist_x_axis./normalizer); % model at the data's bin centres
     yq_thres = yq(hist_x_axis > GOF_threshold);
     binCounts_thres = binCounts((hist_x_axis > GOF_threshold));
