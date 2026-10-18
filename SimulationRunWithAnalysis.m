@@ -100,7 +100,7 @@ for SP = 1:length(stringencyParameter)
     khat = var(abs(ampPos))/mean(abs(ampPos));
     khat_SEhat_coeff = sqrt(2)/sqrt(length(ampPos)) ;
     khat_SEhat = khat * khat_SEhat_coeff;
-    K0Vector = floor(khat - 8 * khat_SEhat):ceil(khat + 18 * khat_SEhat); % The k0 lookup grid is integers spanning >20 standard errors from the k0 estimator, the grid is not symmetrical since we noticed bias towards higher lambdas during simulations
+    K0Vector = max(1, floor(khat - 13 * khat_SEhat)):ceil(khat + 13 * khat_SEhat); % Symmetric k0 grid, +-13 standard errors around the k0 estimator (was -8/+18, tuned to a bias seen in simulation)
     modifiedPoissonFit(rmoutliers(ampPos,"percentiles",[0,90]),lambda,K0Vector,10,'Positive amplitudes',15); % same trim and truncation as ExperimentalAnalysis.m
     
     
@@ -108,7 +108,7 @@ for SP = 1:length(stringencyParameter)
     khat = var(abs(ampNeg))/mean(abs(ampNeg));
     khat_SEhat_coeff = sqrt(2)/sqrt(length(ampNeg)) ;
     khat_SEhat = khat * khat_SEhat_coeff;
-    K0Vector = floor(khat - 8 * khat_SEhat):ceil(khat + 18 * khat_SEhat); % The k0 lookup grid is integers spanning >20 standard errors from the k0 estimator, the grid is not symmetrical since we noticed bias towards higher lambdas during simulations
+    K0Vector = max(1, floor(khat - 13 * khat_SEhat)):ceil(khat + 13 * khat_SEhat); % Symmetric k0 grid, +-13 standard errors around the k0 estimator (was -8/+18, tuned to a bias seen in simulation)
     modifiedPoissonFit(rmoutliers(abs(ampNeg),"percentiles",[0,90]),lambda,K0Vector,10,'Negative amplitudes',15); % same trim and truncation as ExperimentalAnalysis.m
 
 end
