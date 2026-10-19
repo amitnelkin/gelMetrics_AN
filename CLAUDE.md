@@ -118,7 +118,7 @@ Line numbers refer to the original files.
   - `collect_intensity(path, struct('offset',0|200,'aperture',0|5))` reproduces each stage.
   - Re-extracted data (PP7 only) are in `in_vivo_reextracted/<after_R1_redchannel|after_R2_offset|after_R3_aperture>/`, made by `checks/reextract_pp7.m`. The repo `.mat` files are untouched.
   - Working files are in `..\zigzag_scratch\reextract\<dataset>\` (`tif` = bfconvert output, `track` = Fiji/Mosaic, `work` = hard links + renamed CSVs).
-- **Qβ not re-extracted.** The user says the Qβ .nd2 files are not available. `Raw_Results\Naor_Data-All_night_induction\5Qb` and `10Qb` exist on the lab PC (2-channel); it is unconfirmed whether they are the source of the stored Qβ data.
+- **Qβ re-extracted (2026-10-19).** The Naor movies (`Raw_Results\Naor_Data-All_night_induction\5Qb\250ms`, 10 movies; `10Qb`, 9 movies) reproduce the stored Qβ data (trace counts, levels, burst counts within a few percent; RESULTS.md section 12), so they are the source. Re-extracted Qβ is in `in_vivo_reextracted/after_R1_redchannel|after_R2_offset/5Qb_*`, `10Qb_*`. Qβ λ is not identified in either version (σ ≈ amplitude).
 - **Likelihood fitter (analysis 2) done**: `analysis/gelmetricsMLE.m` and helpers, validated (RESULTS.md section 5). On the full pipeline, λ is ~25% high and the profile CIs undercover; use the granule-bootstrap CIs. `opts.fitSigma` exists but is too slow as implemented (~8 min per fit) and gave open CIs: not used.
 - `expConst` in the simulation is 0.0026 /min, the median of per-dataset bleaching fits (`checks/fit_bleaching.py`). It is not the 0.005 placeholder.
 - The baseline wrappers reproduce every negative-burst number in MS.pdf (lambda, burst counts, k0 within 2). The manuscript fits negative bursts only.
