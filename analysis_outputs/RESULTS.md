@@ -423,3 +423,30 @@ Three reasons, in order of importance:
 - **Reviewer points.**
   - R2 4a: error bars and tests are now provided.
   - R1/R2 on the FUS claim: supported as a distribution shift; not supported as a precise λ change.
+
+## 10. MS Fig. 16 recreated: 4x and 30x, PP7 vs PP7-FUS across SP (no fitting)
+`checks/export_amplitudes_sp.m`, `checks/plot_fig16_sp.py`.
+- Outputs (`analysis_outputs/fig16_sp/`):
+  - `fig16_R2_reextracted_Neg.png/pdf` (main);
+  - `fig16_stored_MS_Neg.png/pdf` (same plot on the stored MS data, for reference);
+  - `medians_*.csv`, `amplitudes_sp.csv`.
+- Negative bursts at SP 10-15, R2 re-extraction, same code path as the runners.
+- Each panel uses one common x-axis. The MS figure drew PP7 and PP7-FUS on separate top/bottom axes with different ranges (red to ~1600, blue to ~300-500), so its visual peak shift mixed two scales.
+- Medians come with granule-bootstrap 95% CIs (traces resampled, 1000×).
+
+| SP | 4PP7 median [95%] (n) | 4PP7-FUS median [95%] (n) | 30PP7 median (n) | 30PP7-FUS median (n) |
+|---|---|---|---|---|
+| 10 | 172 [161-187] (176) | 119 [109-135] (209) | 178 (351) | 192 (235) |
+| 11 | 175 [162-189] (151) | 124 [111-145] (173) | 198 (278) | 201 (186) |
+| 12 | 187 [167-198] (123) | 132 [115-155] (144) | 210 (225) | 209 (156) |
+| 13 | 181 [162-201] (85) | 134 [116-158] (103) | 235 (155) | 211 (113) |
+| 14 | 188 [167-242] (43) | 151 [124-209] (69) | 255 (96) | 226 (76) |
+| 15 | 234 [174-278] (23) | 156 [131-268] (45) | 282 (54) | 238 (53) |
+
+**Interpretation.**
+- **The Fig. 16 claim holds on the re-extracted data, on a common axis.**
+  - 4x: FUS shifts the negative-burst amplitude distribution down at every SP. The median is 25-35% lower, and the 95% CIs do not overlap for SP 10-13. At SP 14-15 there are too few bursts (23-69) for the CIs to separate.
+  - 30x: no shift at any SP (medians within ~10%, CIs overlapping).
+- The FUS distribution also has a tail of large amplitudes that 4PP7 lacks, so the means are similar while the bulk is shifted.
+- Higher SP keeps fewer, longer bursts, which raises all medians. The between-condition comparison is stable.
+- This answers the threshold question for this claim (R2 4a): the effect does not depend on the choice of SP.

@@ -128,6 +128,22 @@ Line numbers refer to the original files.
   - **Bleaching asymmetry.** At expConst 0.005, mean positive vs negative amplitude was 645 vs 107 in the original simulation and 172 vs 164 in the fixed one.
   - **Granule bootstrap (t4, 40 resamples).** k0 95% interval 61-168 for 30PP7-FUS and 63-400 for 30PP7, with lambda = 1 in 35/40 resamples for both.
 
+## How λ and k0 are estimated (two methods, both in the code)
+1. **Grid / WS method (the manuscript's method).** `modifiedPoissonFit.m`, called by the runners (`ExperimentalAnalysis.m`, `checks/run_runners.m`). It produces every λ/k0 in `lambda_k0_before_after.md`.
+   - **Model:** Eq. 1.9 as implemented in code. The Poisson pmf at integer n is linearly interpolated at I/k0 and divided by its maximum. It is not the gamma-function form of (I/k0)!, and it has no noise term.
+   - **Search:** λ ∈ {1..5}, k0 ∈ 1:500.
+   - **Score:** WS = 0.5·MSE (10-bin histogram) + 0.25·QQ + 0.25·KS, as ranks.
+   - **Revision changes:**
+     - bug fixes: the model is evaluated at the data's bin centres; QQ/KS use amplitudes, not bar heights; the truncation percentile is taken over the data;
+     - B1: zero-truncation, P(0) = 0.
+2. **Likelihood method (new, analysis 2).** `analysis/gelmetricsMLE.m`.
+   - **Model:** Eq. 1.9's lattice n·k0 with zero-truncated Poisson weights, each point broadened by Gaussian noise σ (σ from the quiescent-segment amplitudes, `ampVar`). As σ → 0 it reduces to the discrete Poisson on n·k0.
+   - **Fit:** continuous λ and k0 by maximum likelihood; no WS.
+   - **Truncation:** the same 10% top trim and truncation percentile, modelled in the normaliser.
+   - **CIs:** profile likelihood and granule bootstrap.
+   - RESULTS.md sections 5, 7-9; the "grid" columns there are method 1 on the same amplitudes.
+- **Open decision for the user:** which method the revised manuscript reports. Method 1 does not track λ in simulation (section 5); method 2 is misspecified in vitro (section 8).
+
 ## Analyses to produce (priority order) and the reviewer point each answers
 1. **Apply the [bug] fixes and rerun everything** (both runners, all datasets). Make a before/after table of λ and k0 per dataset. (General)
 2. **Likelihood fitter**, as a new function, e.g. `gelmetricsMLE.m`, alongside the old fit. Model:
