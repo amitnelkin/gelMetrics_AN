@@ -718,3 +718,72 @@ Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples pe
 - The spot sum (the published multithresh granule mask, minus the local cell level) measures the granule itself. It is the right measure for "fraction of the granule shed".
 - **Robust across every measure:** FUS makes 4x granules shed a larger fraction per burst.
 - **Qβ shedding a smaller fraction than PP7** is supported by the granule-specific measures (spot sum and ring sum, pooled), but the same-RNA comparison 5Qb vs 4PP7 holds only with the spot sum. It should be stated with that caveat.
+
+## 17. Candidate summary scores for comparing systems
+`checks/score_export.m`, `checks/score_compare.py` → `analysis_outputs/scores/` (`scores.csv`, `stability.csv`, `discrimination.csv`, `sim_tracking.csv`, `sim_scores.csv`, `scores.png/pdf`).
+
+**Scores** (negative bursts; fraction = |burst| ÷ granule level just before it):
+
+| score | meaning |
+|---|---|
+| f_med, f_mean | median / mean fraction of the granule shed per burst |
+| A_mean | mean absolute burst size (≈ λ·k0, in intensity units) |
+| shape | gamma shape of the fraction distribution: how peaked around a typical size |
+| lam_mom | moment estimate of units per burst, mean² ÷ (variance − noise²) |
+| rate | bursts per granule per hour |
+| turnover | rate × f_mean, % of the granule shed per hour |
+| net | % gained per hour minus % shed per hour |
+
+- In vivo: spot sum and mean measures (R2 re-extraction). In vitro: mean measure (stored data).
+- SP 10-15; 300 granule-bootstrap resamples at SP 12.
+- Simulations: λ 0.5-5 × k0 60/120 × noise 40/80 × 2 seeds.
+
+**How the scores behave:**
+
+| score | variation across SP 10-15 | rank agreement, mean vs spot sum | typical CI width | follows λ in simulations |
+|---|---|---|---|---|
+| f_med | 9% | 0.94 | ±10% | yes (ρ 0.98) |
+| f_mean | 11% | 0.94 | ±8% | yes (ρ 0.98) |
+| A_mean | 10% | 0.71 | ±12% | yes (ρ 0.98) |
+| shape | 53% | −0.37 | > ±80% | weakly (ρ 0.3-0.8) |
+| lam_mom | 13% (often undefined) | – | > ±100% | no (anti-correlated) |
+| rate | 51% | 0.83 | ±13% | yes (ρ 0.96-0.98) |
+| turnover | 43% | 1.00 | ±17% | yes (ρ 0.98) |
+| net | 49% | 0.77 | > ±100% | no |
+
+**Discrimination at SP 12**, z = difference ÷ combined bootstrap SE (|z| > 2 ≈ p < 0.05):
+
+| comparison | f_mean | A_mean | turnover | rate |
+|---|---|---|---|---|
+| 4PP7-FUS vs 4PP7 (spot sum) | +6.6 | −5.1 | +2.8 | −0.1 |
+| 30PP7-FUS vs 30PP7 (spot sum) | +2.1 | −4.6 | +0.2 | −1.1 |
+| 5Qb vs 4PP7 (spot sum) | −3.1 | +12.2 | −0.3 | +1.3 |
+| 10Qb vs 30PP7 (spot sum) | −9.0 | +23.8 | −3.5 | +2.2 |
+| in vitro 10:1 vs 1:1 | +2.1 | +1.9 | +2.1 | +1.5 |
+| in vitro 100:1 vs 1:1 | +2.3 | +1.6 | +3.4 | +4.4 |
+
+**Values (SP 12; spot sum in vivo, mean in vitro):**
+
+| dataset | f_mean [95%] | A_mean | turnover %/h [95%] |
+|---|---|---|---|
+| 4PP7 | 0.106 [0.097-0.116] | 15,000 | 16 [13-20] |
+| 4PP7-FUS | 0.158 [0.148-0.172] | 9,000 | 24 [20-28] |
+| 30PP7 | 0.145 [0.135-0.158] | 9,600 | 22 [19-26] |
+| 30PP7-FUS | 0.162 [0.152-0.174] | 5,900 | 23 [20-26] |
+| 5Qb | 0.090 [0.084-0.096] | 36,800 | 16 [14-18] |
+| 10Qb | 0.087 [0.083-0.092] | 45,600 | 16 [14-17] |
+| in vitro 1:1 | 0.089 [0.071-0.121] | 49 | 20 [15-28] |
+| in vitro 10:1 | 0.178 [0.118-0.271] | 130 | 49 [31-82] |
+| in vitro 100:1 | 0.167 [0.125-0.247] | 188 | 61 [45-91] |
+
+**Interpretation (plain).**
+- **Best single score: the fraction of the granule shed per burst (f_mean or f_med).**
+  - It is the "λ × k0" idea made unitless: mean burst size ÷ granule intensity. So it combines both and does not need either on its own.
+  - It is stable across detection settings (±10%) and agrees between the two intensity measures. It is precise (±8-10%) and follows the true λ in simulations.
+  - It separates FUS vs PP7 for 4x (z 6.6) and Qβ vs PP7 (z −3 to −9), and in vitro 1:1 vs higher protein (z ≈ 2-4).
+  - It mixes "more units" and "brighter units" (it rises with both λ and k0), so it is a *relative burst size*, not a molecule count.
+- **Useful companions:**
+  - **Absolute burst size (A_mean)** separates Qβ from PP7 strongly, in the opposite direction (Qβ bursts larger, z +12 to +24). It is in intensity units, so it is only comparable under identical imaging.
+  - **Turnover (% of granule per hour)** is the most biologically readable number and agrees perfectly between measures. Its value moves with SP (the burst count depends on the threshold), so it must be quoted at one fixed SP.
+- **Not useful:** the shape-based "number of units" scores (gamma shape, moment λ) and net exchange. They are unstable, imprecise and do not follow λ, which is consistent with sections 13-14: the distribution shape does not carry recoverable unit information in these data.
+- **Suggested reporting:** fraction shed per burst as the main parameter, with absolute burst size and turnover at a fixed SP as secondary parameters, all with granule-bootstrap CIs. The noise floor / single-SP choice and the sensitivity tables should then be run on these scores.
