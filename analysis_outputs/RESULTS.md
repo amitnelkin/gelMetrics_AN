@@ -682,3 +682,39 @@ Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples pe
 - For Qβ vs PP7 the picture reverses compared with absolute burst size. Qβ bursts are bigger, but Qβ granules are much brighter, so each burst is a smaller share (about 9% vs 11-15%).
 - The crop-sum measure does not reproduce that difference. A fixed 15×15 box likely cuts off part of the large, bright Qβ granules and includes their edges in the "background" border, so the spot sum (the published segmentation) is the more trustworthy of the two sums here.
 - This measure needs no model and no k0, and it can be stated with error bars.
+
+## 16. Why the crop sum disagrees for Qβ (diagnosis)
+`collect_intensity.m` (`opts.sumDiag`: extra diagnostic sums; other outputs unchanged), `checks/crop_sum_diagnosis.m`, `checks/plot_crop_diagnosis.py` → `analysis_outputs/crop_diagnosis/` (`radial.csv`, `fractions.csv`, `nearcell.csv`, `summary.csv`, `tests.csv`, `crop_diagnosis.png/pdf`).
+
+**What was checked:**
+1. Granule size against the 15×15 box.
+2. Radial intensity profiles out to 20 px.
+3. The fraction shed recomputed with six intensity measures (SP 12):
+   - spot sum;
+   - a granule-only "ring sum" (r ≤ 6 px minus the 8-11 px ring);
+   - box sums with half-widths 7, 10, 14 and 20 px.
+4. Whether the cell light just around a granule (4-8 px ring) rises when the granule sheds.
+
+**Findings:**
+- **Qβ granules are not cut off by the box.**
+  - Spot masks: Qβ ~56 px, 4PP7 50 px, 30PP7 28 px, all well inside the 225-px box.
+  - Half-maximum radius: Qβ 4-5 px, PP7 3 px.
+  - Qβ also has a diffuse glow around the granule (~10% of the centre level at 10-20 px), which PP7 lacks.
+- **Box sums are mostly not granule light.** Box sum / spot sum ≈ 2.5-3.9 in the 15×15 box and up to ~11 in the 41×41 box. The extra is surrounding cell fluorescence (larger for Qβ). The box-sum fraction is therefore burst ÷ (granule + a variable amount of cell), and that dilution differs between constructs.
+- **The shed light does not stay next to the granule.** When the spot sum drops, the 4-8 px ring brightens in only 23-44% of bursts; the median change is slightly negative, because the ring contains the granule's own edge. So the box sum is not insensitive simply because the released material stays inside the box.
+- **Granule-level permutation p for each comparison and measure:**
+
+  | measure | Qβ vs PP7 (pooled) | 5Qb vs 4PP7 (same RNA) | 4x FUS vs PP7 |
+  |---|---|---|---|
+  | spot sum | 0.0005 | 0.0015 | 0.0005 |
+  | ring sum | 0.0005 | 0.46 | 0.0005 |
+  | box 15×15 | 0.59 | 0.26 | 0.002 |
+  | box 21×21 | 0.88 | 0.10 | 0.0005 |
+  | box 29×29 | 0.61 | 0.26 | 0.0005 |
+  | box 41×41 | 0.0015 | 0.73 | 0.0005 |
+
+**Interpretation (plain).**
+- The crop sum disagrees because a fixed box measures the granule *plus* a lot of surrounding cell light. How much extra light it picks up differs between Qβ and PP7 cells, so it blurs the comparison. Missing granule light is not the cause.
+- The spot sum (the published multithresh granule mask, minus the local cell level) measures the granule itself. It is the right measure for "fraction of the granule shed".
+- **Robust across every measure:** FUS makes 4x granules shed a larger fraction per burst.
+- **Qβ shedding a smaller fraction than PP7** is supported by the granule-specific measures (spot sum and ring sum, pooled), but the same-RNA comparison 5Qb vs 4PP7 holds only with the spot sum. It should be stated with that caveat.

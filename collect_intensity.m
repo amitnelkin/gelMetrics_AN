@@ -26,9 +26,19 @@ function [intensity, background, info, sums] = collect_intensity(file_path, opts
 %   sums.cropSum  sum over the whole 15x15 crop of (pixel - median of the crop
 %                 border); mask-free check
 %   sums.spotArea number of spot pixels
+% Diagnostics (opts.sumDiag = true; checks/crop_sum_diagnosis.m), all with the
+% offset cancelling:
+%   sums.cropSumW{k}  box sums at half-widths opts.cropHW(k) (default 7 10 14 20),
+%                     each minus the median of its own border
+%   sums.ringSum      sum within 6 px of the spot centre minus the median of the
+%                     ring 8-11 px (granule-only, local background)
+%   sums.nearCell     mean of the ring 4-8 px around the centre minus the ring
+%                     8-11 px median (cell light just around the granule)
 
 if nargin < 2, opts = struct(); end
 if ~isfield(opts,'offset'), opts.offset = 200; end
+if ~isfield(opts,'sumDiag'), opts.sumDiag = false; end
+if ~isfield(opts,'cropHW'), opts.cropHW = [7 10 14 20]; end
 file_path = [char(file_path), filesep];
 tiff_files = dir([file_path,'*.tif']);
 
@@ -39,6 +49,10 @@ intensity = cell(1,1);
 background = cell(1,1);
 info = struct('movie',{},'channel',{},'nChannels',{},'nFrames',{},'nTracks',{},'nKept',{});
 sums = struct('spotSum', {cell(1,1)}, 'cropSum', {cell(1,1)}, 'spotArea', {cell(1,1)});
+if opts.sumDiag
+    sums.cropSumW = repmat({cell(1,1)}, 1, numel(opts.cropHW));
+    sums.ringSum = cell(1,1); sums.nearCell = cell(1,1);
+end
 
 for f = 1:numel(tiff_files)
     [~, base] = fileparts(tiff_files(f).name);
@@ -62,6 +76,9 @@ for f = 1:numel(tiff_files)
             spot_intensity = nan(frameIdx(end),1);       % NaN where the tracker skipped frames
             background_intensity = nan(frameIdx(end),1);
             spot_sum = nan(frameIdx(end),1); crop_sum = spot_sum; spot_area = spot_sum;
+            if opts.sumDiag
+                cw = nan(frameIdx(end), numel(opts.cropHW)); ring_sum = spot_sum; near_cell = spot_sum;
+            end
 
             for n = 1:length(spot_x)
                frame = movArray(spot_frames(n)).data; % complete current frame
@@ -85,6 +102,23 @@ for f = 1:numel(tiff_files)
                spot_sum(frameIdx(n),1) = sum(sf(spot_frame) - cellMean);
                crop_sum(frameIdx(n),1) = sum(sf(:) - median(border));
                spot_area(frameIdx(n),1) = nnz(spot_frame);
+               if opts.sumDiag
+                   for k = 1:numel(opts.cropHW)
+                       h = opts.cropHW(k);
+                       r = max(round(spot_y(n))-h,1):min(round(spot_y(n))+h,size(frame,1));
+                       c = max(round(spot_x(n))-h,1):min(round(spot_x(n))+h,size(frame,2));
+                       W = double(frame(r, c));
+                       bd = [W(1,:), W(end,:), W(2:end-1,1)', W(2:end-1,end)'];
+                       cw(frameIdx(n),k) = sum(W(:) - median(bd));
+                   end
+                   r = max(round(spot_y(n))-12,1):min(round(spot_y(n))+12,size(frame,1));
+                   c = max(round(spot_x(n))-12,1):min(round(spot_x(n))+12,size(frame,2));
+                   W = double(frame(r, c)); [cc, rr] = meshgrid(c, r);
+                   d = hypot(cc - spot_x(n), rr - spot_y(n));
+                   bgR = median(W(d >= 8 & d <= 11));
+                   ring_sum(frameIdx(n),1) = sum(W(d <= 6) - bgR);
+                   near_cell(frameIdx(n),1) = mean(W(d > 4 & d <= 8)) - bgR;
+               end
             end
 
             spot_intensity = fillmissing(spot_intensity,'linear');           % fill skipped frames
@@ -94,6 +128,13 @@ for f = 1:numel(tiff_files)
             sums.spotSum = [sums.spotSum, {fillmissing(spot_sum,'linear')}];
             sums.cropSum = [sums.cropSum, {fillmissing(crop_sum,'linear')}];
             sums.spotArea = [sums.spotArea, {fillmissing(spot_area,'linear')}];
+            if opts.sumDiag
+                for k = 1:numel(opts.cropHW)
+                    sums.cropSumW{k} = [sums.cropSumW{k}, {fillmissing(cw(:,k),'linear')}];
+                end
+                sums.ringSum = [sums.ringSum, {fillmissing(ring_sum,'linear')}];
+                sums.nearCell = [sums.nearCell, {fillmissing(near_cell,'linear')}];
+            end
             nKept = nKept + 1;
         end
     end
