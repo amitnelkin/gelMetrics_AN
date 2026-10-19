@@ -450,3 +450,64 @@ Three reasons, in order of importance:
 - The FUS distribution also has a tail of large amplitudes that 4PP7 lacks, so the means are similar while the bulk is shifted.
 - Higher SP keeps fewer, longer bursts, which raises all medians. The between-condition comparison is stable.
 - This answers the threshold question for this claim (R2 4a): the effect does not depend on the choice of SP.
+
+## 11. Biased estimator, WS weights, and the data left out of the fit
+`analysis/gelmetricsMLE.m` (`opts.lamPrior`), `analysis/gm_ws_weights.m`, `checks/estimator_compare_sim.m`, `checks/estimator_compare_real.m`, `checks/plot_estimators.py`.
+- Outputs (`analysis_outputs/estimators/`): `sim_estimates.csv`, `sim_summary.csv`, `sim_lambda.png`, `sim_metrics.png`, `real_*.csv`, `real_summary.md`.
+- PP7 uses the R2 data.
+
+**Estimators compared** (all on the same amplitudes, same code path for simulated and real data):
+- **MLE:** `gelmetricsMLE`, no prior.
+- **Biased estimators (MAP, R1 point 2):** the same likelihood plus a lognormal prior on λ with median 1, either weak (log-SD 1) or moderate (log-SD 0.5).
+- **WS weight sets (grid method):** weights on (MSE, QQ, KS):
+
+  | name | weights |
+  |---|---|
+  | paper | 0.5 / 0.25 / 0.25 |
+  | equal | 1/3 each |
+  | MSE only, QQ only, KS only | 1 on one component |
+  | QQ-heavy | 0.25 / 0.5 / 0.25 |
+  | KS-heavy | 0.25 / 0.25 / 0.5 |
+
+**Simulation.**
+- Setup: λ_true ∈ {0.5, 1, 1.5, 2, 3, 4, 5} × noise SD {20, 40, 80} × 2 seeds × 2 signs; k0 = 60; 150 tracks.
+- Metrics: RMS log error of λ, and the fraction of fits with λ within ±25% of the truth.
+
+| estimator | noise 20 | noise 40 | noise 80 |
+|---|---|---|---|
+| MLE | 0.81 / 21% | 0.34 / 64% | 0.46 / 43% |
+| MAP weak (s=1) | 0.76 / 21% | 0.33 / 68% | **0.35** / 43% |
+| MAP moderate (s=0.5) | 0.71 / 21% | **0.31 / 75%** | 0.42 / 29% |
+| WS paper | 0.80 / 29% | 1.02 / 18% | 0.84 / 29% |
+| WS equal | 0.91 / 29% | 1.02 / 18% | 0.84 / 29% |
+| WS MSE only | 0.86 / 25% | 1.06 / 18% | 0.93 / 21% |
+| WS QQ only | 0.81 / **50%** | 0.65 / 25% | 0.73 / 32% |
+| WS KS only | 0.79 / 46% | 0.72 / 25% | 0.85 / 36% |
+| WS QQ-heavy | 0.88 / 32% | 0.97 / 21% | 0.81 / 25% |
+| WS KS-heavy | 0.86 / 36% | 0.98 / 25% | 0.79 / 29% |
+
+**Real data, negative bursts** (`real_summary.md` has the full tables).
+- **MAP.**
+  - Where the data identify λ, the prior changes nothing: in vitro and 30PP7, λ and k0 within 2%.
+  - Where they don't (Qβ, 4PP7, 4PP7-FUS), λ is pulled to ~0.7-1 and the CIs narrow. That narrowing is the prior, not the data.
+  - 4x with the weak prior: 4PP7 λ 0.70 [0.50-1.76], k0 122 [75-188]; FUS λ 0.92 [0.47-1.19], k0 57 [49-85]. λ is similar; k0 is lower with FUS, and the CIs barely touch.
+- **WS weights change the answer on real data.**
+  - 4PP7: 1/148 (paper) vs 5/37 (QQ or KS only).
+  - 10:1: 2/42 (paper) vs 1/116 (QQ only).
+  - 1:1: 1/28 (paper) vs 2/21 (KS only).
+  - 4PP7-FUS: 1/80 (paper) vs 3/37 (KS only).
+- **Data actually used** (per dataset, negative bursts):
+  - Traces shorter than 180 frames are dropped by `analysis.m`. Kept: 4PP7 76/254 (30%), 4PP7-FUS 94/379 (25%), 30PP7 145/272, 30PP7-FUS 111/194, 5Qb 189/292, 10Qb 247/431, in vitro 31-45 of 57-90.
+  - Of the detected bursts, the top-10% trim and the left truncation (10 or 15% per dataset) together leave 76-82% for the fit.
+  - Also outside the fit by construction: segments shorter than the SP run-length threshold, unclassified segments, and the parts of each trace before the first and after the last significant segment. Positive bursts are not used in the manuscript.
+- **Effect of the trims.**
+  - Removing the top-10% trim raises λ and k0 in vitro: MLE 1:1 1.53 → 2.53; 100:1 3.47 → 5.17; 10:1 1.44 → 2.6. The in-vitro tail carries much of the information.
+  - For PP7 (R2) the MLE moves little, except where λ is not identified (4PP7, 4PP7-FUS, Qβ), where it jumps.
+  - The grid method moves more: 4PP7 1 → 5 without the trim.
+
+**Interpretation.**
+1. **Biased estimator (R1 2).** A weak prior on λ helps where λ is weakly identified. It lowers the λ error at noise 40 and 80 and stabilises the real-data fits for Qβ and 4x PP7, without moving well-identified estimates. It is a reasonable reporting choice if the prior is stated and the unpenalised MLE is shown alongside.
+   - It does not fix the low-noise problem. At noise 20 every likelihood estimator overestimates λ about 2× (medians 1.6-7.5 against 0.5-5): the amplitude noise σ from `ampVar` is too small for the pipeline's amplitude errors, so the model splits each hump into sub-units (k0 too small). This is the in-vitro situation (σ 15-26), where the model was rejected (section 8).
+2. **Weights (R2 4a).** The paper weights are no better than equal weights and are among the worst in simulation (λ within ±25% in 18-29% of fits). QQ-only or KS-only does somewhat better on λ (25-50%) but changes several real-data answers.
+   - The WS λ is not robust to the weighting, which supports the reviewer's "arbitrary" criticism. No weight set makes the grid method competitive with the likelihood at noise 40.
+3. **Excluded data (R2 4a).** About 20-25% of detected bursts are excluded by the two trims, and up to 70-75% of traces by the 180-frame rule (PP7 4x). The in-vitro λ depends strongly on the top trim. These cuts must be stated, and their effect shown (this table), in the revision.

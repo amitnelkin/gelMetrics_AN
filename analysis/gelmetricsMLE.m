@@ -38,6 +38,8 @@ opts = setdef(opts, 'nGrid', 60);
 opts = setdef(opts, 'scanN', 40);       % seed-grid size per axis
 opts = setdef(opts, 'start', []);       % extra start [lambda k0] (bootstrap warm start)
 opts = setdef(opts, 'fitSigma', false); % true: sigma is a free parameter (sigma input = start)
+opts = setdef(opts, 'lamPrior', []);    % [median sdLog]: weak lognormal prior on lambda -> MAP
+                                        % ("biased estimator", R1 point 2); [] = plain MLE
 
 A = abs(A(:));
 A = A(isfinite(A));
@@ -63,6 +65,14 @@ if opts.fitSigma
     f = @(th) sigmaProfiled(exp(th(1)), exp(th(2)), A, Amin, Amax, sgLo, sgHi);
 else
     f = @(th) gm_mle_nll(exp(th(1)), exp(th(2)), A, sigma, Amin, Amax);
+end
+if ~isempty(opts.lamPrior)
+    % penalised (MAP) objective: + 0.5*((log lambda - log m)/s)^2, i.e. a
+    % lognormal prior on lambda with median m; shrinks lambda towards m where
+    % the data do not identify it (the lambda-k0 ridge). Profiles and the
+    % reported nll are then of this penalised objective.
+    fBase = f; pm = log(opts.lamPrior(1)); ps = opts.lamPrior(2);
+    f = @(th) fBase(th) + 0.5*((th(1) - pm)/ps)^2;
 end
 
 % grid scan
