@@ -588,3 +588,52 @@ Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples pe
 **Interpretation.**
 - Valency is the right kind of extra information. On the real data it already says something useful: brightness does not scale with valency (30x vs 4x PP7; 10:1/100:1 vs 1:1 in vitro). The high-valency RNAs are far from full.
 - It does not yet give reliable λ values. On simulations it does not improve λ recovery, because the per-burst noise model underestimates the noise for bright bursts. That noise model must be fixed first (σ calibrated from simulations of the full pipeline, or σ growing with burst size); then this joint fit should be re-run and re-validated.
+
+## 14. Fixing the noise model (all approaches tried)
+`analysis/gm_mle_nll.m`, `analysis/gelmetricsMLE.m` (`opts.noise`, `opts.falseBursts`, `opts.floorK`, `opts.h0K`), `analysis/gelmetricsJoint.m` (`opts.mixFree`, `opts.h0K`), `checks/noise_calibration.m`, `checks/noise_calibration_h0.m`, `checks/noise_model_validation.m`, `checks/noise_model_real.m`, `checks/plot_noise_models.py` → `analysis_outputs/noise_models/`.
+
+**What was wrong (found on simulations with known answers).** The main problem was not the noise width. The detector reports extra small "bursts" (noise wiggles and fragments of real steps, about 20% of detections), and the 15% left cut does not remove them. The fit then explains them by making units small and λ large. Real bursts also come out about 20% larger than the true step; that only rescales k0.
+
+**Approaches tried, all judged on held-out simulations** (7 λ × 3 noise levels × 2 unit sizes × 2 signs; calibration used different seeds):
+
+| model | what it does | λ within ±25% | large-error score (lower = better) |
+|---|---|---|---|
+| fixed (old) | σ from quiet segments, 15% left cut | 31% | 0.93 |
+| free | one burst scatter, fitted | 62% | 0.86 |
+| growN / prop | scatter grows with burst size | 49% / 58% | 1.86 / 1.52 |
+| calib+floor | scatter calibrated on simulations (1.33σ, +7.5% of size) + noise floor | 58% | 1.10 |
+| mix / mix+free / mix+prop | + false-burst component, width fitted | 38% / 65% / 69% | 1.09 / 0.68 / 1.03 |
+| floor / floor+free | left cut at a noise floor of 3.1σ (calibrated) | 37% / 64% | 1.07 / 1.05 |
+| **mixH+free** | false-burst component with width fixed at 1.9σ (calibrated) + fitted scatter | **63%** | **0.78** |
+
+- Calibration from burst-free simulations: false bursts stay below about 3σ (95%) at every SP, with a typical size of 1.9σ.
+- A slow drift over a whole trace is detected as one huge "burst" that no amplitude cut removes.
+- **Chosen model: mixH+free.** On simulations it removes the 1.6× λ overestimate (median λ̂/λ ≈ 1.05-1.09) and tracks λ well when units are clearly larger than the noise. Nothing works for small units in very noisy traces (k0 60 at noise 80): a detection limit.
+
+**Real data with the chosen model** (negative bursts, 100 trace-resampling CIs):
+
+| dataset | λ [95%] | k0 [95%] | false-burst share |
+|---|---|---|---|
+| in vitro 1:1 | 2.3 [0.02-11] | 106 [1-141] | 0.50 (cap) |
+| in vitro 10:1 | 5.0 [0.4-15] | 338 [55-441] | 0.50 (cap) |
+| in vitro 100:1 | 1.35 [0.8-4.4] | 180 [91-284] | 0.41 |
+| 4PP7 | 0.02 [0.02-50] | 171 [3-380] | 0 |
+| 4PP7-FUS | 0.6 [0.02-50] | 96 [1-488] | 0.03 |
+| 30PP7 | 5.3 [0.02-50] | 207 [20-717] | 0.50 (cap) |
+| 30PP7-FUS | 0.9 [0.02-50] | 179 [18-552] | 0.39 |
+| 5Qb | 0.8 [0.02-50] | 346 [2-1178] | 0 |
+| 10Qb | 0.02 [0.02-50] | 444 [2-1331] | 0 |
+
+- **The λ values change with the noise model.** For example, 30PP7 gives 1.1 (old), 4.3 (floor+free), 1.2 (mix+free) and 5.3 (mixH+free); 10:1 gives 1.4-5.3.
+- **The strict noise floor removes almost every PP7 and Qβ burst**: the real quiet-segment σ is large compared with the amplitudes.
+- **The valency-linked joint fits are unstable in the same way**; e.g. 30PP7-FUS λ is 1.0 with full occupancy and 16.9 with "at most full". The joint fits' log-likelihoods barely differ between the two versions (1-5 units).
+
+**Plain-English interpretation.**
+- The fitting method now works on simulated data whose bursts really are made of equal units.
+- On the real data, the amplitude histograms are one smooth hump with no visible steps at 1, 2, 3 units. Many combinations of "how many units" and "how bright a unit" fit equally well. So the number of molecules per burst (λ) cannot be determined from these data, by any of the methods tried, with or without valency.
+- The manuscript's λ = 1, 2, 4 values are therefore not supported.
+- What the data do support, directly and without a model:
+  - the amplitude distributions themselves;
+  - the burst size scale (median amplitude);
+  - the differences between conditions: Qβ vs PP7 (sections 9-10, 12) and FUS for 4x (sections 9c, 10).
+- To get λ, a measured single-unit brightness is needed: single-RNA calibration, or photobleaching steps of one RNA with its proteins. With k0 measured, λ follows from the median burst size.

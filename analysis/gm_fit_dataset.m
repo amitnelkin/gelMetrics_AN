@@ -9,7 +9,7 @@ function out = gm_fit_dataset(T, opts)
 % Output: point estimate + profile CIs (out.mle), bootstrap percentile CIs
 % (out.boot), grid result (out.grid), counts.
 if nargin < 2, opts = struct(); end
-d = struct('sign','Neg','truncPercent',15,'topTrim',10,'nBoot',200,'seed',1,'surface',false,'grid',true,'fitSigma',false,'lamPrior',[]);
+d = struct('sign','Neg','truncPercent',15,'topTrim',10,'nBoot',200,'seed',1,'surface',false,'grid',true,'fitSigma',false,'lamPrior',[],'noise','fixed','calib',[1 0],'falseBursts','none','floorK',0,'h0K',0);
 fn = fieldnames(d);
 for i = 1:numel(fn), if ~isfield(opts, fn{i}), opts.(fn{i}) = d.(fn{i}); end, end
 amp = @(TT) abs(vertcat(TT.(['amp' opts.sign])));
@@ -17,7 +17,8 @@ keep = [T.len] >= 180;
 T = T(keep);
 A = amp(T); sigma = gm_sigma_from_ampvar(vertcat(T.ampVar));
 mo = struct('truncPercent', opts.truncPercent, 'topTrim', opts.topTrim, 'profile', true, ...
-    'surface', opts.surface, 'fitSigma', opts.fitSigma, 'lamPrior', opts.lamPrior);
+    'surface', opts.surface, 'fitSigma', opts.fitSigma, 'lamPrior', opts.lamPrior, ...
+    'noise', opts.noise, 'calib', opts.calib, 'falseBursts', opts.falseBursts, 'floorK', opts.floorK, 'h0K', opts.h0K);
 out.mle = gelmetricsMLE(A, sigma, mo);
 out.nTraces = numel(T); out.nBursts = numel(A); out.sigma = sigma;
 

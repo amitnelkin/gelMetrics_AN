@@ -40,6 +40,12 @@ opts = setdef(opts, 'start', []);       % extra start [lambda k0] (bootstrap war
 opts = setdef(opts, 'fitSigma', false); % true: sigma is a free parameter (sigma input = start)
 opts = setdef(opts, 'lamPrior', []);    % [median sdLog]: weak lognormal prior on lambda -> MAP
                                         % ("biased estimator", R1 point 2); [] = plain MLE
+opts = setdef(opts, 'noise', 'fixed');  % noise model: fixed | free | growN | prop | calib
+opts = setdef(opts, 'calib', [1 0]);    % [a b] for noise = 'calib'
+opts = setdef(opts, 'falseBursts', 'none'); % 'mix': add a false-burst component (share w0, half-normal width h0)
+opts = setdef(opts, 'floorK', 0);      % > 0: left cut at floorK*sigma (noise floor) instead of truncPercent
+opts = setdef(opts, 'h0K', 0);         % > 0 (with falseBursts 'mix'): false-burst width fixed at h0K*sigma
+                                       % (calibrated on burst-free simulations); only its share is fitted (<= 0.5)
 
 A = abs(A(:));
 A = A(isfinite(A));
@@ -50,10 +56,12 @@ else
     Amax = Inf;
 end
 Amin = prctile(A, opts.truncPercent);
+if opts.floorK > 0, Amin = opts.floorK * sigma; end
 A = A(A >= Amin);
 
 R = struct('n', numel(A), 'Amin', Amin, 'Amax', Amax, 'sigma', sigma, ...
-    'lambda', NaN, 'k0', NaN, 'lamK0', NaN, 'nll', NaN, 'exitflag', -99, 'lamAtBound', false);
+    'lambda', NaN, 'k0', NaN, 'lamK0', NaN, 'nll', NaN, 'exitflag', -99, 'lamAtBound', false, ...
+    'noiseParam', NaN, 'noise', opts.noise);
 if numel(A) < 5, return, end
 
 lb = [log(0.02), log(max(A)/400)];
@@ -64,7 +72,33 @@ if opts.fitSigma
     sgLo = log(sigma) - 1.5; sgHi = log(sigma) + 1.5;
     f = @(th) sigmaProfiled(exp(th(1)), exp(th(2)), A, Amin, Amax, sgLo, sgHi);
 else
-    f = @(th) gm_mle_nll(exp(th(1)), exp(th(2)), A, sigma, Amin, Amax);
+    % noise model (opts.noise): how much a burst of n units scatters
+    %   'fixed' sigma from ampVar (default)       'free'  one constant sigma, fitted
+    %   'growN' sigma^2 + n*s1^2, s1 fitted       'prop'  sigma^2 + (f*n*k0)^2, f fitted
+    %   'calib' (a*sigma)^2 + (b*n*k0)^2, a and b from simulations (opts.calib = [a b])
+    noise = opts.noise; nx = any(strcmp(noise, {'free', 'growN', 'prop'}));
+    sg0 = sigma; nzf = [];
+    if strcmp(noise, 'calib'), sg0 = opts.calib(1) * sigma; nzf = struct('f', opts.calib(2)); end
+    switch noise
+        case 'free',  elb = log(sigma/5);  eub = log(5*sigma); e0 = log(sigma);
+        case 'growN', elb = log(sigma/50); eub = log(5*sigma); e0 = log(sigma/2);
+        case 'prop',  elb = log(0.005);    eub = log(2);       e0 = log(0.2);
+        otherwise,    elb = []; eub = []; e0 = [];
+    end
+    ne = numel(e0); mixOn = strcmp(opts.falseBursts, 'mix');
+    h0fix = opts.h0K * sigma;
+    if mixOn   % false-burst share (logit) and, unless fixed, width (log)
+        lgt = @(p) log(p/(1-p));
+        if h0fix > 0
+            elb = [elb lgt(0.001)]; eub = [eub lgt(0.5)]; e0 = [e0 lgt(0.1)];
+        else
+            elb = [elb lgt(0.001) log(sigma/3)]; eub = [eub lgt(0.6) log(5*sigma)]; e0 = [e0 lgt(0.15) log(1.5*sigma)];
+        end
+    end
+    nx = ~isempty(e0);
+    ev = @(th, e) noiseNLL(exp(th(1)), exp(th(2)), A, sg0, Amin, Amax, noise, e, nzf, mixOn, ne, h0fix);
+    f = @(th) ev(th, e0);
+    if nx, opts.profile = false; opts.surface = false; end   % >2 parameters: bootstrap CIs only
 end
 if ~isempty(opts.lamPrior)
     % penalised (MAP) objective: + 0.5*((log lambda - log m)/s)^2, i.e. a
@@ -100,6 +134,30 @@ best = struct('nll', Inf, 'th', starts(1,:), 'ef', -99);
 for s = 1:size(starts,1)
     [th, nll, ef] = fmincon(f, starts(s,:), [], [], [], [], lb, ub, [], fo);
     if nll < best.nll, best = struct('nll', nll, 'th', th, 'ef', ef); end
+end
+R.noise = opts.noise; R.noiseParam = NaN;
+if ~opts.fitSigma && nx
+    % refine in N-D (lambda, k0, extra parameters) from the best 2-D points
+    pr = @(th) 0;
+    if ~isempty(opts.lamPrior), pr = @(th) 0.5*((th(1) - log(opts.lamPrior(1)))/opts.lamPrior(2))^2; end
+    f3 = @(t) ev(t(1:2), t(3:end)) + pr(t);
+    lb3 = [lb elb]; ub3 = [ub eub];
+    s3 = [best.th e0; best.th (elb+eub)/2; best.th elb + 0.25*(eub-elb); ...
+          starts(1:min(3,end),:) repmat(e0, min(3,size(starts,1)), 1)];
+    s3 = min(max(s3, lb3 + 1e-6), ub3 - 1e-6);
+    best3 = struct('nll', Inf);
+    for s = 1:size(s3,1)
+        [th, nll, ef] = fmincon(f3, s3(s,:), [], [], [], [], lb3, ub3, [], fo);
+        if nll < best3.nll, best3 = struct('nll', nll, 'th', th, 'ef', ef); end
+    end
+    best = struct('nll', best3.nll, 'th', best3.th(1:2), 'ef', best3.ef);
+    ex = best3.th(3:end);
+    if ne == 1, R.noiseParam = exp(ex(1)); end
+    if mixOn
+        R.w0 = 1/(1+exp(-ex(ne+1)));
+        if h0fix > 0, R.h0 = h0fix; else, R.h0 = exp(ex(ne+2)); end
+    end
+    R.lamCI = [NaN NaN]; R.k0CI = [NaN NaN]; R.lamCIopen = [false false]; R.k0CIopen = [false false];
 end
 R.lambda = exp(best.th(1)); R.k0 = exp(best.th(2)); R.lamK0 = R.lambda * R.k0;
 R.nll = best.nll; R.exitflag = best.ef;
@@ -183,6 +241,23 @@ if gmin < v
     [q2, v2] = fminbnd(@g, a, b, optimset('TolX', 1e-7));
     if v2 < v, v = v2; qv = q2; end
 end
+end
+
+function v = noiseNLL(lam, k0, A, sg0, Amin, Amax, noise, e, nzf, mixOn, ne, h0fix)
+nz = struct('s1', 0, 'f', 0); if ~isempty(nzf), nz.f = nzf.f; end
+sg = sg0;
+if ne == 1
+    switch noise
+        case 'free',  sg = exp(e(1));
+        case 'growN', nz.s1 = exp(e(1));
+        case 'prop',  nz.f = exp(e(1));
+    end
+end
+if mixOn
+    nz.w0 = 1/(1+exp(-e(ne+1)));
+    if h0fix > 0, nz.h0 = h0fix; else, nz.h0 = exp(e(ne+2)); end
+end
+v = gm_mle_nll(lam, k0, A, sg, Amin, Amax, nz);
 end
 
 function [v, sg] = sigmaProfiled(lam, k0, A, Amin, Amax, lo, hi)
