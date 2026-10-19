@@ -10,13 +10,13 @@ function reextract_pp7(workRoot, stages)
 % collect_intensity.m once per stage:
 %   after_R1_redchannel  red channel only + frame/xy mapping (offset 0, thresholded spot)
 %   after_R2_offset      + camera offset 200
-%   after_R3_aperture    + 5 px circular aperture
+%   (after_R3_aperture, a 5 px aperture spot, was reverted: not a stage any more)
 % Also writes in_vivo_reextracted/<stage>/extraction_info.csv.
 
 if nargin < 2
     stages = {'after_R1_redchannel', struct('offset',0,  'aperture',0);
               'after_R2_offset',     struct('offset',200,'aperture',0);
-              'after_R3_aperture',   struct('offset',200,'aperture',5)};
+              };   % R3 (5 px aperture) was reverted at the user's request: multithresh spot kept
 end
 checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);

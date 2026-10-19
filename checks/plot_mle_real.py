@@ -42,7 +42,7 @@ for ax, par, lo, hi, plo, phi, g, lab in [
 axs[0].legend(fontsize=7, frameon=False, loc='lower right')
 axs[0].set_title('lambda (thin line: profile CI)', fontsize=10, loc='left', color=INK)
 axs[1].set_title('k0', fontsize=10, loc='left', color=INK)
-fig.suptitle('Likelihood fit per dataset; PP7 = R3 re-extracted, in vitro / Qb = stored data', fontsize=10, color=INK)
+fig.suptitle('Likelihood fit per dataset; PP7 = R2 re-extracted, in vitro / Qb = stored data', fontsize=10, color=INK)
 fig.tight_layout()
 for ext in ('png', 'pdf'):
     fig.savefig(os.path.join(d, 'mle_real_estimates.' + ext), dpi=150)

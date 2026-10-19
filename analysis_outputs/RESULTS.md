@@ -360,3 +360,66 @@ KS p, negative / positive bursts:
   - amplitude noise that grows with n (σ² = σ0² + n·σ1²), or σ fitted from the data;
   - a heavy-tail or outlier component.
 - **Reviewer point.** R2 4a/4b: "the model is a poor fit for the in vitro data" is a fair criticism, now shown directly.
+
+## 9. Revision of sections 6-8 (2026-10-19): aperture reverted, fit visuals, 4x FUS test
+**This section supersedes the PP7 parts of sections 6-8.** Those sections used R3 (5 px aperture) data.
+
+### 9a. Aperture spot measure reverted (user decision)
+- The R3 commit (e450505) was reverted. The spot is again the mean of the top-2 multithresh classes, the published method.
+- Kept, because they are bug fixes, not method changes:
+  - R1: red channel only; Mosaic frame/xy +1 mapping;
+  - R2: camera offset 200.
+- All PP7 analyses now use `in_vivo_reextracted/after_R2_offset/`. `reextract_pp7.m` no longer makes an R3 stage.
+- The R3 outputs (`analysis_outputs/after_R3_aperture/`, `in_vivo_reextracted/after_R3_aperture/`) are left on disk for the record and dropped from the λ/k0 table.
+
+Likelihood fit, R2 PP7 data, negative bursts (`analysis_outputs/mle_real/`, rerun). In vitro and Qβ are unchanged from section 7.
+
+| dataset | n | σ | MLE λ [boot 95%] | MLE k0 [boot 95%] | grid λ/k0 | KS p (model) |
+|---|---|---|---|---|---|---|
+| 4PP7 | 134 | 109 | 0.02 [0.02-20.2] (λ at bound) | 159 [9-198] | 1/148 | 0.75 |
+| 4PP7-FUS | 160 | 71 | 0.72 [0.02-2.16] | 64 [33-106] | 1/80 | 0.91 |
+| 30PP7 | 183 | 103 | 1.06 [0.55-1.50] | 121 [91-160] | 1/141 | 0.19 |
+| 30PP7-FUS | 126 | 110 | 0.90 [0.05-1.64] | 127 [69-189] | 1/146 | 0.33 |
+
+With multithresh, σ (71-110) is comparable to k0, so λ is weakly identified for 4x. The model describes all four PP7 distributions (KS p 0.19-0.91).
+
+### 9b. Why the fits looked worse than the manuscript figures
+`checks/plot_ms_style.py` → `analysis_outputs/mle_real/ms_style_Neg.png`. Same data, drawn as `modifiedPoissonFit.m` draws MS Figs. 6-9.
+
+Three reasons, in order of importance:
+1. **Rendering.**
+   - The MS curve is the Poisson pmf at n·k0, linearly interpolated, evaluated only at the 10 bin centres, and **rescaled so its peak equals the tallest bin** (`yq*max(binCounts)./max(yq)`).
+   - It compares shape only, at 10 points, with a free vertical scale, and it has no measurement noise. A broad hump is matched by almost any (λ, k0) on the λ·k0 ridge.
+   - The section 8 plots showed the likelihood model itself: a fixed-normalisation density with Gaussian noise σ, on 20 bins. That is a stricter view.
+2. **The in-vitro comb.** In vitro, σ from `ampVar` (15-26) is small relative to k0, so the noise model predicts narrow peaks at n·k0 that the data do not show (KS p ≤ 0.014). The MS-style curve has no σ and so cannot show this misfit. This is a real model problem in vitro, not a plotting artefact.
+3. **Data.** Section 8 used the R3 aperture data, about 3-4× smaller amplitudes with a different shape. With R2 (multithresh) the PP7 histograms again resemble the MS:
+   - 4PP7-FUS: 20-280 with mode ~110, as in MS Fig. 9a;
+   - 30PP7: mode ~150 with a tail to ~600;
+   - drawn MS-style, the grid curves sit on the points as in the MS.
+
+### 9c. 4x PP7 vs PP7-FUS: the difference is real; marginal CIs were the wrong test
+`checks/fus_test_4x.m`, `checks/plot_fus_test_4x.py` → `analysis_outputs/fus_test_4x/` (csv, png/pdf).
+- Negative bursts, SP 10, window 13.
+- Granule-level permutation: whole traces are shuffled between conditions.
+- Joint likelihood-ratio test of a shared (λ, k0) vs separate ones, on a common amplitude window and with each condition's own σ.
+
+| data | bursts 4PP7/FUS | median 4PP7 vs FUS (perm p) | mean (perm p) | KS p | joint LRT perm p | separate fits λ/k0 |
+|---|---|---|---|---|---|---|
+| R2 re-extraction | 176/209 | 172 vs 119 (<0.0005) | 179 vs 159 (0.29) | 3e-8 | **0.016** | 4PP7 0.02/152, FUS 0.87/58 |
+| stored (MS) data | 155/209 | 242 vs 119 (<0.0005) | 637 vs 156 (<0.0005) | 1e-12 | <0.002 | 4PP7 1.45/125, FUS 0.84/98 |
+
+**Interpretation.**
+- **The histograms differ, and the statistics agree once the right test is used.** The FUS distribution is shifted to lower amplitudes: median 119 vs 172, 0 of 2000 permutations as extreme. The means do not differ, because FUS also has a heavier upper tail.
+- **Why the earlier result said "no detectable difference":**
+  1. It compared λ and k0 one at a time. Their 95% CIs overlap because each parameter alone is poorly identified: the λ-k0 ridge lets either trade against the other. The difference lies across the ridge. The joint LRT, which tests both together, detects it (perm p 0.016).
+  2. It used the R3 aperture data.
+  3. For 4PP7, λ is at its lower bound: the amplitudes form one hump at ~160 with σ ≈ 109, which the model reads as single units of k0 ≈ 150.
+- **Direction.**
+  - Under the model, FUS has a smaller unit (k0 58 vs 152) and more units per burst (λ 0.87 vs ~0). This is the direction the manuscript claims (λ up, k0 down).
+  - But the individual λ values are not well determined, so it should be stated as a shift of the amplitude distribution toward smaller, more numerous units, with the joint test as the evidence. Not as "λ = 1 → 2".
+- **The manuscript's difference was exaggerated by the stored 4PP7 data.**
+  - The stored 4PP7 traces were mostly DIC-contaminated (section 4), so the mean amplitude was 637 vs 179 after re-extraction, with a tail to 1400 (MS Fig. 7a).
+  - A clear but smaller difference survives re-extraction, carried by the bulk of the distribution (median 172 vs 119), not the tail.
+- **Reviewer points.**
+  - R2 4a: error bars and tests are now provided.
+  - R1/R2 on the FUS claim: supported as a distribution shift; not supported as a precise λ change.

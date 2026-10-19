@@ -1,7 +1,7 @@
 % MLE_REAL_DATA  Likelihood fit (gelmetricsMLE) of every dataset, with profile
 % CIs, granule-bootstrap CIs (200 resamples of traces) and the lambda-k0 NLL
 % surface, next to the grid-score fit. Reviewer points R2 4a/4b, R2 5, R1 2.
-% Data: PP7 from the R3 re-extraction (in_vivo_reextracted/after_R3_aperture),
+% Data: PP7 from the R2 re-extraction (in_vivo_reextracted/after_R2_offset; multithresh spot, offset 200),
 % in vitro and Qbeta from the repo .mat files (not re-extractable here).
 % Per-dataset paper settings (SP, truncation GOF) as in run_runners.m; window
 % 13; top trim 10%. Same code path as checks/mle_sim_validation.m.
@@ -10,14 +10,14 @@ repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'mle_real');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
-R3 = 'in_vivo_reextracted/after_R3_aperture';
+R2 = 'in_vivo_reextracted/after_R2_offset';
 D = {'protein_RNA_1_1',   'in_vitro_experiments', 12, 15;
      'protein_RNA_10_1',  'in_vitro_experiments', 12, 10;
      'protein_RNA_100_1', 'in_vitro_experiments', 12, 10;
-     '4PP7',              R3,                     10, 15;
-     '4PP7-FUS',          R3,                     10, 15;
-     '30PP7',             R3,                     12, 10;
-     '30PP7-FUS',         R3,                     12, 10;
+     '4PP7',              R2,                     10, 15;
+     '4PP7-FUS',          R2,                     10, 15;
+     '30PP7',             R2,                     12, 10;
+     '30PP7-FUS',         R2,                     12, 10;
      '5Qb',               'in_vivo_experiments',  14, 15;
      '10Qb',              'in_vivo_experiments',  14, 15};
 tVec = (0:360) * 10/60; win = 13; nBoot = 200;
