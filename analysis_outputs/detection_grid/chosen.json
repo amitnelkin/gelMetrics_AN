@@ -1,0 +1,7 @@
+{
+ "window": 17,
+ "SP": 12,
+ "medianFDR": 0.7757080115099197,
+ "worstFDR": 1.0909090909090908,
+ "rule": "lowest median in vivo false-discovery share with >= 50 real negative bursts per in vivo dataset"
+}

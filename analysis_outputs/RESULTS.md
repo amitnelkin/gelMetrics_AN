@@ -893,3 +893,70 @@ Exactly the real-data code path: detection with `analysis.m`, the same surrogate
   2. Qβ granules show a small but significant excess of real bursts over noise (M1, CI excludes 0), while PP7 granules do not;
   3. in vivo granules are, beyond noise, largely static on the 1-10 min timescale at this imaging noise level.
 - **Recommendation:** report M2b with granule CIs as the primary dynamics measure. Report M1 as the burst-level cross-check. Present the burst-based GelMetrics scores only together with their noise-floor control.
+
+## 20. 4PP7 vs 4PP7-FUS: more replicates, or a different detection setting?
+
+Scripts: `checks/power_fus.py` (outputs in `analysis_outputs/power/`) and `checks/detection_grid.m` + `checks/grid_eval.py` (outputs in `analysis_outputs/detection_grid/`; `bursts.csv`, 33 MB, is not committed and can be regenerated). Reviewer points: R2 5, R2 6, R2 2b, R2 4a.
+
+### 20a. Would more replicates make it significant? (same effect, same spread)
+
+The SE shrinks as 1/√(data), so z grows as √k when every condition has k times more data. Nested = movies resampled, then granules within each movie.
+
+| score | 4PP7-FUS vs 4PP7 | z (granule) | z (nested) | × data for p < 0.05 | × data for 80% power | movies needed (80% power) |
+|---|---|---|---|---|---|---|
+| M2b, noise-free fluctuation (5 min) | 4.98 vs 2.36 % | 1.53 | 1.20 | 2.7 | 5.4 | ~49 / ~66 (now 9 / 12) |
+| M1, excess turnover (SP 12, w 13) | 5.8 vs 2.8 %/h | 0.77 | 0.56 | 12 | 25 | not feasible |
+
+- Movies add their own variability (nested SE 1.28× the granule SE). More **movies** are needed, not only more granules per movie.
+- Other in vivo comparisons with M2b need 18-87× more data (30PP7-FUS vs 30PP7: no trend at all, z −0.4).
+- The FUS z for M2b depends on the lag, from 0.7 to 2.0 (2.0 at 1 min). The 5-min lag was fixed in advance (section 19). Choosing the lag afterwards would be selecting on the outcome.
+
+### 20b. Lower SP or a different smoothing window
+
+Grid: SP {3 4 5 6 8 10 12} × window {5 7 9 13 17 21} frames, negative bursts, main measure, traces ≥ 180 frames. Each setting is run on the real traces and on burst-free surrogates (shared bleaching shape + white noise at each trace's own level). False-discovery share = surrogate bursts ÷ real bursts. Excess turnover = (real − surrogate) fraction shed per hour, with a nested bootstrap SE (500×).
+
+**Rule fixed before looking at any comparison:** pick the setting with the lowest median in vivo false-discovery share among those that keep ≥ 50 real bursts per in vivo dataset. Result: **window 17, SP 12** (median 0.78, worst 1.09).
+
+Median in vivo false-discovery share:
+
+| SP \ window | 5 | 7 | 9 | 13 | 17 | 21 |
+|---|---|---|---|---|---|---|
+| 3 | 0.97 | 0.97 | 0.98 | 0.95 | 0.95 | 0.95 |
+| 5 | 0.96 | 0.95 | 0.96 | 0.94 | 0.94 | 0.96 |
+| 8 | 0.96 | 0.91 | 0.92 | 0.98 | 0.88 | 0.94 |
+| 12 | 0.89* | 0.90* | 0.80* | 0.91 | **0.78** | 0.88 |
+
+\* fewer than 50 real bursts in at least one dataset.
+
+- **Lowering SP does not help.** It adds real and false bursts in the same proportion: at SP 3-5, 94-98% of the detected bursts are matched by noise.
+- **The window does not help either.** No window separates real bursts from noise better than another.
+- **4PP7 alone:** the false-discovery share is ≈ 1.0 at every one of the 42 settings (0.70-1.53). At this noise level, no burst in 4PP7 can be told apart from noise.
+
+At the chosen setting (excess turnover, %/h; z nested):
+
+| comparison | A | B | z |
+|---|---|---|---|
+| 4PP7-FUS vs 4PP7 | 6.3 | −0.5 | 1.5 |
+| 30PP7-FUS vs 30PP7 | 3.5 | 2.3 | 0.3 |
+| 5Qb vs 4PP7 | 7.2 | −0.5 | 2.2 |
+| 10Qb vs 30PP7 | 6.7 | 2.3 | 1.3 |
+| in vitro 10:1 vs 1:1 | 51.1 | 8.2 | 3.2 |
+| in vitro 100:1 vs 1:1 | 39.5 | 8.2 | 1.9 |
+
+Across all 42 settings (z median [min-max]; settings with z > 1.96):
+
+| comparison | z | settings significant |
+|---|---|---|
+| 4PP7-FUS vs 4PP7 | 1.4 [−0.6-2.4] | 8 / 42 |
+| 30PP7-FUS vs 30PP7 | 0.0 [−1.6-1.2] | 0 / 42 |
+| 5Qb vs 4PP7 | 2.3 [0.1-3.3] | 31 / 42 |
+| 10Qb vs 30PP7 | 2.7 [0.3-4.3] | 32 / 42 |
+| in vitro 10:1 vs 1:1 | 2.6 [1.2-3.5] | 39 / 42 |
+| in vitro 100:1 vs 1:1 | 1.6 [1.1-2.2] | 4 / 42 |
+
+**Interpretation (plain).**
+- **The 4x FUS trend is consistent but weak.** FUS is ahead at almost every setting (excess turnover median 12 vs 2 %/h), but it reaches p < 0.05 at only 8 of 42 settings. When 42 settings are tried, some will cross p 0.05 by chance, so reporting one of those 8 would be cherry-picking. At the setting chosen by the noise rule, z = 1.5.
+- **Changing detection does not rescue it.** The limit is the noise in the 4PP7 traces, not the detector settings: 4PP7 bursts look like noise at every SP and window.
+- **More data would.** If the effect is real and the spread stays the same, about 5× more movies per condition (~50-65 movies) would give 80% power with M2b; ~3× would give an even chance of p < 0.05. Brighter or less noisy imaging of 4PP7 would help more than extra movies.
+- **More robust than the FUS effect** (significant at most settings): Qβ shows more excess bursts than PP7 (5Qb vs 4PP7, 10Qb vs 30PP7), and in vitro 10:1 is more dynamic than 1:1. For Qβ this agrees with M1 in section 19, while M2b (section 19) did not separate Qβ from PP7. That is worth stating in the response.
+- **30PP7-FUS vs 30PP7:** no difference at any setting.
