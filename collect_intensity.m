@@ -1,4 +1,4 @@
-function [intensity, background, info] = collect_intensity(file_path, opts)
+function [intensity, background, info, sums] = collect_intensity(file_path, opts)
 % COLLECT_INTENSITY  Body of Collect_intensity_data.m as a function, so the
 % extraction can be rerun headless. For every <name>.tif in file_path it
 % loads <name>_xy.mat (read_tables.m output) and returns, per track of >= 24
@@ -17,6 +17,15 @@ function [intensity, background, info] = collect_intensity(file_path, opts)
 %               (default 200: Andor iXon EMCCD, fluorescence floor 193-200 in
 %               ExampleTIF.tif). The pixel classes are computed on the raw
 %               pixels, so only the levels change. 0 = no subtraction (R1).
+%
+% sums (optional 4th output; the other outputs are unchanged): integrated
+% granule intensity per frame, for expressing bursts as a fraction of the
+% granule (fraction shed per burst):
+%   sums.spotSum  sum over the multithresh spot pixels (top two classes) of
+%                 (pixel - mean of the cell class); the offset cancels
+%   sums.cropSum  sum over the whole 15x15 crop of (pixel - median of the crop
+%                 border); mask-free check
+%   sums.spotArea number of spot pixels
 
 if nargin < 2, opts = struct(); end
 if ~isfield(opts,'offset'), opts.offset = 200; end
@@ -29,6 +38,7 @@ sub_frame_length = 7;
 intensity = cell(1,1);
 background = cell(1,1);
 info = struct('movie',{},'channel',{},'nChannels',{},'nFrames',{},'nTracks',{},'nKept',{});
+sums = struct('spotSum', {cell(1,1)}, 'cropSum', {cell(1,1)}, 'spotArea', {cell(1,1)});
 
 for f = 1:numel(tiff_files)
     [~, base] = fileparts(tiff_files(f).name);
@@ -51,6 +61,7 @@ for f = 1:numel(tiff_files)
             frameIdx = spot_frames - spot_frames(1) + 1;  % position of each detection on the full frame axis
             spot_intensity = nan(frameIdx(end),1);       % NaN where the tracker skipped frames
             background_intensity = nan(frameIdx(end),1);
+            spot_sum = nan(frameIdx(end),1); crop_sum = spot_sum; spot_area = spot_sum;
 
             for n = 1:length(spot_x)
                frame = movArray(spot_frames(n)).data; % complete current frame
@@ -69,12 +80,20 @@ for f = 1:numel(tiff_files)
 
                spot_intensity(frameIdx(n),1) = mean(sub_frame(spot_frame)) - opts.offset;
                background_intensity(frameIdx(n),1) = mean(sub_frame(cell_frame)) - opts.offset;
+               sf = double(sub_frame); cellMean = mean(sf(cell_frame));
+               border = [sf(1,:), sf(end,:), sf(2:end-1,1)', sf(2:end-1,end)'];
+               spot_sum(frameIdx(n),1) = sum(sf(spot_frame) - cellMean);
+               crop_sum(frameIdx(n),1) = sum(sf(:) - median(border));
+               spot_area(frameIdx(n),1) = nnz(spot_frame);
             end
 
             spot_intensity = fillmissing(spot_intensity,'linear');           % fill skipped frames
             background_intensity = fillmissing(background_intensity,'linear');
             intensity = [intensity,{spot_intensity}]; %#ok<AGROW>
             background = [background,{background_intensity}]; %#ok<AGROW>
+            sums.spotSum = [sums.spotSum, {fillmissing(spot_sum,'linear')}];
+            sums.cropSum = [sums.cropSum, {fillmissing(crop_sum,'linear')}];
+            sums.spotArea = [sums.spotArea, {fillmissing(spot_area,'linear')}];
             nKept = nKept + 1;
         end
     end

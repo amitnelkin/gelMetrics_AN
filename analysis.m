@@ -2,7 +2,7 @@
 % measured background signal. It then locates activity bursts in the signal
 % and classifies them to positive, negative or unclassified.
 
-function [timeBetweenPos,timeBetweenNeg,ampPos,ampNeg,ampVar,eventsPerSignal] = ...
+function [timeBetweenPos,timeBetweenNeg,ampPos,ampNeg,ampVar,eventsPerSignal,segInfo] = ...
     analysis(signals,background,timeVecTotal,movingAverageWindowSpan,...
     stringencyParameter,plotMin,plotMax)
 
@@ -16,6 +16,11 @@ ampNeg = -Inf;
 ampVar = -Inf;
 
 eventsPerSignal = [];
+% segInfo (optional 7th output, does not change the other outputs): one row per
+% classified burst: [signal index, sign (+1/-1), first frame, last frame,
+% amplitude, fitted level at the first frame, fitted level at the last frame].
+% Used to express each burst as a fraction of the granule intensity before it.
+segInfo = zeros(0,7);
 
 for i = 1:size(signals,1)
     % Experimental data is in a cell array due to signals might not having
@@ -78,10 +83,12 @@ for i = 1:size(signals,1)
         y = polyval(p{tt},x);
         if y(end)-y(1) >= 0 && length(x) >= thresholdPos
             ampPos = [ampPos; y(end)-y(1)];
+            segInfo = [segInfo; i, 1, x(1), x(end), y(end)-y(1), y(1), y(end)];
             posSegmentStart = [posSegmentStart; x(1)];
         end
         if y(end)-y(1) < 0 && length(x) >= thresholdNeg
             ampNeg = [ampNeg; y(end)-y(1)];
+            segInfo = [segInfo; i, -1, x(1), x(end), y(end)-y(1), y(1), y(end)];
             negSegmentStart = [negSegmentStart; x(1)];
         end
     end

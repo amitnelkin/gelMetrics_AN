@@ -637,3 +637,48 @@ Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples pe
   - the burst size scale (median amplitude);
   - the differences between conditions: Qβ vs PP7 (sections 9-10, 12) and FUS for 4x (sections 9c, 10).
 - To get λ, a measured single-unit brightness is needed: single-RNA calibration, or photobleaching steps of one RNA with its proteins. With k0 measured, λ follows from the median burst size.
+
+## 15. Fraction of the granule shed per burst (instead of λ)
+`analysis.m` (new optional 7th output `segInfo`: start, end and fitted level of each burst; other outputs unchanged), `collect_intensity.m` (new optional 4th output: integrated intensities), `checks/reextract_sums.m`, `checks/shed_fraction.m`, `checks/plot_shed_fraction.py`.
+- Outputs: `analysis_outputs/shed_fraction/` (`fractions.csv`, `medians.csv`, `tests.csv`, `shed_hist.png`, `shed_vs_sp.png`); data in `in_vivo_reextracted/after_R2_sums/`.
+
+**Idea.** For each negative burst, fraction shed = |burst size| ÷ granule intensity just before the burst. It is unitless, so no single-unit brightness (k0) is needed.
+
+**Granule intensity measures:**
+
+| measure | definition | datasets |
+|---|---|---|
+| mean | current trace: mean of the multithresh spot pixels above the cell level | all, in vitro included |
+| spot sum | sum of the multithresh spot pixels above the cell mean (the proposed measure) | PP7, PP7-FUS, Qβ |
+| crop sum | sum of the 15×15 crop above its border median (mask-free check) | PP7, PP7-FUS, Qβ |
+
+- The sums were re-extracted from the movies with the same tracking and settings. The mean traces came out identical to R2.
+- Burst detection is the same analysis as before. SP 10-15; granule-level permutation tests (2000 shuffles of whole traces); granule-bootstrap CIs.
+
+**Median fraction shed per negative burst, SP 12** [95% CI]:
+
+| dataset | mean | spot sum | crop sum |
+|---|---|---|---|
+| 4PP7 | 0.066 [0.060-0.072] | 0.110 [0.103-0.125] | 0.043 |
+| 4PP7-FUS | 0.096 [0.088-0.110] | 0.172 [0.160-0.187] | 0.062 |
+| 30PP7 | 0.092 [0.085-0.101] | 0.153 [0.138-0.168] | 0.058 |
+| 30PP7-FUS | 0.114 [0.099-0.126] | 0.172 [0.163-0.181] | 0.058 |
+| 5Qb | 0.052 [0.048-0.059] | 0.092 [0.088-0.098] | 0.052 |
+| 10Qb | 0.054 [0.051-0.057] | 0.091 [0.087-0.097] | 0.048 |
+| in vitro 1:1 / 10:1 / 100:1 | 0.079 / 0.122 / 0.152 | – | – |
+
+**Tests (consistent across SP 10-15 unless stated):**
+- **4x FUS vs PP7:** FUS sheds a larger fraction with all three measures (spot sum 17% vs 11%; p ≤ 0.016 at every SP).
+- **30x FUS vs PP7:** small increase with mean and spot sum (p 0.002-0.06 at SP 10-14); none with crop sum.
+- **Qβ vs PP7:**
+  - Qβ sheds a *smaller* fraction per burst with mean and spot sum: 9% vs 11-15%, p < 0.001 at every SP; 5Qb vs 4PP7 (same RNA) p 0.001-0.03.
+  - With the crop sum there is no difference (p ≈ 0.6).
+  - Qβ granules are 3-10× brighter in total (median spot sum before a burst: 5Qb 433,000, 10Qb 523,000 vs 4PP7 141,000, 30PP7 54,000). Their bursts are larger in absolute terms (38,000-48,000 vs 9,000-17,000) but a smaller share of the granule.
+- **In vitro (mean only):** the fraction shed rises with protein:RNA ratio, 8% → 12% → 15%.
+
+**Interpretation (plain).**
+- Expressed as a share of the granule, every condition sheds roughly 5-17% of its intensity per burst.
+- The FUS effect on the 4x RNA is robust: FUS granules lose a larger share per burst.
+- For Qβ vs PP7 the picture reverses compared with absolute burst size. Qβ bursts are bigger, but Qβ granules are much brighter, so each burst is a smaller share (about 9% vs 11-15%).
+- The crop-sum measure does not reproduce that difference. A fixed 15×15 box likely cuts off part of the large, bright Qβ granules and includes their edges in the "background" border, so the spot sum (the published segmentation) is the more trustworthy of the two sums here.
+- This measure needs no model and no k0, and it can be stated with error bars.
