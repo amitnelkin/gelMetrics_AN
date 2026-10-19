@@ -1,4 +1,4 @@
-function reextract_pp7(workRoot, stages)
+function reextract_pp7(workRoot, stages, datasets)
 % REEXTRACT_PP7  Re-extracts the PP7 datasets from the .nd2 movies with the
 % fixed extraction (zigzag cause: analysis_outputs/zigzag_diagnosis; general
 % data validity, R2 5). Never touches in_vivo_experiments/: writes
@@ -13,7 +13,7 @@ function reextract_pp7(workRoot, stages)
 %   (after_R3_aperture, a 5 px aperture spot, was reverted: not a stage any more)
 % Also writes in_vivo_reextracted/<stage>/extraction_info.csv.
 
-if nargin < 2
+if nargin < 2 || isempty(stages)
     stages = {'after_R1_redchannel', struct('offset',0,  'aperture',0);
               'after_R2_offset',     struct('offset',200,'aperture',0);
               };   % R3 (5 px aperture) was reverted at the user's request: multithresh spot kept
@@ -21,7 +21,7 @@ end
 checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);
 addpath(repoDir);
-datasets = {'4PP7','4PP7-FUS','30PP7','30PP7-FUS'};
+if nargin < 3, datasets = {'4PP7','4PP7-FUS','30PP7','30PP7-FUS'}; end  % also used for 5Qb/10Qb
 
 here = pwd;
 for d = 1:numel(datasets)
@@ -43,7 +43,9 @@ for s = 1:size(stages,1)
         I.dataset = repmat(datasets(d), height(I), 1);
         allInfo = [allInfo; I]; %#ok<AGROW>
     end
-    writetable(allInfo, fullfile(outDir, 'extraction_info.csv'));
+    infoName = 'extraction_info.csv';
+    if nargin >= 3, infoName = ['extraction_info_' strjoin(datasets, '_') '.csv']; end
+    writetable(allInfo, fullfile(outDir, infoName));
 end
 end
 

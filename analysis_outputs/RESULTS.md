@@ -511,3 +511,35 @@ Three reasons, in order of importance:
 2. **Weights (R2 4a).** The paper weights are no better than equal weights and are among the worst in simulation (λ within ±25% in 18-29% of fits). QQ-only or KS-only does somewhat better on λ (25-50%) but changes several real-data answers.
    - The WS λ is not robust to the weighting, which supports the reviewer's "arbitrary" criticism. No weight set makes the grid method competitive with the likelihood at noise 40.
 3. **Excluded data (R2 4a).** About 20-25% of detected bursts are excluded by the two trims, and up to 70-75% of traces by the 180-frame rule (PP7 4x). The in-vitro λ depends strongly on the top trim. These cuts must be stated, and their effect shown (this table), in the revision.
+
+## 12. Qβ re-extracted from the Naor .nd2 movies: same behaviour as the stored data
+`checks/qb_compare.m`, `checks/plot_qb_compare.py` → `analysis_outputs/qb_compare/` (traces/bursts/fits/amplitudes csv, `qb_compare.png/pdf`).
+- **Movies:**
+  - 5Qb: `Raw_Results\Naor_Data-All_night_induction\5Qb\250ms`, 10 movies;
+  - 10Qb: `...\10Qb`, 9 movies (it has no 250 ms subfolder).
+- **Pipeline:** same as PP7. bfconvert → red-channel tracking (R1 macro) → R1/R2 extraction (multithresh spot, offset 200) → `in_vivo_reextracted/after_R2_offset/5Qb_*.mat` and `10Qb_*.mat`.
+- **Movie layout:** all 19 movies are 2-channel. The second channel is dim and nearly featureless (median ~1050, max ~1300); the red granules are bright (99th percentile 9,000-35,000).
+- **`combined` subfolders.** The movie folders also contain later (Nov 2025) outputs: `combined/spot.mat`, `background.mat`, `*_xy.mat`. These are not the stored data: no trace matches, and the levels differ (median 1065 vs 13431).
+
+| | 5Qb stored | 5Qb re-extracted | 10Qb stored | 10Qb re-extracted |
+|---|---|---|---|---|
+| traces / ≥180 frames | 292 / 189 | 296 / 191 | 431 / 247 | 517 / 279 |
+| median spot / background level | 13431 / 7963 | 13207 / 7777 | 17765 / 10753 | 18264 / 11169 |
+| zigzag-flagged traces | 0 | 0 | 0 | 0 |
+| neg / pos bursts at SP 14 | 134 / 158 | 145 / 179 | 184 / 172 | 217 / 210 |
+| median neg. amplitude, SP 14 | 397 | 426 | 542 | 574 |
+| σ (ampVar) | 262 | 306 | 321 | 373 |
+| grid λ/k0, negative | 2/155 | 1/298 | 3/153 | 2/250 |
+| MLE λ [boot 95%], negative | 0.93 [0.02-40] | 0.44 [0.02-50] | 0.02 [0.02-25] | 50 [0.02-50] |
+
+**Interpretation.**
+- **The movies are the source of the stored Qβ data.**
+  - Trace counts, lengths, levels and burst counts agree within a few percent. The 5Qb level drop of ~200 is exactly the offset subtraction.
+  - The amplitude histograms overlap at every SP.
+  - Bursts per trace vs SP are identical. The re-extracted medians are 5-10% higher, as expected from tracking the red channel only.
+- **Qβ was not affected by the zigzag artefact.** The stored Qβ traces are clean and at red-granule levels.
+- **λ for Qβ is not identified, in either version.**
+  - σ (260-370) is as large as the amplitudes, so the likelihood CIs span the whole search range.
+  - The grid λ moves between 1 and 3 between versions that differ only slightly.
+  - The manuscript's "Qβ λ = 4" is therefore not supported by either method on either version.
+  - What the data do show robustly is that the Qβ amplitudes are 2-3× larger than PP7's (median ~400-570 vs ~120-210), with a broad, roughly symmetric hump.
