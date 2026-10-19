@@ -331,3 +331,32 @@ Negative bursts. Bootstrap CIs are the ones to report (section 5: profile CIs un
   - R2 4b: λ is continuous, and the pipeline bias is quantified.
   - R2 5: the granule bootstrap is in place; FOV/replicate nesting is not yet done.
   - These results undermine several of the manuscript's difference claims.
+## 8. Goodness of fit: amplitude histograms with the fitted model
+`checks/export_amplitudes.m` (amplitudes via the same code path) and `checks/plot_mle_histograms.py`.
+- Outputs (`analysis_outputs/mle_real/`): `mle_hist_Neg.png/pdf`, `mle_hist_Pos.png/pdf`, `mle_hist_gof.csv`, `amplitudes.csv`.
+- Each panel shows:
+  - the histogram of the fitted amplitudes (blue), with the amplitudes outside the fit window in grey;
+  - the fitted truncated mixture (orange) and its n = 1-4 components (dashed).
+- The fit window was rebuilt exactly; n matches `mle_real.csv` in all 18 fits.
+- KS test against the window-truncated model CDF. The parameters were estimated from the same data, so p is optimistic.
+
+KS p, negative / positive bursts:
+
+| | 1:1 | 10:1 | 100:1 | 4PP7 | 4PP7-FUS | 30PP7 | 30PP7-FUS | 5Qb | 10Qb |
+|---|---|---|---|---|---|---|---|---|---|
+| Neg | 0.001 | <0.001 | <0.001 | 0.63 | 0.36 | 0.011 | 0.77 | 0.98 | 0.80 |
+| Pos | 0.014 | <0.001 | <0.001 | 0.90 | 0.11 | 0.006 | 0.63 | 0.49 | 0.97 |
+
+**Interpretation**
+- **PP7 (R3 re-extraction).** The model describes the data: a unimodal, right-skewed amplitude distribution, which the fit explains with a few overlapping n·k0 components. 30PP7 is borderline.
+  - No dataset shows resolved peaks at multiples of k0. λ and k0 are therefore set by the skew of one broad hump, which is why the λ-k0 surfaces are ridges (section 7).
+- **Qβ.** The fits pass only because σ (262-321) is as wide as the whole distribution, so the model is one broad Gaussian and λ carries no information.
+- **In vitro: the model is rejected.**
+  - σ from `ampVar` is small (15-26), so the model predicts a comb of narrow peaks at n·k0.
+  - The data are smooth and heavy-tailed: after the 10% top trim, 10:1 and 100:1 still keep amplitudes up to 870 and 1480, where the model density is ~0.
+  - **This qualifies section 7:** the in-vitro MLE values, including 100:1 λ = 3.47, come from a misspecified model and should not be quoted as estimates.
+  - The manuscript's in-vitro λ = 1 is not supported either, because the grid method does not track λ (section 5). The data do not identify λ in vitro under this model.
+- **What this points to** (a model change; not applied):
+  - amplitude noise that grows with n (σ² = σ0² + n·σ1²), or σ fitted from the data;
+  - a heavy-tail or outlier component.
+- **Reviewer point.** R2 4a/4b: "the model is a poor fit for the in vitro data" is a fair criticism, now shown directly.
