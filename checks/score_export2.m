@@ -16,6 +16,15 @@ function score_export2(tag, opts)
 %             curve, as analysis.m fits the background) + white Gaussian noise
 %             at the trace's own noise level, sigma = 1.4826*MAD(diff(s))/sqrt(2)
 %             (robust to occasional steps); seeded. Every detection is false.
+%   'polysd'  as 'poly' but sigma = std(diff(s))/sqrt(2): the plain (non-robust)
+%             noise level, an upper estimate (it includes the steps), used to
+%             bracket the noise correction.
+%   'bleach'  as 'poly' but the trend is one shared bleaching shape per
+%             dataset (median over traces of each trace's cubic trend divided by
+%             its mean) scaled to the trace mean, so the surrogate cannot carry
+%             the trace's own slow changes (a per-trace cubic trend bends with
+%             real gains/losses; noise_methods_sim showed it then over-counts
+%             false bursts). Robust (MAD) noise level.
 %   The lag-1 autocorrelation of the real first differences (white noise:
 %   -0.5) is written per trace to <tag>_traces.csv (column acDiff) to check the
 %   white-noise assumption.
@@ -49,11 +58,27 @@ for j = 1:size(jobs,1)
     for i = 1:numel(S)
         dd = diff(S{i}(:)); if numel(dd) > 3, cc = corrcoef(dd(1:end-1), dd(2:end)); acd(i) = cc(1,2); end
     end
-    if strcmp(opts.surrogate, 'poly')
+    if strcmp(opts.surrogate, 'bleach')
+        rng(17 + j);
+        Lm = min(cellfun(@numel, S)); shp = zeros(numel(S), Lm);
+        for i = 1:numel(S)
+            s = S{i}(:); x = (1:numel(s))'; trd = polyval(polyfit(x, s, 3), x);
+            shp(i,:) = trd(1:Lm)' / mean(trd(1:Lm));
+        end
+        shape = median(shp, 1);
+        for i = 1:numel(S)
+            s = S{i}(:); n = numel(s);
+            sh = [shape, repmat(shape(end), 1, max(n - Lm, 0))]'; sh = sh(1:n);
+            sgm = 1.4826 * median(abs(diff(s) - median(diff(s)))) / sqrt(2);
+            S{i} = mean(s) / mean(sh) * sh + sgm * randn(n, 1);
+        end
+    end
+    if any(strcmp(opts.surrogate, {'poly', 'polysd'}))
         rng(11 + j);
         for i = 1:numel(S)
             s = S{i}(:); x = (1:numel(s))'; trd = polyval(polyfit(x, s, 3), x);
-            sgm = 1.4826 * median(abs(diff(s) - median(diff(s)))) / sqrt(2);
+            if strcmp(opts.surrogate, 'poly'), sgm = 1.4826 * median(abs(diff(s) - median(diff(s)))) / sqrt(2);
+            else, sgm = std(diff(s)) / sqrt(2); end
             S{i} = trd + sgm * randn(size(s));
         end
     end

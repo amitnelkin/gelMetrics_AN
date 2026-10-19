@@ -822,3 +822,74 @@ Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples pe
   1. Correct every score for the expected false bursts from matched surrogates ("excess over noise").
   2. Replace burst detection with a detection-free fluctuation measure: how much more the granule intensity fluctuates than noise alone, at each timescale.
   3. Re-calibrate the detector so its false-discovery share is controlled (e.g. a threshold set from surrogates per dataset), and accept far fewer bursts.
+
+## 19. Three noise-robust approaches compared (simulation bench + real data)
+- Code: `checks/noise_methods_sim.m` (bench), `checks/noise_methods_real.m` (fluctuations), `checks/score_export2.m` (surrogates `poly`, `polysd`, `bleach`), `checks/noise_methods.py`.
+- Outputs: `analysis_outputs/noise_methods/` (`sim_*.csv`, `sim_eval.csv`, `real_scores.csv`, `real_comparisons.csv`, `real_stability.csv`, `sim_methods.png`, `real_methods.png`) and `analysis_outputs/robustness/noise_floor_sharedbleach.csv`.
+
+**Bench.** Known dynamics with the noise varied independently:
+- relative burst size 3, 6 or 12% of the granule, at 0, 3 or 10 bursts per hour (half losses, half gains);
+- noise 0.5, 1 or 2% of the granule; bleaching on; 100 traces × 361 frames; 2 seeds.
+
+Exactly the real-data code path: detection with `analysis.m`, the same surrogates, the same fluctuation measure.
+
+**Methods:**
+- M0: uncorrected turnover (reference; section 17).
+- M1: excess turnover, real minus its own burst-free surrogate (each trace paired with its own surrogate).
+- M2: excess fluctuation, F(5 min) = how much the granule's relative intensity changes over 5 min beyond the surrogate's.
+- M2b: noise-free fluctuation, G(5 min) = the same, but with the 1-frame lag subtracted instead of a surrogate. White noise adds equally at every lag, so this removes it exactly, whatever its level, with no noise estimate and no burst detection.
+- M3: recalibrated detector, keeping only bursts above a per-dataset size cut that leaves ≤ 10% false bursts.
+
+**Bench results (SP 12):**
+
+| method | score with no bursts | follows the truth (Spearman) | high-noise / low-noise score, same dynamics | depends on SP |
+|---|---|---|---|---|
+| M0 uncorrected | 0.6-2.3 %/h | 0.98 | 1.01 | yes |
+| M1 excess turnover | ≈ 0 | 0.95, but ~50% of the true value | 1.29 | yes |
+| M2 excess fluctuation | ≈ 0 | 0.98 | 0.96 | no |
+| **M2b noise-free fluctuation** | **≈ 0 (max 0.15%)** | **0.98** | **0.97** | **no** |
+| M3 recalibrated detector | – | no valid cut in 78% of settings | – | yes |
+
+- M1 under-corrects because each trace's own cubic trend bends with real gains and losses, so its surrogate inherits part of the dynamics.
+- A surrogate built on one shared bleaching shape per dataset avoids this. On the real data it changes the false-discovery share only slightly (SP 12: PP7 0.82-1.03, Qβ 0.59-0.68, in vitro 0.66-0.78; previously 0.92-0.99, 0.78-0.79 and 0.71-0.88), so section 18 stands.
+
+**Real data, SP 12 (spot sum in vivo, mean in vitro), 95% granule-bootstrap CI:**
+
+| dataset | M0 turnover %/h | M1 excess turnover %/h | M2b G(5 min) % |
+|---|---|---|---|
+| 4PP7 | 17.8 [14.6-21.4] | 1.0 [−3.1-5.3] | 2.4 [0-4.0] |
+| 4PP7-FUS | 25.9 [21.7-30.0] | 4.2 [−2.5-10.6] | 5.0 [2.3-6.6] |
+| 30PP7 | 24.4 [21.6-27.8] | 1.4 [−2.5-5.5] | 3.8 [0-5.3] |
+| 30PP7-FUS | 24.8 [21.3-28.7] | 1.6 [−3.5-7.1] | 2.8 [0-5.6] |
+| 5Qb | 17.5 [15.4-19.5] | 5.8 [3.2-8.0] | 4.0 [3.2-4.7] |
+| 10Qb | 17.6 [15.8-19.4] | 6.4 [4.3-8.6] | 4.1 [3.5-4.6] |
+| in vitro 1:1 | 29.6 [21.5-40.7] | 5.5 [−2.0-14.0] | 6.9 [2.9-10.0] |
+| in vitro 10:1 | 71.6 [49.9-98.7] | 50.4 [28.9-77.1] | 13.1 [9.5-16.4] |
+| in vitro 100:1 | 95.1 [62.2-136] | 31.9 [2.6-57.8] | 11.1 [6.8-15.0] |
+
+- M2b on the surrogates themselves is ≈ 0 (≤ 1%) everywhere.
+- M3 finds a valid cut only for 10Qb (6 bursts) and in vitro 10:1 (24 bursts).
+
+**Comparisons, z (|z| > 2 ≈ p < 0.05):**
+
+| comparison | M0 | M1 | M2b |
+|---|---|---|---|
+| 4PP7-FUS vs 4PP7 | 2.9 | 0.8 | 1.6 |
+| 30PP7-FUS vs 30PP7 | 0.1 | 0.0 | −0.5 |
+| 5Qb vs 4PP7 | −0.1 | 1.9 | 1.2 |
+| 10Qb vs 30PP7 | −3.6 | 2.0 | 0.3 |
+| in vitro 10:1 vs 1:1 | 3.1 | 3.4 | 2.4 |
+| in vitro 100:1 vs 1:1 | 3.3 | 1.9 | 1.5 |
+
+**Interpretation (plain).**
+- **Cleanest method: M2b, the noise-free fluctuation measure.** On the bench it reads zero without dynamics, follows the true dynamics and does not move with the noise level. It needs no burst detection, no SP and no noise estimate. It answers "how much does the granule change beyond noise over 5 minutes?" (it scales with burst rate × size²).
+- **What it says about the real data:**
+  - In vivo, all six conditions show only small slow changes beyond noise (about 2-5% over 5 min), with overlapping CIs. With noise removed, FUS vs non-FUS and Qβ vs PP7 are not distinguishable (|z| ≤ 1.6).
+  - In vitro granules change clearly more (7-13%), and 10:1 is distinguishable from 1:1 (z 2.4).
+  - Noise-corrected burst counting (M1) agrees qualitatively: excess turnover is indistinguishable from 0 for every PP7 dataset. It is positive for Qβ (6 %/h) and large in vitro (32-50 %/h).
+- **The differences between in-vivo conditions seen with the uncorrected burst scores (sections 15-17) are therefore not supported once noise is accounted for.** They mainly reflect how noisy each system's traces are relative to granule brightness.
+- **What remains robust:**
+  1. in vitro, higher protein:RNA ratios give clearly more dynamic granules;
+  2. Qβ granules show a small but significant excess of real bursts over noise (M1, CI excludes 0), while PP7 granules do not;
+  3. in vivo granules are, beyond noise, largely static on the 1-10 min timescale at this imaging noise level.
+- **Recommendation:** report M2b with granule CIs as the primary dynamics measure. Report M1 as the burst-level cross-check. Present the burst-based GelMetrics scores only together with their noise-floor control.
