@@ -543,3 +543,48 @@ Three reasons, in order of importance:
   - The grid λ moves between 1 and 3 between versions that differ only slightly.
   - The manuscript's "Qβ λ = 4" is therefore not supported by either method on either version.
   - What the data do show robustly is that the Qβ amplitudes are 2-3× larger than PP7's (median ~400-570 vs ~120-210), with a broad, roughly symmetric hump.
+
+## 13. Linking unit brightness by valency (joint fits)
+`analysis/gelmetricsJoint.m`, `checks/valency_sim_validation.m`, `checks/valency_real.m` → `analysis_outputs/valency/` (`sim_validation.csv`, `real_fits.csv`, `real_boot.mat`).
+
+**Idea.** Within one protein, the brightness of one unit (k0) should scale with the number of binding sites on the RNA. Two versions:
+- **"full occupancy":** k0 ratio = valency ratio;
+- **"at most full":** k0 ratio between 1 and the valency ratio.
+
+Each dataset keeps its own λ.
+
+**Groups:**
+
+| group | datasets | valency (k0 ratio cap) | data | SP |
+|---|---|---|---|---|
+| Qβ | 5Qb, 10Qb | 2 | R2 | 14 |
+| PP7 | 4PP7, 30PP7 | 7.5 | R2 | 12 |
+| PP7-FUS | 4PP7-FUS, 30PP7-FUS | 7.5 | R2 | 12 |
+| in vitro | 1:1, 10:1, 100:1 (PCP-14x RNA) | at most 1 : 10 : 14 proteins per RNA | stored | 12 |
+
+Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples per joint fit.
+
+**Simulation check (known truth): the link does not help yet.**
+- Share of fits with λ within ±25% of the truth:
+
+  | noise SD | separate | full occupancy | at most full |
+  |---|---|---|---|
+  | 40 | 21% | 7% | 11% |
+  | 80 | 43% | 50% | 54% |
+
+- The bright member of each pair is already fitted badly on its own: λ is overestimated, e.g. 4.6 for a true 1. This is the known problem that the noise width σ from the quiescent segments is too small (sections 5, 11). Linking passes that error to the partner.
+- In the partial-occupancy case (true ratio 1.5, assumed 2), "full occupancy" overestimates λ of the low-valency dataset 2-3×.
+
+**Real data, highlights** (95% bootstrap intervals in brackets; full table in `real_fits.csv`):
+- **Qβ:** both versions give 5Qb λ ~0.5 and 10Qb λ ~0 (single units), k0 ~220 vs ~430. "At most full" chooses a ratio of 1.9, close to full occupancy. The intervals still span almost the whole range (5Qb λ 0.02-19).
+- **PP7:**
+  - Forcing 30PP7 to be up to 7.5× brighter makes 4PP7 consist of ~12 tiny units (k0 17). That is not physically sensible: the data want a ratio of 7.5 or more (it sits at the cap).
+  - Read plainly: the 4x and 30x PP7 amplitudes are too similar for the 30x RNA to be much more occupied than the 4x RNA. This agrees with the MS remark that 30x is not fully occupied.
+- **PP7-FUS:** "at most full" gives a ratio of 1.9 and λ ~0.8-1.0 for both. "Full occupancy" fits slightly worse and again needs many tiny units for 4x.
+- **In vitro:**
+  - "Full occupancy" (1:10:14) fits clearly worse than "at most full" (log-likelihood 1507 vs 1436), so full occupancy is rejected.
+  - "At most full" gives a brightness ratio of 2.3 for both 10:1 and 100:1 vs 1:1, with λ 1.5 [1.1-2.4], 2.0 [0.5-4.8], 3.5 [1.2-7.0].
+
+**Interpretation.**
+- Valency is the right kind of extra information. On the real data it already says something useful: brightness does not scale with valency (30x vs 4x PP7; 10:1/100:1 vs 1:1 in vitro). The high-valency RNAs are far from full.
+- It does not yet give reliable λ values. On simulations it does not improve λ recovery, because the per-burst noise model underestimates the noise for bright bursts. That noise model must be fixed first (σ calibrated from simulations of the full pipeline, or σ growing with burst size); then this joint fit should be re-run and re-validated.
