@@ -1,0 +1,12 @@
+{
+ "chosenSP": 14,
+ "rule": "lowest SP with false-discovery share <= 10% in every dataset (main measure)",
+ "worstFDRbySP": {
+  "10": 1.0090361445783131,
+  "11": 1.0,
+  "12": 0.9932885906040269,
+  "13": 0.9882352941176471,
+  "14": 0.9375,
+  "15": 1.0769230769230769
+ }
+}

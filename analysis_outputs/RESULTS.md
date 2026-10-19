@@ -787,3 +787,38 @@ Truncation 15%, top trim 10%, negative bursts, 50 granule-bootstrap resamples pe
   - **Turnover (% of granule per hour)** is the most biologically readable number and agrees perfectly between measures. Its value moves with SP (the burst count depends on the threshold), so it must be quoted at one fixed SP.
 - **Not useful:** the shape-based "number of units" scores (gamma shape, moment λ) and net exchange. They are unstable, imprecise and do not follow λ, which is consistent with sections 13-14: the distribution shape does not carry recoverable unit information in these data.
 - **Suggested reporting:** fraction shed per burst as the main parameter, with absolute burst size and turnover at a fixed SP as secondary parameters, all with granule-bootstrap CIs. The noise floor / single-SP choice and the sensitivity tables should then be run on these scores.
+
+## 18. Noise floor for the chosen scores: most detected bursts are indistinguishable from noise
+`checks/score_export2.m` (`opts.surrogate`), `checks/robustness.py noise` → `analysis_outputs/robustness/` (`noise_floor_allSP.csv`, `noise_floor.png/pdf`, `*_bursts.csv`, `*_traces.csv`).
+
+**Burst-free control.** Each real trace is replaced by its slow cubic trend (the bleaching curve, as `analysis.m` fits the background) plus fresh white noise at that trace's own noise level. The noise level is 1.4826·MAD of the frame-to-frame differences / √2, which is robust to occasional steps. Everything detected in these surrogates is a false burst.
+- The white-noise assumption holds: the lag-1 autocorrelation of the real frame differences is −0.47 to −0.50 (white noise: −0.5).
+- A first surrogate (61-frame moving-mean trend + shuffled residuals) was rejected: its trend still contains the real bursts, smeared out.
+
+**False-discovery share** (false ÷ real negative bursts; main measure: spot sum in vivo, mean in vitro):
+
+| dataset | SP 10 | SP 12 | SP 14 | SP 16 | SP 18 | SP 20 | real bursts at SP 12 / 18 |
+|---|---|---|---|---|---|---|---|
+| 4PP7 | 0.98 | 0.92 | 0.93 | 0.95 | 2.2 | 3.5 | 106 / 5 |
+| 4PP7-FUS | 0.97 | 0.92 | 0.75 | 0.79 | 1.1 | 1.7 | 124 / 9 |
+| 30PP7 | 1.01 | 0.97 | 0.92 | 0.68 | 0.46 | 1.0 | 207 / 13 |
+| 30PP7-FUS | 1.00 | 0.99 | 0.94 | 1.15 | 1.5 | 0.67 | 149 / 10 |
+| 5Qb | 0.79 | 0.79 | 0.70 | 0.59 | 0.47 | 0.39 | 313 / 38 |
+| 10Qb | 0.80 | 0.78 | 0.67 | 0.69 | 0.63 | 0.64 | 472 / 35 |
+| in vitro 1:1 | 0.97 | 0.88 | 0.83 | 1.04 | 1.1 | 1.07 | 94 / 18 |
+| in vitro 10:1 | 0.77 | 0.71 | 0.41 | 0.39 | 0.27 | 0.25 | 93 / 33 |
+| in vitro 100:1 | 0.91 | 0.72 | 0.79 | 0.76 | 0.74 | 0.81 | 105 / 38 |
+
+- **No SP reaches ≤ 10% false bursts while keeping a usable number of bursts.**
+- A size cut does not rescue PP7. Among bursts ≥ 20% of the granule, 33-83% are false in PP7; for Qβ it is 11-15% (9-13 bursts) and for in vitro 10:1 ≥ 30% it is 5% (21 bursts).
+- False bursts are similar in size to real ones (median fraction shed, SP 14: e.g. 4PP7 0.13 real vs 0.12 false; 5Qb 0.10 vs 0.08). Their size follows each system's noise-to-brightness ratio, which is lower for the bright Qβ granules.
+
+**Interpretation (plain).**
+- At the SP values used in the manuscript (10-14), roughly 70-100% of the detected bursts in every condition could have been produced by measurement noise plus bleaching alone. Only in vitro 10:1 and, partly, Qβ at high SP show a clear excess of real bursts.
+- The cause is the known detection-threshold problem: the run-length threshold assumes independent frame-to-frame changes, but it is applied after a 13-frame moving average, which turns plain noise into long monotone runs.
+- The burst-based scores (fraction shed, burst size, turnover) and their differences between conditions therefore partly reflect each system's noise level relative to granule brightness, not only granule dynamics.
+- **This must be resolved before the sensitivity, nested-bootstrap and window analyses are meaningful.** Those were deliberately not run.
+- **Options:**
+  1. Correct every score for the expected false bursts from matched surrogates ("excess over noise").
+  2. Replace burst detection with a detection-free fluctuation measure: how much more the granule intensity fluctuates than noise alone, at each timescale.
+  3. Re-calibrate the detector so its false-discovery share is controlled (e.g. a threshold set from surrogates per dataset), and accept far fewer bursts.
