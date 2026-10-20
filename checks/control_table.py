@@ -7,10 +7,13 @@ in vitro, 2000x, seeded):
   frame noise              robust frame-to-frame noise of the granule signal,
                            % of its level (spot sum in vivo, spot mean in vitro)
   mean burst size          mean negative-burst amplitude, all bursts, no trim
-                           or truncation (spot mean units, window 13, SP 12) =
-                           the best-identified lambda*k0 combination (exactly
-                           lambda*k0/(1 - exp(-lambda)) for the zero-truncated
-                           Poisson model)
+                           (spot mean units, window 13, SP 12), model-free
+  burst size, granules / copies  median fraction of the granule shed per burst,
+                           granules and their burst-free copies (spot sum), and
+                           the difference = burst size beyond noise, with CI
+  lambda*k0, shape fit     product of lambda and k0 from the shape-only fit of the
+                           manuscript's model curve on all bursts (checks/
+                           lambda_k0_shape.py --notrim, granule bootstrap CI)
   turnover beyond noise    %/h (sections 18-24), and the share of the detected
                            turnover that burst-free copies reproduce (noise share)
   net change               %/h, granule vs cell-background fade (section 22)
@@ -59,6 +62,7 @@ GB = pd.read_csv('analysis_outputs/detection_grid/bursts.csv')
 GB = GB[(GB.window == 13) & (GB.SP == 12) & (GB.levelBefore > 0)].copy(); GB['f'] = GB.amp.abs() / GB.levelBefore
 GT = pd.read_csv('analysis_outputs/detection_grid/traces.csv')
 NL = pd.read_csv('analysis_outputs/net_loss/per_trace.csv')
+SH = pd.read_csv('analysis_outputs/lambda_k0_shape_notrim/fits.csv')
 rows = []
 for ds in VIVO + VITRO:
     vivo = ds in VIVO
@@ -88,6 +92,17 @@ for ds in VIVO + VITRO:
     flat = [x for g in items.values() for x in g]
     r['turnover'] = turn(flat); r['turnover_lo'], r['turnover_hi'] = nested(items, turn)
     r['noiseShare'] = sum(x[1] for x in flat) / sum(x[0] for x in flat)
+    # burst size of the granules vs their burst-free copies (median % of granule shed), and the part beyond noise
+    Rb = {k: g.f.values for k, g in bb[bb.kind == 'real'].groupby('trace')}; Sb = {k: g.f.values for k, g in bb[bb.kind == 'surr'].groupby('trace')}
+    e0 = np.zeros(0)
+    sz = {m: [(Rb.get(k, e0), Sb.get(k, e0)) for k in g.trace] for m, g in t.groupby('movie')}
+    med = lambda it, j: 100 * np.median(np.concatenate([x[j] for x in it]))
+    fl = [x for g in sz.values() for x in g]
+    r['sizeReal'], r['sizeCopy'] = med(fl, 0), med(fl, 1); r['sizeBeyond'] = r['sizeReal'] - r['sizeCopy']
+    r['sizeBeyond_lo'], r['sizeBeyond_hi'] = nested(sz, lambda it: med(it, 0) - med(it, 1))
+    # lambda*k0 from the shape fit on all bursts (checks/lambda_k0_shape.py --notrim)
+    f = SH[SH.dataset == ds].iloc[0]
+    r['lamk0'], r['lamk0_lo'], r['lamk0_hi'] = f['mean'], f['mean_lo'], f['mean_hi']
     # net change
     col = 'sumNet' if vivo else 'excessNet'
     n = NL[(NL.dataset == ds)].dropna(subset=[col])
@@ -97,18 +112,19 @@ for ds in VIVO + VITRO:
 T = pd.DataFrame(rows); T.to_csv(os.path.join(out, 'control_table.csv'), index=False)
 
 ci = lambda r, c, f='.1f': f"{r[c]:{f}} [{r[c + '_lo']:{f}}, {r[c + '_hi']:{f}}]"
-hdr = ['dataset', 'granules (movies)', 'granule brightness (a.u.)', 'frame noise (% of granule)', 'mean burst size, λ·k0 (a.u.)',
-       'turnover beyond noise (%/h)', 'share of turnover explained by noise', 'net change beyond bleaching (%/h)']
+hdr = ['dataset', 'granules (movies)', 'granule brightness (a.u.)', 'frame noise (% of granule)',
+       'burst size, granules / noise copies (% of granule)', 'burst size beyond noise (% points)', 'mean burst size (a.u.)', 'λ·k0, shape fit (a.u.)',
+       'turnover beyond noise (%/h)', 'net change beyond bleaching (%/h)']
 cells = []
 for _, r in T.iterrows():
     cells.append([r.label, f"{r.granules}" + (f" ({int(r.movies)})" if r.dataset in VIVO else ''), ci(r, 'brightness', '.0f'), f"{r.noise:.1f}",
-                  ci(r, 'meanBurst', '.0f') + f" (n = {r.bursts})", ci(r, 'turnover'), f"{r.noiseShare:.2f}", ci(r, 'net')])
+                  f"{r.sizeReal:.1f} / {r.sizeCopy:.1f}", ci(r, 'sizeBeyond'), ci(r, 'meanBurst', '.0f'), ci(r, 'lamk0', '.0f'), ci(r, 'turnover'), ci(r, 'net')])
 with open(os.path.join(out, 'control_table.md'), 'w', encoding='utf-8', newline=chr(13) + chr(10)) as fh:
     fh.write('| ' + ' | '.join(hdr) + ' |' + chr(10) + '|' + '---|' * len(hdr) + chr(10))
     for c in cells:
         fh.write('| ' + ' | '.join(c) + ' |' + chr(10))
 print(open(os.path.join(out, 'control_table.md'), encoding='utf-8').read())
-fig, ax = plt.subplots(figsize=(20, 4.6)); ax.axis('off')
+fig, ax = plt.subplots(figsize=(24, 4.8)); ax.axis('off')
 tb = ax.table(cellText=cells, colLabels=[h.replace(', ', ',\n').replace(' (', '\n(').replace('turnover explained', 'turnover\nexplained') for h in hdr], loc='center', cellLoc='center')
 tb.auto_set_font_size(False); tb.set_fontsize(8.5); tb.scale(1, 2.1)
 for (i, j), c in tb.get_celld().items():

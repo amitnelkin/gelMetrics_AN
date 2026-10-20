@@ -1335,3 +1335,74 @@ Script: `checks/control_table.py` → `analysis_outputs/control_table/` (`contro
 - Brightness and mean burst size are in spot-mean units (as the manuscript's k0). Turnover is from the spot sum, as a fraction of the granule.
 - A noise share near 1 means the detected turnover is about what noise alone produces, so it should not be interpreted as dynamics (all PP7 rows).
 - In vitro has no movie ids, so its CIs are granule-level only.
+
+## 28. Can noise explain the whole FUS-PP7 gap? (hypothesis test); λ·k0 by shape fit on all bursts; updated control table
+
+### 28a. Hypothesis test: is the burst-size gap entirely explained by noise?
+- Script: `checks/gap_test.py` → `analysis_outputs/gap_test/` (`tests.csv/.md`, `per_dataset.csv`).
+- **H0:** the gap between the conditions' granule bursts equals the gap between their burst-free copies, which have the same brightness and noise but no bursts. In other words, the part beyond noise is 0.
+- **Statistic:** the difference in differences of the median fraction shed per burst. Sensitivity check: the mean of log(fraction), which uses every burst.
+- In vivo R2, all bursts, window 13, SP 12.
+- **p:** movie-level permutation, 10000×. One-sided only where the manuscript states the direction (FUS > PP7).
+- **CIs:** nested bootstrap, 5000×.
+
+| comparison | statistic | total gap [95% CI] | explained by noise [95% CI] | beyond noise [95% CI] | p, two-sided | p, one-sided |
+|---|---|---|---|---|---|---|
+| 4PP7-FUS vs 4PP7 | median size (% points) | 6.1 [2.9, 8.8] | 2.6 [0.1, 5.2] | 3.5 [-0.0, 6.5] | 0.061 | 0.031 (pre-specified) |
+| 4PP7-FUS vs 4PP7 | mean log size | 0.40 [0.20, 0.60] | 0.24 [-0.01, 0.51] | 0.16 [-0.11, 0.43] | 0.174 | 0.088 (pre-specified) |
+| 30PP7-FUS vs 30PP7 | median size (% points) | 1.9 [-1.1, 4.4] | 2.2 [-0.5, 4.5] | -0.3 [-3.2, 2.2] | 0.789 | 0.388 |
+| 30PP7-FUS vs 30PP7 | mean log size | 0.14 [-0.05, 0.33] | 0.25 [0.08, 0.42] | -0.10 [-0.33, 0.10] | 0.305 | 0.151 |
+| 5Qb vs 4PP7 | median size (% points) | -1.8 [-4.0, -0.3] | -5.1 [-7.1, -3.5] | 3.3 [0.8, 5.4] | 0.000 | 0.000 |
+| 5Qb vs 4PP7 | mean log size | -0.16 [-0.31, -0.00] | -0.58 [-0.82, -0.32] | 0.42 [0.14, 0.69] | 0.001 | 0.001 |
+| 10Qb vs 30PP7 | median size (% points) | -6.1 [-9.0, -3.9] | -7.4 [-9.9, -5.5] | 1.3 [-1.2, 3.6] | 0.205 | 0.106 |
+| 10Qb vs 30PP7 | mean log size | -0.49 [-0.68, -0.32] | -0.68 [-0.86, -0.50] | 0.19 [-0.02, 0.38] | 0.034 | 0.016 |
+
+**Reading.**
+- **4x:** 3.5 of the 6.1 points (57%) are beyond noise.
+  - With the manuscript's direction pre-specified, H0 is rejected (one-sided p = 0.031; two-sided p = 0.061).
+  - With the every-burst statistic (mean log size), H0 is not rejected (one-sided p = 0.088).
+  - So the beyond-noise FUS effect at 4x is supported at the 5% level by one reasonable statistic, but not robustly across statistics.
+- **30x:** noise explains the whole gap.
+- **5Qb vs 4PP7:** the part beyond noise is clear (p ≤ 0.001 on both statistics).
+
+### 28b. λ·k0 by shape fitting, all bursts (no trim, no truncation)
+- Script: `python checks/lambda_k0_shape.py --notrim` → `analysis_outputs/lambda_k0_shape_notrim/`. The model is as in section 26b, normalised over [0, max amplitude].
+
+| dataset | bursts (fitted) | λ [95% CI] | k0 [95% CI] | mean burst λ·k0 [95% CI] |
+|---|---|---|---|---|
+| PP7, 4x | 123 (123) | 0.14 [0.05, 7.95] | 174.5 [24.6, 187.8] | 24 [9, 219] |
+| PP7-FUS, 4x | 144 (144) | 0.91 [0.13, 1.86] | 123.8 [85.7, 143.2] | 112 [15, 259] |
+| PP7, 30x | 225 (225) | 1.21 [0.34, 1.59] | 177.5 [117.8, 289.3] | 215 [52, 335] |
+| PP7-FUS, 30x | 156 (156) | 0.75 [0.34, 1.70] | 179.1 [97.5, 212.7] | 134 [70, 206] |
+| Qβ, 5x | 336 (336) | 0.62 [0.40, 1.11] | 350.9 [256.8, 386.6] | 217 [139, 380] |
+| Qβ, 10x | 497 (497) | 0.36 [0.10, 5.22] | 478.9 [103.6, 573.0] | 174 [51, 548] |
+| in vitro 1:1 | 94 (94) | 0.88 [0.84, 1.61] | 136.1 [33.0, 282.1] | 119 [42, 297] |
+| in vitro 10:1 | 93 (93) | 1.45 [1.20, 1.73] | 152.1 [101.2, 186.0] | 220 [130, 316] |
+| in vitro 100:1 | 105 (105) | 1.32 [1.10, 1.61] | 327.8 [164.1, 468.1] | 434 [188, 754] |
+
+- **Simulations:** the shape-fitted λ·k0 tracks the true λ·k0 = 60λ (panel c of `shape_fit.png`). At SNR 1.5-5 it is within 0.8-1.35× for true λ·k0 60-300, and it over-reads at true 30 (1.5-1.6×). λ alone stays at about 2 regardless of the truth (as in section 26).
+- **In vivo, λ is mostly below 1.** There, the product λ·k0 is unstable, e.g. 4PP7 24 [9, 219]: almost every burst is one "unit", so the product understates the burst size, and its CI is wide. The model's mean burst size, λ·k0/(1 − e^−λ), and the model-free mean burst size (190 for 4PP7) are the stable quantities.
+- **Movie-level p for λ·k0:**
+  - 4PP7-FUS vs 4PP7: 112 vs 24, p = 0.095;
+  - 30x pair: p = 0.54;
+  - 5Qb vs 4PP7: p = 0.001;
+  - 10Qb vs 30PP7: p = 0.33;
+  - in vitro 10:1 and 100:1 vs 1:1: p = 0.29 and 0.071.
+
+### 28c. Control table, updated
+`analysis_outputs/control_table/control_table.png/.md/.csv`. Added:
+- the median burst size of the granules vs their noise-only copies;
+- the burst size beyond noise, with 95% CI;
+- λ·k0 from the shape fit.
+
+| dataset | granules (movies) | granule brightness (a.u.) | frame noise (% of granule) | burst size, granules / noise copies (% of granule) | burst size beyond noise (% points) | mean burst size (a.u.) | λ·k0, shape fit (a.u.) | turnover beyond noise (%/h) | net change beyond bleaching (%/h) |
+|---|---|---|---|---|---|---|---|---|---|
+| PP7 + QCP-5x/PCP-4x | 76 (9) | 5644 [4645, 6267] | 16.4 | 11.0 / 12.3 | -1.2 [-3.0, 1.0] | 190 [170, 215] | 24 [9, 219] | 1.6 [-5.1, 7.9] | 0.7 [-3.5, 4.4] |
+| PP7-FUS + QCP-5x/PCP-4x | 94 (12) | 3036 [1861, 3735] | 22.2 | 17.2 / 14.9 | 2.3 [-0.1, 4.9] | 182 [113, 269] | 112 [15, 259] | 3.0 [-5.9, 10.4] | -6.6 [-14.9, 1.5] |
+| PP7 + PCP-30x | 145 (8) | 3998 [2305, 8978] | 20.7 | 15.3 / 14.0 | 1.3 [-0.7, 3.5] | 295 [165, 436] | 215 [52, 335] | 1.5 [-3.9, 7.5] | -5.1 [-11.5, 0.7] |
+| PP7-FUS + PCP-30x | 111 (8) | 3436 [2645, 3932] | 23.3 | 17.2 / 16.1 | 1.0 [-1.0, 2.8] | 253 [196, 305] | 134 [70, 206] | 2.2 [-5.9, 10.8] | -1.3 [-4.5, 1.9] |
+| Qβ + QCP-5x/PCP-4x | 191 (10) | 13197 [11812, 14982] | 11.0 | 9.2 / 7.2 | 2.1 [1.0, 3.2] | 461 [394, 545] | 217 [139, 380] | 9.3 [5.3, 13.5] | 3.5 [-0.3, 7.5] |
+| Qβ + QCP-10x | 279 (9) | 17534 [16069, 18904] | 11.0 | 9.1 / 6.6 | 2.6 [1.6, 3.8] | 574 [502, 658] | 174 [51, 548] | 9.7 [6.4, 13.3] | 8.9 [5.4, 13.5] |
+| in vitro, protein:RNA 1:1 | 45 | 914 [660, 1238] | 3.0 | 7.9 / 10.4 | -2.5 [-6.4, 1.3] | 129 [52, 267] | 119 [42, 297] | 8.8 [-2.8, 21.5] | -21.1 [-35.1, -8.8] |
+| in vitro, protein:RNA 10:1 | 37 | 1715 [1527, 1796] | 3.0 | 12.2 / 8.8 | 3.4 [0.7, 7.3] | 234 [151, 321] | 220 [130, 316] | 50.1 [27.9, 74.2] | -39.7 [-62.5, -20.2] |
+| in vitro, protein:RNA 100:1 | 31 | 1726 [809, 2714] | 2.6 | 15.2 / 10.0 | 5.1 [0.3, 7.9] | 432 [200, 725] | 434 [188, 754] | 46.2 [17.0, 78.7] | -70.8 [-88.1, -54.3] |

@@ -17,7 +17,7 @@ recomputed in every permuted group, refit each).
 Simulations with known lambda (k0 = 60) at three noise levels show what the
 shape-fitted lambda measures.
 Data: analysis_outputs/lambda_k0_shape/amplitudes.csv (checks/export_amps_shape.m).
-Usage: python checks/lambda_k0_shape.py [--plot]   (--plot: redraw the figure only)
+Usage: python checks/lambda_k0_shape.py [--plot] [--notrim]   (--notrim: no top-10% trim; output lambda_k0_shape_notrim/)   (--plot: redraw the figure only)
 Writes analysis_outputs/lambda_k0_shape/{fits.csv, fits.md, comparisons.csv, shape_fit.png/.pdf}."""
 import os
 import sys
@@ -30,9 +30,11 @@ import matplotlib.ticker
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-out = os.path.join('analysis_outputs', 'lambda_k0_shape')
+NOTRIM = '--notrim' in sys.argv   # fit every burst: no top-10% trim either (section 27)
+src = os.path.join('analysis_outputs', 'lambda_k0_shape')
+out = src + ('_notrim' if NOTRIM else ''); os.makedirs(out, exist_ok=True)
 rng = np.random.default_rng(27)
-A = pd.read_csv(os.path.join(out, 'amplitudes.csv'))
+A = pd.read_csv(os.path.join(src, 'amplitudes.csv'))
 VIVO = ['4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb']
 VITRO = ['protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1']
 COMPS = [('4PP7-FUS', '4PP7'), ('30PP7-FUS', '30PP7'), ('5Qb', '4PP7'), ('10Qb', '30PP7'),
@@ -62,6 +64,8 @@ def logpdf(a, lam, k0, hi):
 
 
 def trim(a):
+    if NOTRIM:
+        return a, a.max() * 1.001
     hi = np.percentile(a, 90); return a[a <= hi], hi
 
 
@@ -112,9 +116,9 @@ if not PLOT_ONLY:
     for a_, b_ in COMPS:
         Ga, Gb = groups(A[A.dataset == a_]), groups(A[A.dataset == b_])
         fa, fb = F.set_index('dataset').loc[a_], F.set_index('dataset').loc[b_]
-        obs = np.array([fa.lam - fb.lam, np.log(fa.k0 / fb.k0)])
+        obs = np.array([fa.lam - fb.lam, np.log(fa.k0 / fb.k0), np.log(fa.lam * fa.k0 / (fb.lam * fb.k0))])
         movies = list(Ga.values()) + list(Gb.values()); na = len(Ga)
-        cnt = np.zeros(2)
+        cnt = np.zeros(3)
         if len(Ga) > 1 and len(Gb) > 1:   # in vivo: whole movies
             units = movies
         else:                             # in vitro: no movie ids, permute granules (traces)
@@ -123,9 +127,9 @@ if not PLOT_ONLY:
             p = rng.permutation(len(units))
             xa = np.concatenate([t for i in p[:na] for t in units[i]]); xb = np.concatenate([t for i in p[na:] for t in units[i]])
             la, ka, _, _ = fit(xa); lb, kb, _, _ = fit(xb)
-            cnt += np.abs([la - lb, np.log(ka / kb)]) >= np.abs(obs) - 1e-12
-        pl, pk = (cnt + 1) / (NPERM + 1)
-        comp.append(dict(compare=f'{a_} vs {b_}', lamA=fa.lam, lamB=fb.lam, p_lambda=pl, k0A=fa.k0, k0B=fb.k0, p_k0=pk,
+            cnt += np.abs([la - lb, np.log(ka / kb), np.log(la * ka / (lb * kb))]) >= np.abs(obs) - 1e-12
+        pl, pk, pm = (cnt + 1) / (NPERM + 1)
+        comp.append(dict(compare=f'{a_} vs {b_}', lamA=fa.lam, lamB=fb.lam, p_lambda=pl, k0A=fa.k0, k0B=fb.k0, p_k0=pk, lamk0A=fa.lam * fa.k0, lamk0B=fb.lam * fb.k0, p_lamk0=pm,
                          unit='movies' if len(Ga) > 1 and len(Gb) > 1 else 'granules'))
         print(comp[-1], flush=True)
     Cp = pd.DataFrame(comp); Cp.to_csv(os.path.join(out, 'comparisons.csv'), index=False)
@@ -146,7 +150,7 @@ for ds, c in [('4PP7', 'tab:blue'), ('4PP7-FUS', 'tab:green')]:
     xx = np.linspace(0, hi, 300); ax.plot(xx, np.exp(logpdf(xx, r.lam, r.k0, hi)), color=c, lw=2.5,
                                           label=f'{LAB[ds]}: λ {r.lam:.2f} [{r.lam_lo:.2f}-{r.lam_hi:.2f}], k0 {r.k0:.0f} [{r.k0_lo:.0f}-{r.k0_hi:.0f}]')
 pc = Cp[Cp['compare'] == '4PP7-FUS vs 4PP7'].iloc[0]
-ax.set_title(f"(a) shape fits, top 10% removed\nFUS vs PP7: λ p = {pc.p_lambda:.2g}, k0 p = {pc.p_k0:.2g} (movie-level)", fontsize=10, loc='left')
+ax.set_title(f"(a) shape fits, {'all bursts' if NOTRIM else 'top 10% removed'}" + chr(10) + f"FUS vs PP7: λ p = {pc.p_lambda:.2g}, k0 p = {pc.p_k0:.2g}" + (f", λ·k0 p = {pc.p_lamk0:.2g}" if 'p_lamk0' in pc else '') + ' (movie-level)', fontsize=10, loc='left')
 ax.set_xlabel('burst amplitude (a.u., spot mean)'); ax.set_ylabel('probability density'); ax.legend(fontsize=7.5)
 ax = axs[1]
 a, hi = trim(A[A.dataset == '4PP7-FUS'].amp.values)
@@ -160,10 +164,14 @@ ax = axs[2]
 S = F[F.kind == 'simulated']
 for nz, c, lab in [(12, 'tab:purple', 'SNR 5'), (40, 'tab:orange', 'SNR 1.5'), (120, 'tab:brown', 'SNR 0.5')]:
     s = S[S.noise == nz]
-    ax.errorbar(s.lambdaTrue * (1 + (nz - 40) / 1000), s.lam, yerr=[s.lam - s.lam_lo, s.lam_hi - s.lam], fmt='o-', color=c, capsize=3, label=f'{lab} (noise {nz})')
-ax.plot([0.4, 5.5], [0.4, 5.5], 'k:', lw=1, label='perfect recovery')
-ax.set_xlabel('true λ (simulation, k0 = 60)'); ax.set_ylabel('fitted λ (shape fit)'); ax.legend(fontsize=8)
-ax.set_title('(c) does the shape-fitted λ track the true λ?\nsame detection pipeline as the real data', fontsize=10, loc='left')
+    if NOTRIM:   # lambda*k0 recovery
+        ax.errorbar(60 * s.lambdaTrue * (1 + (nz - 40) / 1000), s['mean'], yerr=[s['mean'] - s.mean_lo, s.mean_hi - s['mean']], fmt='o-', color=c, capsize=3, label=f'{lab} (noise {nz})')
+    else:
+        ax.errorbar(s.lambdaTrue * (1 + (nz - 40) / 1000), s.lam, yerr=[s.lam - s.lam_lo, s.lam_hi - s.lam], fmt='o-', color=c, capsize=3, label=f'{lab} (noise {nz})')
+lim = [24, 330] if NOTRIM else [0.4, 5.5]
+ax.plot(lim, lim, 'k:', lw=1, label='perfect recovery')
+ax.set_xlabel('true λ·k0 (simulation, k0 = 60)' if NOTRIM else 'true λ (simulation, k0 = 60)'); ax.set_ylabel('fitted λ·k0 (shape fit)' if NOTRIM else 'fitted λ (shape fit)'); ax.legend(fontsize=8)
+ax.set_title(('(c) does the shape-fitted λ·k0 track the truth?' if NOTRIM else '(c) does the shape-fitted λ track the true λ?') + chr(10) + 'same detection pipeline as the real data', fontsize=10, loc='left')
 ax = axs[3]
 for _, r in F[F.kind != 'simulated'].iterrows():
     ax.errorbar(r.k0, r.lam, xerr=[[r.k0 - r.k0_lo], [r.k0_hi - r.k0]], yerr=[[r.lam - r.lam_lo], [r.lam_hi - r.lam]], fmt='s' if '30' in r.dataset else 'o',
