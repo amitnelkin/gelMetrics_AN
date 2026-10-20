@@ -1012,3 +1012,46 @@ Scripts: `checks/noise_from_background.m` → `checks/noise_background_summary.p
   - The detector divides by the cell-background trend, so a granule that fades faster than its surroundings keeps that net loss in the signal.
   - The surrogates use the dataset's typical granule curve, so a net loss shared by most granules cancels out of the "real minus noise" burst comparison.
   - Net loss is better measured directly: granule fade rate minus cell-background fade rate, per granule. Not yet done.
+
+## 22. Net loss of granule material: granule fade rate vs cell-background fade rate
+
+Script: `checks/net_loss.py` → `analysis_outputs/net_loss/` (`per_trace.csv`, `summary.csv`, `comparisons.csv`, `net_loss.png/pdf`). No burst detection, no noise model.
+
+**Idea.** The cell background is the same fluorescent protein under the same light, so it bleaches at the same rate as the granule. A granule that fades faster than its surroundings is losing material; one that fades slower is gaining.
+
+**Method.**
+- Per granule (traces ≥ 180 frames), I fit robust straight-line slopes (Theil-Sen) to ln(intensity) over time, in %/h.
+- Net change = slope of ln(granule ÷ cell).
+- Granule measured two ways: the spot sum (in vivo only) and the spot mean above the cell.
+- Errors: nested movie → granule bootstrap, 2000×. In vitro has no movie ids, so the bootstrap there is over granules.
+
+**Rates, %/h, mean [95% CI]:**
+
+| dataset | cell fade | net, spot sum | net, mean above cell | granules with net < 0 |
+|---|---|---|---|---|
+| 4PP7 | −7.3 [−12.1, −3.4] | +0.7 [−3.4, 4.2] | −1.3 [−3.8, 1.5] | 43-62% |
+| 4PP7-FUS | −7.8 [−12.1, −4.2] | −6.6 [−14.8, 1.5] | −0.9 [−2.9, 1.0] | 54% |
+| 30PP7 | +1.1 [−2.4, 5.4] | −5.1 [−11.0, 0.7] | +1.3 [−3.0, 5.0] | 41-59% |
+| 30PP7-FUS | −10.5 [−17.6, −5.5] | −1.3 [−4.6, 2.0] | −1.3 [−4.7, 2.0] | 51-52% |
+| 5Qb | −54.5 [−60.0, −49.7] | +3.5 [−0.2, 7.6] | +1.2 [−2.8, 5.4] | 41-43% |
+| 10Qb | −55.4 [−62.7, −50.1] | +8.9 [5.3, 13.5] | −3.5 [−9.8, 1.3] | 27-56% |
+| in vitro 1:1 | −46.9 [−67.7, −27.5] | – | −21.1 [−34.9, −8.5] | 62% |
+| in vitro 10:1 | −19.8 [−25.5, −14.6] | – | −39.7 [−62.4, −20.6] | 84% |
+| in vitro 100:1 | −102.7 [−136, −72.5] | – | −70.8 [−87.9, −53.9] | 94% |
+
+**Comparisons (z):**
+- 4PP7-FUS vs 4PP7: −1.6 (spot sum), +0.2 (mean above cell). The two measures disagree, so there is no effect.
+- 30PP7-FUS vs 30PP7: +1.1 / −1.0.
+- 10Qb vs 30PP7: +3.8 / −1.4. The measures disagree in sign, so this is not robust.
+- In vitro 100:1 vs 1:1: −4.5. In vitro 10:1 vs 1:1: −1.5.
+
+**Checks (in vitro).**
+- The camera offset is assumed 200 for the in vitro data (not confirmed). With offset 0 or 100, net loss stays clearly negative in all three ratios (1:1 −29 to −35, 10:1 −41 to −43, 100:1 −85 to −94 %/h), and 100:1 remains the largest.
+- The loss is faster in the second half of the movie (e.g. 100:1: −31 vs −87 %/h at offset 200). Part of this is arithmetic: the same absolute loss is a larger percentage once little granule is left above the background.
+
+**Interpretation (plain).**
+- **In vivo granules are in net balance.** In every in vivo condition they fade at the same rate as their surroundings, within a few %/h, i.e. by bleaching only. Any shedding is matched by uptake. About half the granules drift up and half down. No FUS effect, and no PP7 vs Qβ difference that both granule measures agree on.
+- **In vitro granules lose material steadily**, beyond bleaching. The loss grows with the protein:RNA ratio: 1:1 ≈ −21, 10:1 ≈ −40, 100:1 ≈ −71 %/h. At 100:1, 94% of the granules lose material. This is the clearest, most robust between-condition difference in the whole analysis. It needs no burst detection and is independent of the noise problem.
+- It fits the burst results: in vitro shows a real excess of negative bursts over noise (sections 18-20), and in vivo does not.
+- **Caveat.** A granule drifting out of focus would also fade faster than the diffuse background. For in vitro (granules settling or moving on the glass) this cannot be excluded from intensity alone. Checking the spot area or size over time, or the focus, would help.
+- **Bleaching itself:** PP7 movies bleach slowly (about 7-10 %/h). Qβ movies bleach about 55 %/h, consistent with their different imaging (250 ms exposure).
