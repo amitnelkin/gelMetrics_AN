@@ -11,9 +11,13 @@ conditions, 10000x, seeded): movies are the replicate unit. For contrast, the
 burst-level Mann-Whitney p (every burst treated as independent, as in a naive
 histogram comparison) is also given for the raw burst sizes.
 CIs: nested movie -> granule bootstrap, 2000x.
-Usage: python checks/fus_brightness.py
+Usage: python checks/fus_brightness.py [--trim 10]
+  --trim P  drop the largest P% of burst sizes per dataset, separately for the
+            granules and their burst-free copies, before every burst measure
+            (as the manuscript's top-10% trim); output folder fus_brightness_trimP.
 Writes analysis_outputs/fus_brightness/{pvalues.csv, pvalues.md, fus_brightness.png/.pdf}."""
 import os
+import sys
 import numpy as np
 import pandas as pd
 from scipy.stats import mannwhitneyu
@@ -21,7 +25,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-out = os.path.join('analysis_outputs', 'fus_brightness'); os.makedirs(out, exist_ok=True)
+TRIM = float(sys.argv[sys.argv.index('--trim') + 1]) if '--trim' in sys.argv else 0
+out = os.path.join('analysis_outputs', 'fus_brightness' + (f'_trim{TRIM:g}' if TRIM else '')); os.makedirs(out, exist_ok=True)
 rng = np.random.default_rng(25)
 H = 10 / 3600; NPERM = 10000; NB = 2000
 COMPS = [('4PP7-FUS', '4PP7'), ('30PP7-FUS', '30PP7'), ('5Qb', '4PP7'), ('10Qb', '30PP7')]
@@ -33,6 +38,10 @@ B = pd.read_csv('analysis_outputs/detection_grid/bursts.csv')
 B = B[(B.window == 13) & (B.SP == 12) & (B.levelBefore > 0)].copy(); B['f'] = B.amp.abs() / B.levelBefore
 T = pd.read_csv('analysis_outputs/detection_grid/traces.csv')
 B = B.merge(T[['dataset', 'trace', 'movie']], on=['dataset', 'trace'])
+if TRIM:
+    cut = B.groupby(['dataset', 'kind']).f.transform(lambda x: np.percentile(x, 100 - TRIM))
+    print('trim: dropped', int((B.f > cut).sum()), 'of', len(B), 'bursts')
+    B = B[B.f <= cut].copy()
 BR = pd.read_csv('analysis_outputs/noise_background/traces.csv'); BR = BR[BR.lengthFrames >= 180].copy()
 BR['noise'] = BR.sdSum_meas / BR.spotSum
 SF = pd.read_csv('analysis_outputs/noise_methods/real_sf.csv'); SF = SF[SF.measure == 'spotsum'].copy()
@@ -157,5 +166,5 @@ for r_, (a, b) in enumerate(COMPS[:2]):
     ax.axhline(0, color='k', lw=0.8); ax.set_xticks([0, 1]); ax.set_xticklabels([LAB[d] for d in pair]); ax.set_xlim(-0.6, 1.6)
     ax.set_ylabel('turnover beyond noise (%/h, 95% CI)')
     ax.set_title(f"(d) dynamics beyond noise: turnover {ptxt(pv('turnover', a, b))}\nfluctuation {ptxt(pv('G30', a, b))}, net change {ptxt(pv('net', a, b))}", fontsize=9, loc='left')
-fig.suptitle('Rows: 4x RNA (top), 30x RNA (bottom). p: movie-level permutation (movies are the replicates)', fontsize=11)
+fig.suptitle('Rows: 4x RNA (top), 30x RNA (bottom). p: movie-level permutation (movies are the replicates)' + (f'. Largest {TRIM:g}% of bursts removed' if TRIM else ''), fontsize=11)
 fig.tight_layout(); fig.savefig(os.path.join(out, 'fus_brightness.png'), dpi=130); fig.savefig(os.path.join(out, 'fus_brightness.pdf'))

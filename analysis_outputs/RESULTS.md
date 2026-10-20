@@ -1221,3 +1221,91 @@ Scripts: `checks/fus_brightness.py` → `analysis_outputs/fus_brightness/` (`pva
   - (c) Data simulated from three of these truths (λ 0.3, 1, 4) at the same sample size look alike: pairwise KS p 0.12, 0.31, 0.03.
   - (d) 200 datasets simulated from a known truth (λ = 1, k0 = 56), each fitted: the fitted λ is within 2× of the truth in only 44%. The 90% range of fitted λ is 0.05-5.7, and the estimates scatter along the ridge (k0 17-106).
 - **This is why the revision reports the dynamics parameters of section 24 instead of λ and k0.** The manuscript's own Fig. 15(b) shows the same ridge: the best k0 falls steadily as λ is raised from 1 to 5, at a nearly unchanged WS.
+
+## 26. Top-10% trim for the burst-size pipeline; and a shape-only fit of λ and k0
+
+### 26a. Section 25a repeated with the largest 10% of bursts removed
+`python checks/fus_brightness.py --trim 10` → `analysis_outputs/fus_brightness_trim10/`. Per dataset, the largest 10% of burst sizes are removed, separately for the granules and their burst-free copies (302 of 2941 bursts). Everything else is as in section 25a.
+
+| measure | 4PP7-FUS vs 4PP7 | 30PP7-FUS vs 30PP7 | 5Qb vs 4PP7 | 10Qb vs 30PP7 |
+|---|---|---|---|---|
+| granule brightness (spot mean) | 3.04e+03 vs 5.64e+03, p = 0.0016 | 3.44e+03 vs 4e+03, p = 0.55 | 1.32e+04 vs 5.64e+03, p = 0.0002 | 1.75e+04 vs 4e+03, p = 0.0005 |
+| frame noise (% of granule) | 22.2 vs 16.4, p = 0.002 | 23.3 vs 20.7, p = 0.23 | 11 vs 16.4, p = 0.0002 | 11 vs 20.7, p = 0.0002 |
+| median burst size, granules (%) | 16.5 vs 10.6, p = 0.0009 (naive burst-level p = 1e-11) | 16.7 vs 14.5, p = 0.056 (naive burst-level p = 0.007) | 8.82 vs 10.6, p = 0.0002 (naive burst-level p = 0.0003) | 8.68 vs 14.5, p = 0.0001 (naive burst-level p = 6e-34) |
+| median burst size, burst-free copies (%) | 14.5 vs 11.8, p = 0.0034 | 15.6 vs 13.3, p = 0.071 | 6.55 vs 11.8, p = 0.0001 | 6.19 vs 13.3, p = 0.0002 |
+| burst size beyond noise (granules - copies, % points) | 2 vs -1.24, p = 0.073 | 1.09 vs 1.2, p = 0.88 | 2.27 vs -1.24, p = 0.0003 | 2.49 vs 1.2, p = 0.24 |
+| turnover beyond noise (%/h) | 2.83 vs 1.28, p = 0.66 | 1.64 vs 1.29, p = 0.91 | 7.53 vs 1.28, p = 0.018 | 7.77 vs 1.29, p = 0.0049 |
+| fluctuation over 5 min (%) | 4.98 vs 2.36, p = 0.17 | 2.79 vs 3.75, p = 0.67 | 3.96 vs 2.36, p = 0.052 | 4.06 vs 3.75, p = 0.66 |
+| net change beyond bleaching (%/h) | -6.58 vs 0.72, p = 0.14 | -1.31 vs -5.14, p = 0.26 | 3.55 vs 0.72, p = 0.34 | 8.86 vs -5.14, p = 0.0001 |
+
+The trim changes nothing qualitatively:
+- 4x FUS vs PP7: burst size 16.5 vs 10.6% (p = 0.0009); the noise-only copies differ too (p = 0.003); beyond noise, a trend (p = 0.07); no difference in dynamics beyond noise.
+- 30x: nothing (p ≥ 0.056).
+- Qβ vs PP7: more turnover beyond noise (p = 0.018 and 0.005).
+
+### 26b. Shape-only fit of λ and k0
+- **How section 25b fitted (not WS):** the likelihood model with a Gaussian noise term, on the 15-90% window.
+- **Here:** the manuscript's own model curve, exactly as `modifiedPoissonFit.m` builds it after B1:
+  - the zero-truncated Poisson pmf at whole numbers of units, joined by straight lines, evaluated at A/k0;
+  - no noise term;
+  - normalised into a density over [0, A90];
+  - fitted to every negative burst except the largest 10% (no lower 15% cut), by maximum likelihood.
+- The normalisation removes the overall height, so only the shape is fitted: no binning, no WS ranks. Bounds: λ 0.05-60.
+- A continuous Gamma-function version was tried first. It degenerates to an exponential (λ → 0, k0 → ∞) for any distribution that falls from small to large amplitudes, so it was dropped.
+- Data: spot mean (manuscript units), R2 in vivo, stored in vitro, window 13, SP 12 (`checks/export_amps_shape.m`).
+- CIs: 200× granule bootstrap, nested in movies in vivo. p values: 1000× movie-level permutation, with the trim recomputed and the model refitted in every permuted group (granules for in vitro: no movie ids).
+- Scripts: `checks/lambda_k0_shape.py` → `analysis_outputs/lambda_k0_shape/` (`fits.csv/.md`, `comparisons.csv`, `shape_fit.png/pdf`).
+
+| dataset | bursts (fitted) | λ [95% CI] | k0 [95% CI] | mean burst λ·k0 [95% CI] |
+|---|---|---|---|---|
+| PP7, 4x | 123 (110) | 0.55 [0.05, 8.60] | 174.5 [24.5, 196.8] | 95 [9, 550] |
+| PP7-FUS, 4x | 144 (129) | 0.44 [0.19, 8.01] | 114.5 [14.4, 133.0] | 50 [21, 214] |
+| PP7, 30x | 225 (202) | 0.84 [0.34, 2.81] | 155.9 [57.3, 220.4] | 130 [51, 275] |
+| PP7-FUS, 30x | 156 (140) | 0.72 [0.33, 6.16] | 176.3 [35.8, 207.7] | 126 [52, 265] |
+| Qβ, 5x | 336 (302) | 0.57 [0.23, 5.67] | 331.9 [70.7, 367.7] | 191 [82, 425] |
+| Qβ, 10x | 497 (447) | 5.46 [0.06, 6.50] | 98.2 [76.9, 515.2] | 536 [34, 602] |
+| in vitro 1:1 | 94 (84) | 1.53 [1.26, 1.99] | 26.4 [16.9, 37.8] | 41 [26, 66] |
+| in vitro 10:1 | 93 (83) | 1.09 [0.74, 1.64] | 87.7 [52.0, 131.3] | 96 [49, 212] |
+| in vitro 100:1 | 105 (94) | 1.45 [1.08, 1.97] | 115.1 [47.4, 272.5] | 166 [87, 433] |
+| sim lambda 0.5, noise 12 | 483 (434) | 2.10 [1.89, 2.26] | 16.9 [16.1, 17.5] | 35 [31, 39] |
+| sim lambda 0.5, noise 40 | 429 (386) | 0.99 [0.84, 1.23] | 35.7 [33.3, 37.8] | 35 [30, 42] |
+| sim lambda 0.5, noise 120 | 357 (321) | 5.13 [0.71, 6.83] | 22.8 [16.3, 96.3] | 117 [68, 129] |
+| sim lambda 1, noise 12 | 615 (553) | 2.40 [2.06, 2.44] | 23.9 [23.0, 28.7] | 57 [52, 61] |
+| sim lambda 1, noise 40 | 511 (460) | 1.80 [1.61, 2.02] | 39.4 [37.9, 41.2] | 71 [63, 79] |
+| sim lambda 1, noise 120 | 370 (333) | 0.86 [0.44, 5.54] | 94.0 [22.6, 111.1] | 81 [49, 128] |
+| sim lambda 2, noise 12 | 680 (612) | 2.18 [1.50, 2.42] | 42.7 [37.4, 58.3] | 93 [85, 99] |
+| sim lambda 2, noise 40 | 654 (588) | 2.16 [1.91, 2.33] | 51.3 [47.9, 56.6] | 111 [101, 121] |
+| sim lambda 2, noise 120 | 467 (420) | 1.50 [0.87, 1.82] | 97.7 [92.2, 125.7] | 146 [107, 171] |
+| sim lambda 3, noise 12 | 737 (663) | 2.26 [2.09, 2.39] | 64.3 [63.4, 68.5] | 145 [134, 157] |
+| sim lambda 3, noise 40 | 680 (612) | 2.27 [2.14, 2.41] | 65.8 [62.7, 69.0] | 149 [140, 161] |
+| sim lambda 3, noise 120 | 544 (489) | 1.78 [1.55, 2.20] | 105.5 [90.8, 118.7] | 188 [173, 209] |
+| sim lambda 4, noise 12 | 740 (666) | 2.51 [2.29, 2.63] | 71.6 [69.7, 84.7] | 180 [169, 195] |
+| sim lambda 4, noise 40 | 763 (686) | 2.48 [2.31, 2.57] | 78.7 [75.4, 85.1] | 195 [180, 209] |
+| sim lambda 4, noise 120 | 635 (571) | 2.05 [1.84, 2.22] | 110.3 [104.9, 120.1] | 226 [207, 245] |
+| sim lambda 5, noise 12 | 786 (707) | 2.38 [2.22, 2.50] | 98.8 [96.2, 103.8] | 235 [217, 257] |
+| sim lambda 5, noise 40 | 735 (661) | 2.60 [2.45, 2.78] | 107.2 [102.0, 112.2] | 279 [260, 300] |
+| sim lambda 5, noise 120 | 705 (634) | 2.28 [2.11, 2.49] | 121.5 [117.2, 127.3] | 277 [257, 304] |
+
+**Comparisons (p, permutation):**
+
+| comparison | λ | p (λ) | k0 | p (k0) |
+|---|---|---|---|---|
+| 4PP7-FUS vs 4PP7 | 0.44 vs 0.55 | 0.98 | 114 vs 175 | 0.61 |
+| 30PP7-FUS vs 30PP7 | 0.72 vs 0.84 | 0.78 | 176 vs 156 | 0.50 |
+| 5Qb vs 4PP7 | 0.58 vs 0.55 | 0.98 | 332 vs 175 | 0.058 |
+| 10Qb vs 30PP7 | 5.46 vs 0.84 | 0.001 | 98 vs 156 | 0.048 |
+| in vitro 10:1 vs 1:1 | 1.09 vs 1.53 | 0.33 | 88 vs 26 | 0.008 |
+| in vitro 100:1 vs 1:1 | 1.45 vs 1.53 | 0.90 | 115 vs 26 | 0.007 |
+
+**What the shape-fitted λ measures (simulations, k0 = 60, same detection pipeline).**
+- At SNR 5 and 1.5, the fitted λ is 2.1-2.6 for every true λ from 1 to 5, and 1-2 at true λ 0.5.
+- At SNR 0.5 it is erratic (0.9-5.1).
+- The fitted k0 is not 60 either: it grows with the true λ, from 17 to 121. Only the mean burst size λ·k0 grows steadily with the true λ.
+- The shape of the detected-burst distribution is set mainly by the detector, which removes small bursts and merges close ones, and by the noise. It is not set by the number of units per burst.
+
+**Interpretation (plain).**
+- Fitting the manuscript's curve to the shape alone gives clean-looking fits and decent CIs in vitro (λ 1.1-1.5), but the simulations show this λ does not track the true number of units.
+- In vivo, λ's CIs span 0.05-8 in most datasets: the shape does not pin it down there either.
+- Differences in k0 between in vitro ratios (p ≈ 0.007) are differences in typical burst size, i.e. the mean λ·k0. That agrees with the burst-size and turnover results.
+- The one λ difference (10Qb, 5.5 vs 0.8, p = 0.001) is not trustworthy: the 10Qb λ CI is 0.06-6.5 (two near-equal solutions).
+- **This supports reporting burst size and turnover with their noise controls (sections 24-25), not λ and k0.**
