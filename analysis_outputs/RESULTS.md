@@ -960,3 +960,55 @@ Across all 42 settings (z median [min-max]; settings with z > 1.96):
 - **More data would.** If the effect is real and the spread stays the same, about 5× more movies per condition (~50-65 movies) would give 80% power with M2b; ~3× would give an even chance of p < 0.05. Brighter or less noisy imaging of 4PP7 would help more than extra movies.
 - **More robust than the FUS effect** (significant at most settings): Qβ shows more excess bursts than PP7 (5Qb vs 4PP7, 10Qb vs 30PP7), and in vitro 10:1 is more dynamic than 1:1. For Qβ this agrees with M1 in section 19, while M2b (section 19) did not separate Qβ from PP7. That is worth stating in the response.
 - **30PP7-FUS vs 30PP7:** no difference at any setting.
+
+## 21. Where the trace noise comes from: an independent check from the movies
+
+Scripts: `checks/noise_from_background.m` → `checks/noise_background_summary.py`; `checks/noise_jitter_sources.py`; examples from `checks/example_traces.m` → `checks/plot_example_traces.py`. Outputs in `analysis_outputs/noise_background/`. Reviewer point: R2 6. In vivo only (no in vitro movies).
+
+**Question.** The burst-free surrogates use the noise measured on each trace itself. Could that "noise" be fast real granule changes?
+
+**Method.**
+- **Prediction from pixels away from all granules.** For each movie, take every pixel > 10 px from any tracked point. Its frame-to-frame variance against its mean intensity is a straight line (R² ≥ 0.99), the EMCCD photon-noise law.
+- **Predicted vs measured noise.** Feed each trace's spot and cell pixels (same crop and multithresh masks) through that line. This gives the expected camera + photon noise of the spot sum, the spot mean and the cell mean. Compare it with the noise actually measured on each trace.
+- **Caveats on the prediction:**
+  - Granule pixels are brighter than any calibration pixel (all spot pixels lie above the calibrated range), so the line is extrapolated 5-10×.
+  - The intercept is negative.
+  - The prediction is therefore approximate. The conclusions below do not depend on it.
+
+**Measured ÷ predicted noise (median over traces ≥ 180 frames):**
+
+| dataset | spot sum | spot mean | cell mean |
+|---|---|---|---|
+| 4PP7 | 4.1 | 2.4 | 4.3 |
+| 4PP7-FUS | 3.7 | 2.2 | 3.8 |
+| 30PP7 | 4.1 | 2.4 | 4.2 |
+| 30PP7-FUS | 3.6 | 2.2 | 4.0 |
+| 5Qb | 6.1 | 3.5 | 5.9 |
+| 10Qb | 6.5 | 3.9 | 6.2 |
+
+**Frame-to-frame jitter, relative to the level (robust):**
+
+| dataset | spot mean | spot sum | cell mean | spot area (pixels in mask) | rank corr. of spot vs cell changes |
+|---|---|---|---|---|---|
+| 4PP7 | 3.8% | 16% | 6.7% | 16% | 0.79 |
+| 4PP7-FUS | 5.3% | 22% | 7.6% | 24% | 0.82 |
+| 30PP7 | 5.4% | 21% | 7.2% | 24% | 0.76 |
+| 30PP7-FUS | 7.1% | 23% | 9.1% | 28% | 0.72 |
+| 5Qb | 2.3% | 11% | 3.8% | 11% | 0.80 |
+| 10Qb | 2.3% | 11% | 3.5% | 12% | 0.81 |
+
+**Interpretation (plain).**
+- **The jitter is mostly not camera/photon noise.** It is 2-6× larger than photon noise predicts.
+- **The extra jitter is a measurement effect, not granule dynamics:**
+  1. The cell background, which has no granule bursts, shows the same excess (4-6×).
+  2. The spot and cell levels jump up and down together (correlation ~0.8).
+  3. The number of pixels the threshold assigns to the granule changes by 11-28% from one frame to the next, i.e. every 10 s. A real granule does not change size that fast and back.
+- **Cause.** The multithresh thresholds are recomputed in every frame, and each noisy frame moves the class boundaries. That changes which pixels count as "spot" and "cell" and shifts both class means together.
+- **This answers the concern about the surrogates.** The noise level they use is not inflated by real granule dynamics. It is real measurement jitter, so the false-burst rates (sections 18-20) stand.
+- **The spot sum (the "fraction shed" measure) is hit hardest.** Its jitter is 11-23% per frame, against 2-7% for the spot mean, because it multiplies by the jittering mask area. Dividing by the cell level frame by frame does not help (the two jitters are not proportional).
+- **Implication.** This jitter is avoidable. Freezing the mask, or the thresholds, over time for each granule (e.g. thresholds from a running median) would remove most of it while keeping multithresh. If the jitter fell to the spot-mean level, the noise on the spot sum would drop about 3-4×. That is the main lever on the noise floor and on the 4x FUS power problem (section 20). It is an extraction change, not yet made.
+- **Example traces** (`example_traces.png`): a 4PP7-FUS trace and its burst-free copy look alike raw and after smoothing, and the detector calls bursts in both. In the in vitro 10:1 example, the granule fades much faster than the dataset's typical bleaching curve. The detector calls that faster fade negative bursts, while the burst-free copy (typical curve) fades less.
+- **Net loss vs bleaching.**
+  - The detector divides by the cell-background trend, so a granule that fades faster than its surroundings keeps that net loss in the signal.
+  - The surrogates use the dataset's typical granule curve, so a net loss shared by most granules cancels out of the "real minus noise" burst comparison.
+  - Net loss is better measured directly: granule fade rate minus cell-background fade rate, per granule. Not yet done.
