@@ -1054,4 +1054,4 @@ Script: `checks/net_loss.py` → `analysis_outputs/net_loss/` (`per_trace.csv`, 
 - **In vitro granules lose material steadily**, beyond bleaching. The loss grows with the protein:RNA ratio: 1:1 ≈ −21, 10:1 ≈ −40, 100:1 ≈ −71 %/h. At 100:1, 94% of the granules lose material. This is the clearest, most robust between-condition difference in the whole analysis. It needs no burst detection and is independent of the noise problem.
 - It fits the burst results: in vitro shows a real excess of negative bursts over noise (sections 18-20), and in vivo does not.
 - **Caveat.** A granule drifting out of focus would also fade faster than the diffuse background. For in vitro (granules settling or moving on the glass) this cannot be excluded from intensity alone. Checking the spot area or size over time, or the focus, would help.
-- **Bleaching itself:** PP7 movies bleach slowly (about 7-10 %/h). Qβ movies bleach about 55 %/h, consistent with their different imaging (250 ms exposure).
+- **Bleaching itself:** PP7 movies bleach slowly (about 7-10 %/h). Qβ movies bleach about 55 %/h, probably reflecting different imaging settings (not checked).
