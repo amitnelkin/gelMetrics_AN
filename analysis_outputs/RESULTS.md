@@ -1470,3 +1470,52 @@ Scripts: `checks/ms_sim_test.m` (simulation + detection) and `checks/ms_eq19_fit
 
 **Story for the response (suggested wording).**
 "We first estimated λ and k0 by fitting Eq. (1.9) to the burst-amplitude histogram. On simulated data with known parameters this does not recover λ or k0, with any of six scoring methods (MSE, likelihood, KS, Cramér-von Mises, QQ, WS). The burst detector smooths and merges events, so the detected-burst distribution has nearly the same shape for any true λ (fitted λ ≈ 2-3 for true λ 0.5-5). Only the product λ·k0, i.e. the mean burst size, is recovered reliably. We therefore report burst size (median and mean) with a noise control, rather than λ and k0 separately."
+
+## 31. MS Fig. 13 recreated for every scoring method; was the true λ a close runner-up?
+
+Script: `checks/ms_fig13.py` (simulated rows from `checks/ms_sim_test.m`, plus `ms_sim_test(2, [12 120], '_snr')` for the Fig. 13 rows λ = 2 at SNR 5 and 0.5). Outputs in `analysis_outputs/ms_sim_test/`: `fig13_heatmaps.png` (per score: score and k0 at each λest = 1-5), `fig13_choice.png`, `fig13_scores.csv`, `fig13_choice.csv`, `fig13_choice_summary.csv`.
+
+**Setup.**
+- Eq. (1.9) as written, all negative bursts, k0 = 60.
+- Candidate λ = 1-5 as in the manuscript, k0 optimised for each.
+- Rows: true λ 0.5-5 at SNR 1.5 (noise 40, the MS default), and λ 2 at SNR 5 and 0.5. 5 datasets per row.
+- **"Close runner-up" test:**
+  - 100 granule (trace) bootstrap resamples per dataset (500 per row), refitted: how often does each λ win?
+  - For the likelihood, 2·ΔNLL between the true λ and the winner. Above about 4, the true λ is rejected.
+
+**How often the true λ is chosen (500 resampled fits per row):**
+
+| row | MSE | NLL | KS | CvM | QQ | WS |
+|---|---|---|---|---|---|---|
+| λ = 1, SNR 1.5 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| λ = 2, SNR 1.5 | 0.87 | 0.59 | 0.75 | 0.77 | 0.72 | 0.63 |
+| λ = 3, SNR 1.5 | 0.15 | 0.50 | 0.35 | 0.59 | 0.69 | 0.31 |
+| λ = 4, SNR 1.5 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| λ = 5, SNR 1.5 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| λ = 2, SNR 5 | 0.68 | 0.16 | 0.09 | 0.28 | 0.91 | 0.97 |
+| λ = 2, SNR 0.5 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+
+(True λ 0.5 is not among the candidates; it is fitted as 2-3.)
+
+**Likelihood, 2·(NLL(λest) − NLL(best)), median of 5 datasets:**
+
+| row | λest 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| λ = 1 | 124 | 10 | **0** | 68 | 195 |
+| λ = 2 | 143 | **0** | 4 | 117 | 311 |
+| λ = 3 | 171 | **0** | 1 | 130 | 355 |
+| λ = 4 | 191 | 3 | **0** | 136 | 373 |
+| λ = 5 | 239 | 25 | **0** | 115 | 334 |
+| λ = 2, SNR 5 | **0** | 22 | 228 | 571 | 1018 |
+| λ = 2, SNR 0.5 | 304 | 128 | 33 | **0** | 11 |
+
+**k0 if λ were fixed at the truth** (true 60): 63-77 for λ ≥ 2 at SNR ≥ 1.5, but 84-99 at λ 1 and 99-112 at SNR 0.5.
+
+**Reading (plain).**
+- **The true λ is not a close runner-up**, except when it happens to be 2 or 3.
+  - At true λ 4 the true value is never chosen (0 of 500 resamples, any score), and the likelihood rejects it decisively (2·ΔNLL = 136).
+  - Same at λ 5 (334) and λ 1 (124).
+- **The method has a preferred answer of λ ≈ 2-3**, set by the detector, and it is "right" only when the truth falls there. A stopped clock is right twice a day.
+- **The chosen λ follows the noise level, not the number of units.** The same true λ = 2 is fitted as 1-2 at SNR 5, 2 at SNR 1.5, and 4 at SNR 0.5, with every score. This reproduces the referee's simulated-vs-estimated discrepancy (true 2, estimated 4) at low SNR.
+- **The score choice matters at the margins** (e.g. λ 2 at SNR 5: NLL picks 1, QQ and WS pick 2), but no score recovers λ across the range.
+- **Each k0 heatmap shows the ridge:** as λest increases, the best k0 falls in proportion. Only λ·k0 is fixed by the data.

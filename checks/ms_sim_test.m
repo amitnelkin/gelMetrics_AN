@@ -1,4 +1,4 @@
-function ms_sim_test()
+function ms_sim_test(lams, noises, tag)
 % MS_SIM_TEST  The manuscript's own approach on simulated data (RESULTS.md
 % section 30): simulated burst signals as MS section III (generateSim type 3,
 % 1000 signals x 361 frames, k0 = 60, white noise 40 a.u., bleaching
@@ -12,11 +12,16 @@ function ms_sim_test()
 % example traces with their processed signal and detected bursts.
 % Writes analysis_outputs/ms_sim_test/{amplitudes.csv, true_jumps.csv,
 % example_traces.csv, example_bursts.csv}.
+% Optional (section 31): lams, noises and a file tag, e.g. ms_sim_test(2, [12 120], '_snr')
+% for the MS Fig. 13 rows lambda 2 at SNR 5 and 0.5 (k0/noise); ids then start at 1001.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'ms_sim_test'); if ~exist(outDir, 'dir'), mkdir(outDir); end
-lams = [0.5 1 2 3 4 5]; noises = [40 4]; nRep = 5; nT = 1000; nF = 361; k = 0.0026; SP = 15; w = 13;
-tVec = (0:360) * 10/60; A = cell(0, 6); J = cell(0, 5); ex = cell(0, 5); eb = cell(0, 6); id = 0;
+if nargin < 1, lams = [0.5 1 2 3 4 5]; end
+if nargin < 2, noises = [40 4]; end
+if nargin < 3, tag = ''; end
+nRep = 5; nT = 1000; nF = 361; k = 0.0026; SP = 15; w = 13;
+tVec = (0:360) * 10/60; A = cell(0, 6); J = cell(0, 5); ex = cell(0, 5); eb = cell(0, 6); id = 1000 * ~isempty(tag);
 for nz = noises
     for lam = lams
         for rep = 1:nRep
@@ -42,10 +47,10 @@ for nz = noises
         end
     end
 end
-writetable(cell2table(A, 'VariableNames', {'id','lambda','noise','rep','trace','amp'}), fullfile(outDir, 'amplitudes.csv'));
-writetable(cell2table(J, 'VariableNames', {'id','lambda','noise','rep','jump'}), fullfile(outDir, 'true_jumps.csv'));
-writetable(cell2table(ex, 'VariableNames', {'trace','frame','raw','processed','noiseFree'}), fullfile(outDir, 'example_traces.csv'));
-writetable(cell2table(eb, 'VariableNames', {'trace','sign','firstFrame','lastFrame','levelStart','levelEnd'}), fullfile(outDir, 'example_bursts.csv'));
+writetable(cell2table(A, 'VariableNames', {'id','lambda','noise','rep','trace','amp'}), fullfile(outDir, ['amplitudes' tag '.csv']));
+writetable(cell2table(J, 'VariableNames', {'id','lambda','noise','rep','jump'}), fullfile(outDir, ['true_jumps' tag '.csv']));
+if ~isempty(ex), writetable(cell2table(ex, 'VariableNames', {'trace','frame','raw','processed','noiseFree'}), fullfile(outDir, 'example_traces.csv')); end
+if ~isempty(eb), writetable(cell2table(eb, 'VariableNames', {'trace','sign','firstFrame','lastFrame','levelStart','levelEnd'}), fullfile(outDir, 'example_bursts.csv')); end
 disp('MS_SIM_DONE');
 end
 
