@@ -1176,3 +1176,48 @@ Scripts: `checks/report_params_sim.m` (simulations with known truth), `checks/st
 - **Claims that change:**
   - "Qβ granules are more dynamic than PP7 granules" is supported (turnover beyond noise).
   - "PP7-FUS increases λ for low-valency RNA" is not supported: no PP7 condition shows dynamics distinguishable from noise with this extraction (see section 23 for the steady-threshold test).
+
+## 25. Why 4x PP7 vs PP7-FUS differ consistently: brightness vs dynamics; and why λ and k0 are not reported
+
+Scripts: `checks/fus_brightness.py` → `analysis_outputs/fus_brightness/` (`pvalues.csv/.md`, `fus_brightness.png/pdf`); `checks/lambda_k0_degeneracy.py` → `analysis_outputs/lambda_k0_degeneracy/` (`degeneracy.png/pdf`, `summary.csv`).
+
+### 25a. Brightness vs dynamics, with p values
+
+- In vivo R2 (published extraction), spot sum, window 13, SP 12, traces ≥ 180 frames.
+- **p values:** movie-level permutation (whole movies reassigned between the two conditions, 10000×), because movies are the replicates. For the raw burst sizes, the naive burst-level Mann-Whitney p (every burst counted as independent) is also shown.
+- **CIs:** nested movie → granule bootstrap.
+
+| measure | 4PP7-FUS vs 4PP7 | 30PP7-FUS vs 30PP7 | 5Qb vs 4PP7 | 10Qb vs 30PP7 |
+|---|---|---|---|---|
+| granule brightness (spot mean) | 3.04e+03 vs 5.64e+03, p = 0.0016 | 3.44e+03 vs 4e+03, p = 0.55 | 1.32e+04 vs 5.64e+03, p = 0.0002 | 1.75e+04 vs 4e+03, p = 0.0005 |
+| frame noise (% of granule) | 22.2 vs 16.4, p = 0.002 | 23.3 vs 20.7, p = 0.23 | 11 vs 16.4, p = 0.0002 | 11 vs 20.7, p = 0.0002 |
+| median burst size, granules (%) | 17.2 vs 11, p = 0.0006 (naive burst-level p = 8e-11) | 17.2 vs 15.3, p = 0.1 (naive burst-level p = 0.02) | 9.25 vs 11, p = 0.0006 (naive burst-level p = 0.001) | 9.14 vs 15.3, p = 0.0001 (naive burst-level p = 5e-31) |
+| median burst size, burst-free copies (%) | 14.9 vs 12.3, p = 0.01 | 16.1 vs 14, p = 0.19 | 7.18 vs 12.3, p = 0.0001 | 6.55 vs 14, p = 0.0002 |
+| burst size beyond noise (granules - copies, % points) | 2.26 vs -1.23, p = 0.062 | 1.05 vs 1.31, p = 0.78 | 2.07 vs -1.23, p = 0.0003 | 2.58 vs 1.31, p = 0.22 |
+| turnover beyond noise (%/h) | 3.04 vs 1.61, p = 0.73 | 2.24 vs 1.52, p = 0.84 | 9.33 vs 1.61, p = 0.017 | 9.73 vs 1.52, p = 0.0019 |
+| fluctuation over 5 min (%) | 4.98 vs 2.36, p = 0.17 | 2.79 vs 3.75, p = 0.67 | 3.96 vs 2.36, p = 0.052 | 4.06 vs 3.75, p = 0.66 |
+| net change beyond bleaching (%/h) | -6.58 vs 0.72, p = 0.14 | -1.31 vs -5.14, p = 0.26 | 3.55 vs 0.72, p = 0.34 | 8.86 vs -5.14, p = 0.0001 |
+
+**Reading (plain).**
+- **4x pair:**
+  - FUS granules are about half as bright (p = 0.002), so they are noisier relative to their size (22% vs 16% per frame, p = 0.002).
+  - Their bursts are larger: 17.2% vs 11.0% of the granule. That holds even with movies as replicates (p = 0.0006); the naive burst-level test (p = 8e-11) greatly overstates the evidence.
+  - Of the 6.1-point gap, 2.6 points are reproduced by burst-free copies with the same brightness and noise (p = 0.01). The remaining 3.5 points are beyond noise (p = 0.06, a trend).
+  - Turnover beyond noise, fluctuation and net change do not differ (p 0.14-0.73).
+- **30x pair:** similar brightness (p = 0.55) and similar noise (p = 0.23); no difference in any measure (p ≥ 0.1).
+- **The consistency you noticed is therefore real, but mostly a brightness difference:**
+  - FUS at low valency makes dimmer, smaller granules. Their apparent bursts are larger partly for that reason, plus a borderline extra.
+  - At high valency the two proteins make granules of similar brightness, and nothing differs.
+  - The brightness difference is itself a robust, reportable biological result. It fits the manuscript's lower k0 for PP7-FUS at 4x.
+- **Qβ vs PP7:** brighter granules and less noise (p ≤ 0.0005), and clearly more turnover beyond noise (p = 0.017 and 0.002). 5Qb bursts exceed their noise copies (p = 0.0003 vs 4PP7).
+
+### 25b. Why λ and k0 are not fitted
+
+- **Model:** that of `gelmetricsMLE.m` in basic form: amplitude = n·k0 + Gaussian noise (σ = 71, from the quiescent segments), n ≥ 1 zero-truncated Poisson(λ).
+- **Data:** 4PP7-FUS negative-burst amplitudes (R2, SP 10), between the 15th percentile (truncation) and the 90th percentile (top trim); n = 156.
+- **Results:**
+  - (a) λ = 0.3/k0 = 85, λ = 1/k0 = 56, λ = 2/k0 = 38 and λ = 4/k0 = 23 fit the same histogram equally well. The log-likelihood is within 0.6 of the best for all four, and KS p is 0.51-0.83. Only the mean burst size (≈ 87-99) is fixed by the data.
+  - (b) The likelihood surface is a long ridge along the line of constant mean burst size. The 95% region spans λ from < 0.05 to > 8.
+  - (c) Data simulated from three of these truths (λ 0.3, 1, 4) at the same sample size look alike: pairwise KS p 0.12, 0.31, 0.03.
+  - (d) 200 datasets simulated from a known truth (λ = 1, k0 = 56), each fitted: the fitted λ is within 2× of the truth in only 44%. The 90% range of fitted λ is 0.05-5.7, and the estimates scatter along the ridge (k0 17-106).
+- **This is why the revision reports the dynamics parameters of section 24 instead of λ and k0.** The manuscript's own Fig. 15(b) shows the same ridge: the best k0 falls steadily as λ is raised from 1 to 5, at a nearly unchanged WS.
