@@ -1416,3 +1416,57 @@ Script: `checks/control_table.py` → `analysis_outputs/control_table/` (`contro
   - **Report the mean only when relating to λ·k0 or total turnover.**
   - Noteworthy: 4PP7-FUS has a smaller median (132 vs 187) but a similar mean (182 vs 190), with skewness 2.2 vs 0.5. FUS has more small bursts and a longer tail of large ones.
 - **Summary deck for the PI meeting:** `analysis_outputs/deck/GelMetrics_revision_summary.pptx`, 12 slides with speaker notes, built by `checks/make_deck.py` from the figures above.
+
+## 30. The manuscript's approach revisited: Eq. (1.9) on simulated data, six ways of scoring the fit
+
+Scripts: `checks/ms_sim_test.m` (simulation + detection) and `checks/ms_eq19_fit.py` (fits). Outputs in `analysis_outputs/ms_sim_test/`: `traces.png`, `fits_examples.png`, `recovery.png`, `fits.csv`, `fits_summary.csv`.
+
+**Setup (as MS section III).**
+- Simulation: generateSim type 3, 1000 signals × 361 frames, k0 = 60, white noise 40 a.u., bleaching 0.0026/min.
+- λ ∈ {0.5, 1, 2, 3, 4, 5}, 5 independent datasets each.
+- Detection: analysis.m, window 13, SP 15; negative bursts; **nothing removed** (no 15th-percentile cut, no top trim).
+- Controls:
+  - the same simulation at noise 4 (almost noise-free);
+  - the true jump sizes of the noise-free twin, i.e. what Eq. (1.9) is meant to describe, without noise or detection.
+- **Model:** Eq. (1.9) exactly as written, p(I) = (1/k0)·λ^(I/k0)·e^(−λ)/(I/k0)!, with no noise term.
+- **Scores** (same grid, λ 0.05-20 plus 1..5, k0 2-600): MSE (10-bin histogram), negative log-likelihood, Kolmogorov-Smirnov, Cramér-von Mises, QQ RMSE, the manuscript's WS, and WS restricted to integer λ 1-5 (as in the MS).
+
+**Fitted λ (median of 5 datasets):**
+
+| true λ | 0.5 | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|
+| detected, noise 40 (MS), all scores | 2.4-3.0 | 2.2-3.0 | 2.0-2.4 | 2.0-2.6 | 2.4-3.0 | 2.4-3.2 |
+| detected, noise 4, all scores | 0.1-1.0 | 0.7-3.5 | 0.1-2.4 | 0.1-1.8 | 0.6-2.2 | 0.9-3.0 |
+| true jumps, NLL / CvM / KS | 6.9 / 4.0 / 0.2 | 4.4 / 3.0 / 3.5 | 3.5 / 3.0 / 3.2 | 3.8 / 3.2 / 3.2 | 4.4 / 4.0 / 4.0 | 5.1 / 5.0 / 5.0 |
+
+**Fitted k0 (true 60), detected, noise 40:** 26-34 at λ 0.5, rising to 99-137 at λ 5, for every score.
+
+**Fitted λ·k0 (true 60λ), detected, noise 40:**
+- 76-81 for true 30, 102-108 for 60, 154-158 for 120, 205-210 for 180, 256-276 for 240, 313-335 for 300.
+- It tracks the truth with an upward offset that shrinks from +50 to +20.
+- At noise 4 it is close to the truth for the likelihood, CvM and QQ scores.
+
+**Goodness of fit:** the best (likelihood) curve is rejected by a KS test for most settings (p < 0.01 at noise 40; p < 0.001 at noise 4).
+
+**Mean burst size vs truth:**
+
+| true λ | 0.5 | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|
+| true mean jump | 76 | 94 | 141 | 190 | 245 | 302 |
+| detected, noise 4 | 62 | 88 | 138 | 188 | 247 | 305 |
+| detected, noise 40 | 83 | 111 | 164 | 213 | 268 | 325 |
+
+**Why the manuscript's approach does not work (plain).**
+1. **The detector reshapes the burst distribution.**
+   - Smoothing over 13 frames turns each step into a ramp. Steps closer together than the window merge into one larger "burst", and small steps are missed (example traces: a trace with two clear drops gives 0 detected bursts).
+   - The detected distribution therefore always has the same smooth hump shape, whatever the true number of units. Fitted λ ends up at about 2-3 for every true λ from 0.5 to 5, with every scoring method. This is the simulated-vs-estimated λ discrepancy the referee pointed out (2 vs 4).
+2. **The model does not match how bursts are generated, even on perfect data.**
+   - Bursts carry 1, 2, 3, ... whole units, and a burst with 0 units is invisible. Eq. (1.9) is a smooth curve that does not account for either.
+   - On the true jumps it recovers λ only for λ ≥ 3, and overestimates it below (λ 0.5 → 4-7; λ 1 → 3-4.4).
+3. **The answer depends on how the fit is scored.**
+   - With little noise, the six scores give λ from 0.1 to 3.5 for the same data.
+   - The integer λ grid of the manuscript hides this by forcing one of five values.
+4. **What survives:** the product λ·k0, i.e. the mean burst size. It follows the truth for every score and every noise level, with a modest upward bias at the MS noise level. Separately λ and k0 do not.
+
+**Story for the response (suggested wording).**
+"We first estimated λ and k0 by fitting Eq. (1.9) to the burst-amplitude histogram. On simulated data with known parameters this does not recover λ or k0, with any of six scoring methods (MSE, likelihood, KS, Cramér-von Mises, QQ, WS). The burst detector smooths and merges events, so the detected-burst distribution has nearly the same shape for any true λ (fitted λ ≈ 2-3 for true λ 0.5-5). Only the product λ·k0, i.e. the mean burst size, is recovered reliably. We therefore report burst size (median and mean) with a noise control, rather than λ and k0 separately."
