@@ -1406,3 +1406,13 @@ Script: `checks/control_table.py` → `analysis_outputs/control_table/` (`contro
 | in vitro, protein:RNA 1:1 | 45 | 914 [660, 1238] | 3.0 | 7.9 / 10.4 | -2.5 [-6.4, 1.3] | 129 [52, 267] | 119 [42, 297] | 8.8 [-2.8, 21.5] | -21.1 [-35.1, -8.8] |
 | in vitro, protein:RNA 10:1 | 37 | 1715 [1527, 1796] | 3.0 | 12.2 / 8.8 | 3.4 [0.7, 7.3] | 234 [151, 321] | 220 [130, 316] | 50.1 [27.9, 74.2] | -39.7 [-62.5, -20.2] |
 | in vitro, protein:RNA 100:1 | 31 | 1726 [809, 2714] | 2.6 | 15.2 / 10.0 | 5.1 [0.3, 7.9] | 432 [200, 725] | 434 [188, 754] | 46.2 [17.0, 78.7] | -70.8 [-88.1, -54.3] |
+
+## 29. Median burst size added; median vs mean; summary deck
+
+- `analysis_outputs/control_table/` now also lists the median burst size [95% CI] (spot-mean units, all bursts).
+- **Median vs mean.** The burst-size distributions are right-skewed: a few very large bursts, possibly merged events. Skewness is 0.5-8.9; e.g. in vitro 1:1 has median 36, mean 129, max 5272.
+  - **Mean:** what λ·k0 represents, and what adds up to total turnover (rate × mean). It is dominated by the rare largest bursts, so its CIs are wide and it is sensitive to merged events.
+  - **Median:** the typical burst. Robust to the tail, tighter CIs; use it for comparing conditions, as in all tests in sections 25-28.
+  - **Report the mean only when relating to λ·k0 or total turnover.**
+  - Noteworthy: 4PP7-FUS has a smaller median (132 vs 187) but a similar mean (182 vs 190), with skewness 2.2 vs 0.5. FUS has more small bursts and a longer tail of large ones.
+- **Summary deck for the PI meeting:** `analysis_outputs/deck/GelMetrics_revision_summary.pptx`, 12 slides with speaker notes, built by `checks/make_deck.py` from the figures above.

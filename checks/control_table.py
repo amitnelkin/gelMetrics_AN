@@ -7,7 +7,8 @@ in vitro, 2000x, seeded):
   frame noise              robust frame-to-frame noise of the granule signal,
                            % of its level (spot sum in vivo, spot mean in vitro)
   mean burst size          mean negative-burst amplitude, all bursts, no trim
-                           (spot mean units, window 13, SP 12), model-free
+                           (spot mean units, window 13, SP 12), model-free;
+                           also the median (robust to the long tail)
   burst size, granules / copies  median fraction of the granule shed per burst,
                            granules and their burst-free copies (spot sum), and
                            the difference = burst size beyond noise, with CI
@@ -84,6 +85,7 @@ for ds in VIVO + VITRO:
     U = {m: [g2.amp.values for _, g2 in g.groupby('trace')] for m, g in a.groupby('movie')}
     r['bursts'] = len(a); r['meanBurst'] = a.amp.mean(); r['medianBurst'] = a.amp.median()
     r['meanBurst_lo'], r['meanBurst_hi'] = nested(U, lambda it: np.concatenate(it).mean() if len(it) else np.nan)
+    r['medianBurst_lo'], r['medianBurst_hi'] = nested(U, lambda it: np.median(np.concatenate(it)) if len(it) else np.nan)
     # turnover beyond noise + noise share
     bb = GB[GB.dataset == ds]
     R = bb[bb.kind == 'real'].groupby('trace').f.sum(); Su = bb[bb.kind == 'surr'].groupby('trace').f.sum()
@@ -113,18 +115,18 @@ T = pd.DataFrame(rows); T.to_csv(os.path.join(out, 'control_table.csv'), index=F
 
 ci = lambda r, c, f='.1f': f"{r[c]:{f}} [{r[c + '_lo']:{f}}, {r[c + '_hi']:{f}}]"
 hdr = ['dataset', 'granules (movies)', 'granule brightness (a.u.)', 'frame noise (% of granule)',
-       'burst size, granules / noise copies (% of granule)', 'burst size beyond noise (% points)', 'mean burst size (a.u.)', 'λ·k0, shape fit (a.u.)',
+       'burst size, granules / noise copies (% of granule)', 'burst size beyond noise (% points)', 'median burst size (a.u.)', 'mean burst size (a.u.)', 'λ·k0, shape fit (a.u.)',
        'turnover beyond noise (%/h)', 'net change beyond bleaching (%/h)']
 cells = []
 for _, r in T.iterrows():
     cells.append([r.label, f"{r.granules}" + (f" ({int(r.movies)})" if r.dataset in VIVO else ''), ci(r, 'brightness', '.0f'), f"{r.noise:.1f}",
-                  f"{r.sizeReal:.1f} / {r.sizeCopy:.1f}", ci(r, 'sizeBeyond'), ci(r, 'meanBurst', '.0f'), ci(r, 'lamk0', '.0f'), ci(r, 'turnover'), ci(r, 'net')])
+                  f"{r.sizeReal:.1f} / {r.sizeCopy:.1f}", ci(r, 'sizeBeyond'), ci(r, 'medianBurst', '.0f'), ci(r, 'meanBurst', '.0f'), ci(r, 'lamk0', '.0f'), ci(r, 'turnover'), ci(r, 'net')])
 with open(os.path.join(out, 'control_table.md'), 'w', encoding='utf-8', newline=chr(13) + chr(10)) as fh:
     fh.write('| ' + ' | '.join(hdr) + ' |' + chr(10) + '|' + '---|' * len(hdr) + chr(10))
     for c in cells:
         fh.write('| ' + ' | '.join(c) + ' |' + chr(10))
 print(open(os.path.join(out, 'control_table.md'), encoding='utf-8').read())
-fig, ax = plt.subplots(figsize=(24, 4.8)); ax.axis('off')
+fig, ax = plt.subplots(figsize=(26, 4.8)); ax.axis('off')
 tb = ax.table(cellText=cells, colLabels=[h.replace(', ', ',\n').replace(' (', '\n(').replace('turnover explained', 'turnover\nexplained') for h in hdr], loc='center', cellLoc='center')
 tb.auto_set_font_size(False); tb.set_fontsize(8.5); tb.scale(1, 2.1)
 for (i, j), c in tb.get_celld().items():
