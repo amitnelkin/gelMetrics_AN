@@ -113,7 +113,7 @@ dark(prs, 'GelMetrics revision: what the re-analysis shows', 'Summary of the cod
 s = content(prs, 'Bottom line', notes='Five messages; each has its own slide after this one.')
 msgs = [('1', 'A pipeline bug corrupted the PP7 traces', 'Two-channel movies mixed DIC pages into the red signal. Fixed and re-extracted.'),
         ('2', 'Most PP7 "bursts" are noise', 'Burst-free copies of each trace reproduce 88-94% of the detected PP7 turnover.'),
-        ('3', 'λ and k0 cannot be separated', 'Only their product (≈ mean burst size) is pinned down by the data.'),
+        ('3', 'λ and k0 cannot be separated', 'The manuscript fit returns λ ≈ 2-3 for any true λ; only λ·k0 (≈ mean burst size) is recovered.'),
         ('4', 'FUS at 4x: mostly brightness, partly real', 'FUS granules are 2x dimmer; 57% of the burst-size gap is beyond noise (one-sided p = 0.03).'),
         ('5', 'Robust differences remain', 'Qβ is more dynamic than PP7; in vitro granules lose material faster at higher protein:RNA.')]
 for i, (n, h, d) in enumerate(msgs):
@@ -170,6 +170,36 @@ bullets(s, 0.6, 4.6, 12.1, 2.4, [
     [('Same histogram, many answers: ', {'bold': True}), ('λ from 0.3 to 4 fits equally well; only λ·k0 (≈ the mean burst size) is fixed.', {})],
     [('Known truth, poor recovery: ', {'bold': True}), ('fitted λ within 2x of the true λ in only 44% of simulated datasets (range 0.05-5.7).', {})],
     [('Integer λ in the manuscript ', {'bold': True}), ('hides this: the grid search picks one point on a flat ridge.', {})]], size=15)
+
+# 6b manuscript approach on simulations
+s = content(prs, 'The manuscript’s fit returns λ ≈ 2-3 whatever the truth',
+            notes='Simulations as MS section III (1000 signals, k0 = 60, noise 40, SP 15), true λ 0.5-5, 5 datasets each, all negative bursts kept. '
+                  'Eq. (1.9) fitted with six scores: MSE, likelihood, KS, Cramer-von Mises, QQ, and the manuscript’s WS. Every score returns λ ≈ 2-3, and k0 drifts from about 30 to 130 (true 60). '
+                  'Only λ·k0 tracks the truth. Reasons: the 13-frame smoothing merges close steps and misses small ones, so the detected distribution has the same hump shape for any λ; '
+                  'Eq. (1.9) ignores that bursts carry whole units and that 0-unit bursts are invisible; and the answer depends on the score. Near-noise-free simulations fail too.')
+pl = crop('ms_sim_test/recovery.png', (0.0, 0.034, 0.333, 0.355), 'ms_rec_lambda.png')
+pk = crop('ms_sim_test/recovery.png', (0.0, 0.68, 0.333, 1.0), 'ms_rec_lamk0.png')
+pic(s, pl, 0.6, 1.45, w=4.15); pic(s, pk, 4.9, 1.45, w=4.15)
+text(s, 0.6, 4.45, 4.0, 0.4, 'Fitted λ (dotted: truth)', size=13, bold=True, color=RED)
+text(s, 4.9, 4.45, 4.0, 0.4, 'Fitted λ·k0 (dotted: truth)', size=13, bold=True, color=TEAL)
+stat(s, 9.2, 1.5, 3.5, 'λ ≈ 2-3', 'for every true λ from 0.5 to 5, with all six scores')
+stat(s, 9.2, 3.25, 3.5, '30 → 130', 'fitted k0 (true value 60) drifts with λ', color=MUTED)
+text(s, 0.6, 5.2, 8.4, 1.6, 'Why: smoothing merges and misses bursts, so the detected distribution has the same shape for any λ; and Eq. (1.9) ignores whole units and invisible 0-unit bursts.',
+     size=13, color=MUTED)
+
+# 6c Fig. 13 revisited
+s = content(prs, 'Fig. 13 revisited: the true λ is not a close runner-up',
+            notes='MS Fig. 13 rows (λ 1, 2, 4; λ 2 at SNR 5 and 0.5) plus λ 3 and 5. Candidate λ 1-5, k0 optimised. Granules resampled 100x per dataset (500 fits per row). '
+                  'The true λ wins only when it is 2 or 3. At true λ 4 and 5 it is never chosen and the likelihood rejects it (2·ΔNLL 136 and 334). '
+                  'The same true λ = 2 is fitted as 1-2 at SNR 5, 2 at SNR 1.5 and 4 at SNR 0.5: λ follows the noise level. '
+                  'Success = true λ in the top 3 of 5: 62% overall, vs 60% for a random pick and 71% for always guessing 2, 3 or 4.')
+pic(s, os.path.join(AO, 'ms_sim_test/fig13_choice.png'), 0.6, 1.4, w=12.1)
+stat(s, 0.6, 4.25, 2.85, '62%', 'true λ in the top 3 of 5 candidates')
+stat(s, 3.65, 4.25, 2.85, '60%', 'a random pick of 3 of 5', color=MUTED)
+stat(s, 6.7, 4.25, 2.85, '71%', 'always guessing λ = 2, 3 or 4 (ignores the data)', color=MUTED)
+stat(s, 9.75, 4.25, 2.95, '1 → 2 → 4', 'fitted λ for the same true λ = 2 as SNR drops from 5 to 0.5', color=TEAL)
+text(s, 0.6, 6.05, 12.1, 0.9, 'The method has a built-in answer of λ ≈ 2-3: it is right only when the truth happens to sit there, and the chosen λ follows the noise level, not the number of units.',
+     size=14, color=INK)
 
 # 7 shape fit
 s = content(prs, 'Shape fitting recovers λ·k0, but not λ',
