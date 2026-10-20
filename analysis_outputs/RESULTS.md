@@ -1519,3 +1519,15 @@ Script: `checks/ms_fig13.py` (simulated rows from `checks/ms_sim_test.m`, plus `
 - **The chosen λ follows the noise level, not the number of units.** The same true λ = 2 is fitted as 1-2 at SNR 5, 2 at SNR 1.5, and 4 at SNR 0.5, with every score. This reproduces the referee's simulated-vs-estimated discrepancy (true 2, estimated 4) at low SNR.
 - **The score choice matters at the margins** (e.g. λ 2 at SNR 5: NLL picks 1, QQ and WS pick 2), but no score recovers λ across the range.
 - **Each k0 heatmap shows the ridge:** as λest increases, the best k0 falls in proportion. Only λ·k0 is fixed by the data.
+
+**Addendum: "success" = true λ among the top 3 of the 5 candidates.** Rank of the true λ per dataset (5 datasets × 7 rows with true λ 1-5), from `fig13_scores.csv`:
+
+| criterion | all scores | best score | chance (random pick of 5) |
+|---|---|---|---|
+| true λ ranked 1st | 24% | 37% (QQ) | 20% |
+| top 2 | 43% | 46% (WS) | 40% |
+| top 3 | 62% | 71% (QQ) | 60% |
+
+- Top-3 success is 100% for true λ 2-4 and λ 2 at SNR 5. It is 0-20% for λ 5, 0-80% for λ 1 (score-dependent), and 0% for λ 2 at SNR 0.5.
+- The fixed guess "λ ∈ {2, 3, 4}", which ignores the data, succeeds in 71% of these datasets.
+- So the method is no better than chance at ranking λ. Its top-3 hits come from the middle candidates it always favours.
