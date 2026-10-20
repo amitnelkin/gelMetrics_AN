@@ -1127,3 +1127,52 @@ Outputs are in `analysis_outputs/steady/`. In vivo only: the in vitro movies are
   - it ignores real slow focus drift;
   - photon noise is extrapolated above the calibrated range (section 21).
   - It is therefore a lower bound on non-biological fluctuation.
+
+## 24. Proposed report parameters per dataset (replacing λ and k0), with mock-ups of Figs. 7, 10(b) and 15
+
+Scripts: `checks/report_params_sim.m` (simulations with known truth), `checks/static_control.m` (now all six in vivo datasets; `static_control_more.csv`), and `checks/report_params.py`. Outputs in `analysis_outputs/report_params/`: `params.csv`, `params.md`, `fig7_mock.png` (in vivo), `fig7_mock_sim.png`, `fig10b_mock.png`, `fig15_mock.png`. In vitro is not included: no raw movies, so no static control and no re-extraction.
+
+**Parameters.** In vivo uses R2 (the published per-frame multithresh, spot sum), window 13, SP 12. 95% CIs: nested movie → granule bootstrap in vivo, granule bootstrap in the simulations.
+1. **Turnover beyond noise (%/h).** Fraction of the granule shed per detected negative burst, summed per granule-hour, minus the same on burst-free copies of each trace.
+2. **Fluctuation beyond noise over 5 min (%).** G30 = 100·√mean(D30 − D1) of the relative granule intensity. White noise cancels exactly. The pixel-level static-granule control gives mean(D30 − D1) consistent with 0 in all six in vivo datasets (within ~2 SE), so nothing is subtracted.
+3. **Net change beyond bleaching (%/h).** Granule vs cell-background fade rate (section 22).
+4. **Quality check: share of turnover explained by noise.** Turnover on the burst-free copies ÷ turnover on the traces. Size-weighted, because at high SNR noise gives many tiny bursts.
+
+**Simulations (as manuscript Fig. 13).** generateSim type 3, k0 = 60, 200 traces each, seeded. True values come from the noise-free twin (same seed, noise 0).
+
+| dataset | turnover beyond noise (%/h) | fluctuation beyond noise, 5 min (%) | net change (%/h) | share of turnover explained by noise | bursts (real / noise) | granules (movies) | true turnover / fluct. / net |
+|---|---|---|---|---|---|---|---|
+| sim: no bursts | 0.2 [-0.1, 0.5] | 0.0 [0.0, 0.1] | -0.0 [-0.1, 0.1] | 0.87 | 317 / 308 | 200 | 0.0 / 0.0 / 0.0 |
+| sim: lambda 1 | 5.6 [4.6, 6.7] | 1.3 [1.1, 1.4] | -0.3 [-1.1, 0.4] | 0.21 | 541 / 304 | 200 | 4.0 / 1.3 / -0.3 |
+| sim: lambda 2 | 10.5 [8.9, 12.0] | 1.9 [1.7, 2.1] | -0.9 [-1.9, 0.2] | 0.13 | 642 / 313 | 200 | 7.1 / 1.9 / -0.6 |
+| sim: lambda 4 | 25.4 [21.0, 30.4] | 4.0 [3.6, 4.4] | 0.4 [-1.9, 3.0] | 0.05 | 729 / 260 | 200 | 15.4 / 4.0 / 0.2 |
+| sim: lambda 2, SNR 5 | 10.8 [9.1, 12.9] | 2.0 [1.8, 2.2] | -0.8 [-1.9, 0.3] | 0.07 | 686 / 477 | 200 | 7.0 / 2.0 / -0.5 |
+| sim: lambda 2, SNR 0.5 | 10.0 [7.6, 12.5] | 2.3 [2.0, 2.5] | -1.2 [-2.6, 0.2] | 0.32 | 460 / 275 | 200 | 8.3 / 2.3 / -1.2 |
+| PP7 + QCP-5x/PCP-4x | 1.6 [-5.0, 7.6] | 2.4 [0.0, 4.7] | 0.7 [-3.0, 4.4] | 0.91 | 106 / 92 | 76 (9) | – |
+| PP7-FUS + QCP-5x/PCP-4x | 3.0 [-5.5, 9.9] | 5.0 [0.0, 7.4] | -6.6 [-14.7, 1.6] | 0.88 | 124 / 122 | 94 (12) | – |
+| PP7 + PCP-30x | 1.5 [-3.4, 7.5] | 3.7 [0.0, 5.6] | -5.1 [-11.2, 0.7] | 0.94 | 207 / 217 | 145 (8) | – |
+| PP7-FUS + PCP-30x | 2.2 [-5.5, 10.4] | 2.8 [0.0, 6.8] | -1.3 [-4.4, 2.0] | 0.91 | 149 / 141 | 111 (8) | – |
+| Qβ + QCP-5x/PCP-4x | 9.3 [5.0, 13.9] | 4.0 [3.0, 5.1] | 3.5 [-0.3, 7.4] | 0.47 | 313 / 204 | 191 (10) | – |
+| Qβ + QCP-10x | 9.7 [6.5, 13.0] | 4.1 [3.1, 4.9] | 8.9 [5.0, 13.9] | 0.45 | 472 / 286 | 279 (9) | – |
+
+**What the parameters do on the simulations.**
+- **Fluctuation (G30) recovers the truth almost exactly** in every simulation, from SNR 0.5 to 5, and reads 0.0 without bursts.
+- **Turnover beyond noise:**
+  - reads ≈ 0 without bursts;
+  - rises with λ at fixed k0 (5.6 → 10.5 → 25.4 %/h for λ 1, 2, 4);
+  - does not change with noise level at fixed λ (10.0-10.8);
+  - but over-reads the true turnover by 1.2-1.65×, because each detected run also picks up noise and smoothing.
+  - It is therefore good for comparing conditions, not as an absolute rate.
+- **Net change** reads the true value (≈ 0) within its CI.
+- **None of the three separates λ from k0.** All three scale with burst rate × burst size, the identifiable combination (sections 5-9). They replace λ and k0, they do not estimate them.
+
+**What the parameters say about the in vivo datasets.**
+- **PP7 and PP7-FUS (both RNAs): no turnover beyond noise.** Noise explains 88-94% of the detected turnover, and the CIs include 0. Fluctuation is small (3-5% over 5 min) with CIs reaching 0. There is no net change beyond bleaching.
+- **Qβ (both RNAs): clear turnover beyond noise**, about 9-10 %/h (CI excludes 0), with noise explaining only ~45%. Fluctuation is 4% [3-5] over 5 min. 10Qb shows a net gain beyond bleaching: +8.9 %/h [5, 14] by the spot sum, but section 22 notes the mean-above-cell measure disagrees.
+- **Recommendation for the figures:**
+  - Fig. 7/9 → `fig7_mock.png`: per dataset, the burst-size distribution of the granules over that of their burst-free copies (so the excess over noise is visible), plus the fluctuation-vs-lag curve.
+  - Fig. 10(b) → `fig10b_mock.png`: turnover beyond noise × fluctuation, with CIs, colour = protein, marker = RNA. Also net change, and estimated vs true for the simulations.
+  - Figs. 13-15 → `fig15_mock.png`: datasets × parameters, with CIs and (for the simulations) true values.
+- **Claims that change:**
+  - "Qβ granules are more dynamic than PP7 granules" is supported (turnover beyond noise).
+  - "PP7-FUS increases λ for low-valency RNA" is not supported: no PP7 condition shows dynamics distinguishable from noise with this extraction (see section 23 for the steady-threshold test).

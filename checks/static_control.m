@@ -1,4 +1,4 @@
-function static_control(workRoot, datasets)
+function static_control(workRoot, datasets, outName)
 % STATIC_CONTROL  Pixel-level negative control for the extraction (RESULTS.md
 % section 23): does the extraction itself (per-frame or steady multithresh
 % thresholds) create apparent granule dynamics?
@@ -17,8 +17,9 @@ function static_control(workRoot, datasets)
 % bleaching shape + white noise, as detection_grid.m), and the structure
 % function D(1 frame), D(30 frames) of y = spotSum / cubicTrend - 1 (as
 % noise_methods_real.m). Seeded. Tracks whose crop touches the image edge are skipped.
-% Writes analysis_outputs/steady/static_control.csv.
+% Writes analysis_outputs/steady/static_control.csv (or outName).
 if nargin < 2, datasets = {'4PP7', '4PP7-FUS'}; end
+if nargin < 3, outName = 'static_control.csv'; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
 off = 200; rng(2023);
@@ -117,6 +118,6 @@ for d = 1:numel(datasets)
 end
 R = cell2table(rows, 'VariableNames', {'dataset','version','trace','movie','lengthFrames', ...
     'nReal13','fracReal13','nSurr13','fracSurr13','nReal17','fracReal17','nSurr17','fracSurr17','D1','D30'});
-writetable(R, fullfile(repoDir, 'analysis_outputs', 'steady', 'static_control.csv'));
+writetable(R, fullfile(repoDir, 'analysis_outputs', 'steady', outName));
 disp('STATIC_DONE');
 end
