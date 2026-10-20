@@ -1,4 +1,4 @@
-function noise_methods_real()
+function noise_methods_real(r2Folder, suFolder, outFile, doVitro)
 % NOISE_METHODS_REAL  Detection-free fluctuation measure for the real data
 % (RESULTS.md section 19; reviewer points R2 6, R2 4a, "comparison with other
 % methods"). Granule intensity g per trace: the spot sum (in vivo, R2 sums) or
@@ -10,19 +10,25 @@ function noise_methods_real()
 % own level, seeded), so D_excess = D_real - D_surr is the fluctuation beyond noise.
 % Movie id per trace as in score_export2.m. Traces >= 180 frames.
 % Writes analysis_outputs/noise_methods/real_sf.csv.
+% Optional (section 23): r2Folder, suFolder (mean and spot-sum data), outFile
+% (path under analysis_outputs), doVitro (default true).
+if nargin < 1, r2Folder = 'in_vivo_reextracted/after_R2_offset'; end
+if nargin < 2, suFolder = 'in_vivo_reextracted/after_R2_sums'; end
+if nargin < 3, outFile = fullfile('noise_methods', 'real_sf.csv'); end
+if nargin < 4, doVitro = true; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_methods');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
-R2 = 'in_vivo_reextracted/after_R2_offset'; SU = 'in_vivo_reextracted/after_R2_sums';
-info = [readtable(fullfile(repoDir, R2, 'extraction_info.csv')); readtable(fullfile(repoDir, R2, 'extraction_info_5Qb_10Qb.csv'))];
+R2i = 'in_vivo_reextracted/after_R2_offset'; R2 = r2Folder; SU = suFolder;
+info = [readtable(fullfile(repoDir, R2i, 'extraction_info.csv')); readtable(fullfile(repoDir, R2i, 'extraction_info_5Qb_10Qb.csv'))];
 jobs = {};
 for d = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}
     jobs(end+1,:) = {d{1}, 'mean', R2, d{1}, false}; %#ok<AGROW>
     jobs(end+1,:) = {d{1}, 'spotsum', SU, [d{1} '_spotsum'], true}; %#ok<AGROW>
 end
 for d = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}
-    jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments', d{1}, false}; %#ok<AGROW>
+    if doVitro, jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments', d{1}, false}; end %#ok<AGROW>
 end
 taus = [1 2 3 6 12 18 30 45 60]; rows = cell(0, 8);
 for j = 1:size(jobs,1)
@@ -48,7 +54,7 @@ for j = 1:size(jobs,1)
     fprintf('%s %s done\n', jobs{j,1}, jobs{j,2});
 end
 writetable(cell2table(rows, 'VariableNames', {'dataset','measure','trace','movie','lengthFrames','taus','Dreal','Dsurr'}), ...
-    fullfile(outDir, 'real_sf.csv'));
+    fullfile(repoDir, 'analysis_outputs', outFile));
 disp('NOISE_REAL_SF_DONE');
 end
 

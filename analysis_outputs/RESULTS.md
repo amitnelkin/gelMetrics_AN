@@ -1055,3 +1055,75 @@ Script: `checks/net_loss.py` → `analysis_outputs/net_loss/` (`per_trace.csv`, 
 - It fits the burst results: in vitro shows a real excess of negative bursts over noise (sections 18-20), and in vivo does not.
 - **Caveat.** A granule drifting out of focus would also fade faster than the diffuse background. For in vitro (granules settling or moving on the glass) this cannot be excluded from intensity alone. Checking the spot area or size over time, or the focus, would help.
 - **Bleaching itself:** PP7 movies bleach slowly (about 7-10 %/h). Qβ movies bleach about 55 %/h, probably reflecting different imaging settings (not checked).
+
+## 23. Steady thresholds: less noise, but a slow artefact; checked with static-granule controls
+
+Scripts:
+- `collect_intensity.m` (`opts.thrWin`, default 0 = published behaviour unchanged);
+- `checks/reextract_steady.m` → `in_vivo_reextracted/after_R4_steadythr/`;
+- `checks/detection_grid.m` and `checks/noise_methods_real.m` (now take a data folder);
+- `checks/steady_compare.py`, `checks/static_control.m`, `checks/static_control_summary.py`.
+
+Outputs are in `analysis_outputs/steady/`. In vivo only: the in vitro movies are not on the lab PC (`InVitro_PCP14-MCP15` holds a single 2 MB 005.nd2), so in vitro could not be re-extracted.
+
+**Change tested (R4).** Same tracking, crop, offset and multithresh classes as R2. But each track's four thresholds are replaced by their running median over 31 frames (~5 min, fixed in advance), instead of being recomputed on every frame. The masks then follow bleaching but no longer jump with each frame's noise. All six datasets keep exactly the same traces and lengths as R2.
+
+**Noise drop (relative frame-to-frame jitter, median over traces):**
+
+| dataset | spot sum R2 → R4 | spot mean | cell mean | spot area |
+|---|---|---|---|---|
+| 4PP7 | 16.4 → 7.1% | 3.8 → 1.5% | 6.7 → 2.0% | 16 → 6% |
+| 4PP7-FUS | 21.5 → 10.4% | 5.3 → 2.0% | 7.6 → 2.1% | 24 → 9% |
+| 30PP7 | 20.6 → 9.6% | 5.4 → 2.1% | 7.2 → 2.0% | 24 → 9% |
+| 30PP7-FUS | 23.2 → 12.0% | 7.1 → 2.9% | 9.1 → 2.6% | 28 → 12% |
+| 5Qb | 10.9 → 4.3% | 2.3 → 0.8% | 3.8 → 1.2% | 11 → 4% |
+| 10Qb | 11.0 → 4.1% | 2.3 → 0.8% | 3.5 → 1.1% | 12 → 4% |
+
+**Taken at face value (R4 vs R2, window 13, SP 12):**
+- Burst counts go up 1.4-2×.
+- The false-discovery share falls from 0.6-1.05 to 0.28-0.64.
+- Excess turnover rises in every dataset (e.g. 4PP7 1.6 → 12.3 %/h).
+- 4PP7-FUS vs 4PP7 becomes significant: z 1.7-3.1 on excess turnover over 6 settings, and z 5.3 on the noise-free fluctuation G30 (was 1.2).
+
+**Negative control: static granules.**
+- For each real 4PP7 and 4PP7-FUS track (≥ 24 points), I built a synthetic granule that never changes:
+  - the median of its first 31 real crops;
+  - kept centred along the track;
+  - bleached with the movie's own background trend;
+  - with fresh camera + photon noise per pixel and frame (variance a·I + c, calibrated per movie as in section 21).
+- The same measurement (multithresh, per-frame or steady thresholds) and the same downstream treatment were then applied: surrogates, detection, structure function.
+
+| | 4PP7 R2 | 4PP7 R4 | 4PP7-FUS R2 | 4PP7-FUS R4 |
+|---|---|---|---|---|
+| frame noise, real / static | 16.9 / 16.7% | 7.2 / 6.6% | 22.2 / 21.1% | 10.6 / 9.2% |
+| excess turnover w13, real / static (%/h) | 1.6 / 1.6 | 12.3 / 13.0 | 3.0 / 2.3 | 22.7 / 14.2 |
+| excess turnover w17, real / static | −0.5 / 0.7 | 12.0 / 11.6 | 6.3 / −2.1 | 23.1 / 13.3 |
+| false-discovery share w13, real / static | 0.87 / 1.00 | 0.54 / 0.45 | 0.98 / 0.94 | 0.57 / 0.53 |
+| G30, real / static (%) | 2.4 / 2.8 | 4.9 / 4.4 | 5.0 / 3.9 | 8.6 / 6.2 |
+
+**What the control shows.**
+1. **Section 21 is confirmed.** A static granule with nothing but photon noise reproduces the real frame noise almost exactly (16.7 vs 16.9% in 4PP7). The real jitter is photon noise amplified by per-frame threshold jitter.
+2. **With per-frame thresholds (published), the white-noise surrogates are valid.** A static granule gives excess ≈ 0 and a false-discovery share ≈ 1. The noise-floor results of sections 18-20 stand. Real 4PP7 is indistinguishable from a static granule.
+3. **Steady thresholds create a slow artefact.** A static granule reads 12-14 %/h of "excess turnover" and G30 4.4-6.2%. The running-median thresholds drift slowly, so the measured noise is no longer white and the white-noise surrogates no longer apply. Most of the face-value gains above are this artefact: real 4PP7 under R4 equals its static control.
+4. **Measured against matched static controls** (real minus static, propagated bootstrap SEs):
+
+| 4PP7-FUS vs 4PP7 | per-frame (R2) | steady (R4) |
+|---|---|---|
+| 4PP7, beyond static: turnover w13 / w17, G30² | 0.0 / −1.2 %/h, −2.3 | −0.7 / 0.4 %/h, 4.1 |
+| 4PP7-FUS, beyond static | 0.8 / 8.3 %/h, 9.9 | 8.5 / 9.8 %/h, 36.0 (G ≈ 6%) |
+| z, turnover w13 / w17 | 0.1 / 1.7 | 1.3 / 1.8 |
+| z, G30² | 0.6 | 2.5 |
+| × data for 80% power (best measure) | ≈ 3 | ≈ 1.3-2.3 |
+
+**Interpretation (plain).**
+- Holding the thresholds steady lowers the noise 2-3×, but it is not a free win: it adds a slow fake signal of its own. Results from R4 are only meaningful against a matched static-granule control, which is now built (`static_control.m`).
+- **Against that control:**
+  - 4PP7 granules look static: no dynamics beyond what a non-changing granule shows, with either extraction.
+  - 4PP7-FUS granules show a modest excess with steady thresholds: about 9 %/h more turnover and ~6% fluctuation over 5 min beyond static. FUS vs 4PP7 reaches z 2.5 on the fluctuation measure and 1.3-1.8 on turnover. That is borderline: it is significant on one measure only, and it is better than R2 (z ≤ 1.7).
+- **The trend is the same in both extractions (FUS > 4PP7).** A firm claim would still need roughly 1.5-2× more movies, or an extraction whose steady masks do not drift. Possible fix: hold one mask per granule over the whole trace and correct for bleaching separately. Not tried.
+- **The static control is the strongest noise control in the revision.** It is a pixel-level negative control with the real track geometry and calibrated camera noise. For the response letter it should replace the trace-level white-noise surrogates.
+- **Limits of the control:**
+  - it ignores tracking jitter (the granule is kept centred);
+  - it ignores real slow focus drift;
+  - photon noise is extrapolated above the calibrated range (section 21).
+  - It is therefore a lower bound on non-biological fluctuation.

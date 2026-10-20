@@ -1,4 +1,4 @@
-function detection_grid()
+function detection_grid(suFolder, outName, SPs, wins, doVitro)
 % DETECTION_GRID  Burst detection across stringency SP and smoothing window,
 % on the real traces and on burst-free surrogates (one shared bleaching shape
 % per dataset scaled to each trace + white noise at the trace's robust noise
@@ -8,20 +8,26 @@ function detection_grid()
 % frames, same detection code as the runners (analysis.m).
 % SP in {3 4 5 6 8 10 12}, window in {5 7 9 13 17 21} frames.
 % Writes analysis_outputs/detection_grid/bursts.csv, traces.csv.
+% Optional (section 23): suFolder (spot-sum data, default after_R2_sums),
+% outName (output folder under analysis_outputs), SPs, wins, doVitro (default true).
+if nargin < 1, suFolder = 'in_vivo_reextracted/after_R2_sums'; end
+if nargin < 2, outName = 'detection_grid'; end
+if nargin < 3, SPs = [3 4 5 6 8 10 12]; end
+if nargin < 4, wins = [5 7 9 13 17 21]; end
+if nargin < 5, doVitro = true; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
-outDir = fullfile(repoDir, 'analysis_outputs', 'detection_grid');
+outDir = fullfile(repoDir, 'analysis_outputs', outName);
 if ~exist(outDir, 'dir'), mkdir(outDir); end
-R2 = 'in_vivo_reextracted/after_R2_offset'; SU = 'in_vivo_reextracted/after_R2_sums';
+R2 = 'in_vivo_reextracted/after_R2_offset'; SU = suFolder;
 info = [readtable(fullfile(repoDir, R2, 'extraction_info.csv')); readtable(fullfile(repoDir, R2, 'extraction_info_5Qb_10Qb.csv'))];
 jobs = {};
 for d = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}
     jobs(end+1,:) = {d{1}, SU, [d{1} '_spotsum'], true}; %#ok<AGROW>
 end
 for d = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}
-    jobs(end+1,:) = {d{1}, 'in_vitro_experiments', d{1}, false}; %#ok<AGROW>
+    if doVitro, jobs(end+1,:) = {d{1}, 'in_vitro_experiments', d{1}, false}; end %#ok<AGROW>
 end
-SPs = [3 4 5 6 8 10 12]; wins = [5 7 9 13 17 21];
 tVec = (0:360) * 10/60; bu = cell(0, 9); tr = cell(0, 4);
 for j = 1:size(jobs,1)
     [S, B] = gm_loadDataset(repoDir, jobs{j,2}, jobs{j,3});

@@ -34,11 +34,19 @@ function [intensity, background, info, sums] = collect_intensity(file_path, opts
 %                     ring 8-11 px (granule-only, local background)
 %   sums.nearCell     mean of the ring 4-8 px around the centre minus the ring
 %                     8-11 px median (cell light just around the granule)
+%
+% opts.thrWin  steady thresholds (revision test, RESULTS.md section 23): 0 (default,
+%              published) = multithresh recomputed on every frame. > 0 = the four
+%              multithresh thresholds of each track are first computed per frame,
+%              then replaced by their running median over opts.thrWin frames, so
+%              the spot/cell masks no longer jump with each frame's noise but still
+%              follow bleaching.
 
 if nargin < 2, opts = struct(); end
 if ~isfield(opts,'offset'), opts.offset = 200; end
 if ~isfield(opts,'sumDiag'), opts.sumDiag = false; end
 if ~isfield(opts,'cropHW'), opts.cropHW = [7 10 14 20]; end
+if ~isfield(opts,'thrWin'), opts.thrWin = 0; end
 file_path = [char(file_path), filesep];
 tiff_files = dir([file_path,'*.tif']);
 
@@ -80,6 +88,14 @@ for f = 1:numel(tiff_files)
                 cw = nan(frameIdx(end), numel(opts.cropHW)); ring_sum = spot_sum; near_cell = spot_sum;
             end
 
+            if opts.thrWin > 0   % steady thresholds: running median of the per-frame ones
+                TH = nan(frameIdx(end), 4);
+                for n = 1:length(spot_x)
+                    TH(frameIdx(n),:) = double(multithresh(crop15(movArray(spot_frames(n)).data, spot_x(n), spot_y(n), sub_frame_length), 4));
+                end
+                TH = movmedian(TH, opts.thrWin, 1, 'omitnan');
+            end
+
             for n = 1:length(spot_x)
                frame = movArray(spot_frames(n)).data; % complete current frame
                % Extract sub frame around the spot coordinates
@@ -92,6 +108,7 @@ for f = 1:numel(tiff_files)
 
                % Separate to spot, and 2 levels of background
                th = multithresh(sub_frame,4);
+               if opts.thrWin > 0, th = TH(frameIdx(n),:); end
                spot_frame = sub_frame>=th(3);
                cell_frame = sub_frame>=th(1) & sub_frame<th(3);
 
@@ -141,4 +158,10 @@ for f = 1:numel(tiff_files)
     info(end+1) = struct('movie',base,'channel',channel,'nChannels',nChannels, ...
         'nFrames',numel(movArray),'nTracks',numel(xdata),'nKept',nKept); %#ok<AGROW>
 end
+end
+
+function sub_frame = crop15(frame, x, y, hw)
+% the same crop as the main loop
+b = round([max(y-hw,1), min(y+hw,size(frame,1)), max(x-hw,1), min(x+hw,size(frame,2))]);
+sub_frame = frame(b(1):b(2), b(3):b(4));
 end
