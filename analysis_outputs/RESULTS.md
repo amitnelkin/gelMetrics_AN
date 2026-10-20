@@ -1309,3 +1309,29 @@ The trim changes nothing qualitatively:
 - Differences in k0 between in vitro ratios (p ≈ 0.007) are differences in typical burst size, i.e. the mean λ·k0. That agrees with the burst-size and turnover results.
 - The one λ difference (10Qb, 5.5 vs 0.8, p = 0.001) is not trustworthy: the 10Qb λ CI is 0.06-6.5 (two near-equal solutions).
 - **This supports reporting burst size and turnover with their noise controls (sections 24-25), not λ and k0.**
+
+## 27. Mean burst size (the identifiable λ·k0) and a minimal control table
+
+Script: `checks/control_table.py` → `analysis_outputs/control_table/` (`control_table.csv/.md/.png`).
+
+- **Mean burst size.** The mean negative-burst amplitude over **all** bursts (no top-10% trim, no 15th-percentile cut), in spot-mean units, window 13, SP 12.
+  - It is the combination of λ and k0 that the data pin down. For the zero-truncated Poisson model it equals λ·k0/(1 − e^−λ), i.e. ≈ λ·k0 for λ ≳ 2 and ≈ k0 for small λ. λ and k0 separately are not identified (sections 25-26).
+  - 95% CI: nested movie → granule bootstrap (in vitro: granules), 2000×.
+- **Minimal control table**, one row per dataset. Each parameter is given with its noise control: frame noise, and the share of turnover that burst-free copies reproduce.
+
+| dataset | granules (movies) | granule brightness (a.u.) | frame noise (% of granule) | mean burst size, λ·k0 (a.u.) | turnover beyond noise (%/h) | share of turnover explained by noise | net change beyond bleaching (%/h) |
+|---|---|---|---|---|---|---|---|
+| PP7 + QCP-5x/PCP-4x | 76 (9) | 5644 [4645, 6267] | 16.4 | 190 [170, 215] (n = 123) | 1.6 [-5.1, 7.9] | 0.91 | 0.7 [-3.5, 4.3] |
+| PP7-FUS + QCP-5x/PCP-4x | 94 (12) | 3036 [1843, 3735] | 22.2 | 182 [113, 269] (n = 144) | 3.0 [-5.6, 10.1] | 0.88 | -6.6 [-15.0, 1.5] |
+| PP7 + PCP-30x | 145 (8) | 3998 [2305, 9095] | 20.7 | 295 [166, 433] (n = 225) | 1.5 [-3.4, 7.0] | 0.94 | -5.1 [-11.4, 0.7] |
+| PP7-FUS + PCP-30x | 111 (8) | 3436 [2777, 3932] | 23.3 | 253 [195, 304] (n = 156) | 2.2 [-5.4, 10.0] | 0.91 | -1.3 [-4.6, 1.9] |
+| Qβ + QCP-5x/PCP-4x | 191 (10) | 13197 [11838, 14888] | 11.0 | 461 [395, 548] (n = 336) | 9.3 [5.2, 13.7] | 0.47 | 3.5 [-0.2, 7.7] |
+| Qβ + QCP-10x | 279 (9) | 17534 [16083, 19160] | 11.0 | 574 [501, 660] (n = 497) | 9.7 [6.2, 13.3] | 0.45 | 8.9 [5.1, 13.6] |
+| in vitro, protein:RNA 1:1 | 45 | 914 [660, 1238] | 3.0 | 129 [51, 261] (n = 94) | 8.8 [-2.5, 21.2] | 0.70 | -21.1 [-35.3, -8.3] |
+| in vitro, protein:RNA 10:1 | 37 | 1715 [1527, 1796] | 3.0 | 234 [149, 318] (n = 93) | 50.1 [25.1, 76.2] | 0.30 | -39.7 [-63.0, -20.4] |
+| in vitro, protein:RNA 100:1 | 31 | 1726 [809, 2714] | 2.6 | 432 [205, 728] (n = 105) | 46.2 [17.5, 79.3] | 0.51 | -70.8 [-88.9, -55.1] |
+
+**Notes.**
+- Brightness and mean burst size are in spot-mean units (as the manuscript's k0). Turnover is from the spot sum, as a fraction of the granule.
+- A noise share near 1 means the detected turnover is about what noise alone produces, so it should not be interpreted as dynamics (all PP7 rows).
+- In vitro has no movie ids, so its CIs are granule-level only.
