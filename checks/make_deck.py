@@ -307,4 +307,8 @@ for i, it in enumerate(items):
     p.runs[0].font.size = Pt(14); p.runs[0].font.bold = True; p.runs[0].font.color.rgb = WHITE
     text(s, 1.6, y + 0.02, 11.0, 0.5, it, size=18, color=WHITE)
 s.shapes[0].top = Inches(1.3)   # move the title up on this slide
+from deck_notes import NOTES   # detailed speaker notes: what each plot shows, how it was made, what it tells us
+assert len(NOTES) == len(prs.slides), (len(NOTES), len(prs.slides))
+for sl, nt in zip(prs.slides, NOTES):
+    sl.notes_slide.notes_text_frame.text = nt.replace(chr(13), '')
 prs.save(os.path.join(OUT, 'GelMetrics_revision_summary.pptx')); print('saved')
