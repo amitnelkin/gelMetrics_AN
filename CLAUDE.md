@@ -139,28 +139,14 @@ Everything downstream of extraction:
 - Possible next analyses: run `window_duration_test.m`; a movement-insensitive granule measure.
 - Summary deck for the PI: `analysis_outputs/deck/GelMetrics_revision_summary.pptx`, 14 slides, built by `checks/make_deck.py`. Speaker notes are in `checks/deck_notes.py`; one entry per slide, so edit both together.
 
-## In progress: manuscript revision documents (started 2026-10-22)
-The user asked for three deliverables (inputs: `MS.docx`, `Reviewer_Comments_AN101026.docx`, both untracked in the repo root):
-1. **Reviewer response file**, completed with answers (keep the reviewer text; fill every 'Author response'; drop the internal Roee/Amit comments).
-2. **Revised MS** (`MS.docx` → revised copy with Word tracked changes):
-   - keep the writing style, figure style (MATLAB look: boxed axes, inward ticks, bold (a) labels, salmon-red histograms, blue open circles, red dashed lines) and the narrative;
-   - do not touch unchanged intro/methods (e.g. bacteria, imaging); not too technical; only what the reviewers asked for;
-   - separate main vs supplementary (Appendix) figures; tell the user what changed where.
-3. **Control file**: section by section, what changed (or not) and why.
-
-**Decisions from the user (binding):**
-- Report λ·k0 / burst size, turnover and net change with noise controls, instead of λ and k0.
-- 4x FUS: a fractional, brightness-dependent effect; highlight p = 0.031 (one-sided, pre-specified; two-sided 0.061) with caveats.
-- Discuss the lack of a fixed-granule control: not possible; modelled controls (burst-free copies, synthetic static granule) instead.
-- FRAP gave no significant results: drop FRAP entirely (no placeholders); answer R2 7 and 10b with prior work and the new analyses.
-- Response tone (default, user did not object): concede where the data agree with the reviewer and point to the new analyses; keep drafted wording where it still holds (Otsu, PFS, out-of-equilibrium, mammalian cells, R1 3).
-
-**Plan (not yet started when the session paused):**
-- Tools on the laptop: no pandoc/LibreOffice/Node/python-docx; Word is installed → edit via Word COM (PowerShell) with TrackRevisions on; render to PDF via Word to check.
-- Main figures: remake Fig. 4 (Okabe-Ito, current fixed simulation; update Sec. III counts); revise Fig. 5 (λ not recovered, λ·k0 recovered, detection limit at real noise); Figs. 6-9 = burst sizes of granules vs burst-free copies with noise-corrected numbers; Fig. 10 = summary of burst size / turnover / net change per condition (+ FUS fractional vs absolute).
-- Appendix figures: Fig. 15 and 16 redone on re-extracted data (old ones used DIC-contaminated PP7 traces); new appendix figures for noise sources/static control, SP x window sensitivity, Fig. 13 revisited, slow changes, time halves, two-channel extraction fix.
-- Data for figures: `control_table/`, `gap_test/`, `robustness/*_bursts.csv`, `lambda_k0_shape/`, `ms_sim_test/`, `detection_grid*/`, `slow_changes*/`, `halves/`, `steady/`, `noise_background/`, `fig16_sp/`, `after_R2_offset/*_run.mat`.
-- MS text error found: Sec. III '4.8, 3.2, 1.7 segments per 1000 time points' are per trace (360 points).
+## Manuscript revision documents (done 2026-10-23; local only, NOT in git)
+- `revision_docs/` (excluded via .git/info/exclude; contains the unpublished manuscript, do not commit or push):
+  - `MS_revised_tracked.docx` (385 tracked changes, author 'Amit Nelkin'), `MS_revised_clean.docx` (accepted), `Response_to_reviewers.docx`, `Revision_control.docx` (section-by-section table + 'please check' list).
+  - `work/`: generators. `ms_edits.py` (all text edits, inserts, figures, Table I; keyed by Word paragraph index of `MS_base.docx` = copy of MS.docx), `build_ops.py` -> `ops.json` (word-level, anchored), `apply_ops.ps1` (Word COM, Track Changes on, full-width sections for appendix figures/Table I, formatting pass with tracking off), `finalize.ps1` (clean copy + PDFs), `pdf2png.ps1` (Windows PDF renderer -> PNG for checking), `response.py` / `control.py` -> HTML -> `html2docx.ps1`.
+  - Rebuild: `cd revision_docs/work; py -3 build_ops.py`, then apply_ops.ps1 (from MS_base.docx), finalize.ps1. Paragraph indices refer to MS_base.docx; if MS.docx changes, re-dump with dump.ps1 and re-check the indices.
+- Figures: `checks/ms_figures.py` -> `analysis_outputs/ms_revision/figs/` (MS style); data for Fig. 4 from `checks/ms_fig4_sim.m`; Fig. 15 from `run_runners('ms_fig15_R2', ...)`; burst files for Figs. 6-9 in `analysis_outputs/ms_grid_w13sp12/` (detection_grid, window 13, SP 12).
+- Decisions used: report burst size / turnover / net change with noise controls (not lambda, k0); 4x FUS = fractional, brightness-dependent effect (one-sided p = 0.031, two-sided 0.061); fixed-granule control 'not feasible' (wording to be confirmed by the user); FRAP dropped; concede-and-show-data tone.
+- Open items for the user are listed at the end of Revision_control.docx (Fig. 10(a) arrow label 'lambda', Eq. 1.1 as Word equation, reference [30], etc.).
 
 ## Where things are (scripts → outputs)
 - **Pipeline:** `BatchParticleTracker.ijm`, `read_tables.m`, `collect_intensity.m` (+ wrapper `Collect_intensity_data.m`), `generate_movArray.m`, `analysis.m` (optional 7th output `segInfo` per burst), `getPosition.m`, `modifiedPoissonFit.m`, `generateSim.m` (optional k0), runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` (run via `checks/run_runners.m`).

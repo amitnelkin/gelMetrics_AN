@@ -144,12 +144,17 @@ def fig5():
     a.set_xlabel('true $\\lambda\\cdot k_0$ (a.u.)'); a.set_ylabel('estimated $\\lambda\\cdot k_0$ (a.u.)'); label(a, 'e')
     # (f) detection limit: share of true bursts found vs SP, at manuscript-like and PP7-like noise
     a = ax[1, 2]
+    from matplotlib.lines import Line2D
     for nm, cl, mk in [('MS-like', BLUE, 'o'), ('PP7-like', OI[1], 's')]:
         g = hs[hs.setting.str.startswith(nm)].sort_values('SP')
-        a.plot(g.SP, 100 * g.recall, '-' + mk, color=cl, mfc='none', ms=4, lw=0.8, label=f'{nm} noise, found')
-        a.plot(g.SP, 100 * g.false_over_detected.clip(upper=1), ':', color=cl, lw=1, label=f'{nm} noise, false share')
-    a.set_xlabel('Stringency parameter j'); a.set_ylabel('%'); a.set_ylim(0, 150); a.set_yticks([0, 25, 50, 75, 100])
-    a.legend(loc='upper center', fontsize=5.5, ncol=2, columnspacing=0.8, handlelength=1.6); label(a, 'f')
+        a.plot(g.SP, 100 * g.recall, '-' + mk, color=cl, mfc='none', ms=4, lw=0.8)
+        a.plot(g.SP, 100 * g.false_over_detected.clip(upper=1), ':', color=cl, lw=1)
+    a.legend(handles=[Line2D([], [], color=BLUE, lw=1.5, label='original noise'),
+                      Line2D([], [], color=OI[1], lw=1.5, label='PP7 noise'),
+                      Line2D([], [], color='k', lw=0.8, marker='o', mfc='none', ms=3, label='bursts found'),
+                      Line2D([], [], color='k', lw=1, ls=':', label='false share')], loc='upper right', fontsize=5.5, handlelength=1.8)
+    a.set_xlabel('Stringency parameter j'); a.set_ylabel('%'); a.set_ylim(0, 105); a.set_yticks([0, 25, 50, 75, 100])
+    label(a, 'f')
     fig.tight_layout(h_pad=1.2)
     save(fig, 'fig5')
 
@@ -228,7 +233,7 @@ def fig9():
     a.set_xticks(x); a.set_xticklabels(['PP7', 'PP7-FUS', 'PP7', 'PP7-FUS'], fontsize=7)
     a.text(0.5, -0.22, 'QCP-5x/PCP-4x', transform=a.get_xaxis_transform(), ha='center', fontsize=7)
     a.text(3.1, -0.22, 'PCP-30x', transform=a.get_xaxis_transform(), ha='center', fontsize=7)
-    a.set_ylabel('Granule brightness (×10$^3$ a.u.)')
+    a.set_ylabel('Granule brightness (a.u./1000)')
     a.text(0.5, 0.93, 'p = 0.002', transform=a.get_xaxis_transform(), ha='center', fontsize=7, fontweight='bold')
     a.text(3.1, 0.93, 'p = 0.55', transform=a.get_xaxis_transform(), ha='center', fontsize=7)
     label(a, 'c', x=-0.1)
