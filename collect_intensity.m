@@ -41,12 +41,24 @@ function [intensity, background, info, sums] = collect_intensity(file_path, opts
 %              then replaced by their running median over opts.thrWin frames, so
 %              the spot/cell masks no longer jump with each frame's noise but still
 %              follow bleaching.
+% opts.fixedMask  one fixed mask per granule (revision test R5, RESULTS.md section 33):
+%              false (default, published). true = the track position is smoothed
+%              (running median over opts.posWin frames, default 15), the 15x15 crops
+%              of all the granule's frames are averaged, multithresh(4) is run ONCE on
+%              that average image, and the resulting spot (top two classes) and cell
+%              (middle two) pixel sets are used unchanged in every frame. Each value is
+%              then the same pixels measured again, with no slow mask drift. Pixels
+%              outside the image are NaN and ignored. Adds sums.maskFrac: per frame,
+%              the share of the granule's light above the cell level inside the crop
+%              that falls inside the fixed mask (tests whether the granule outgrows it).
 
 if nargin < 2, opts = struct(); end
 if ~isfield(opts,'offset'), opts.offset = 200; end
 if ~isfield(opts,'sumDiag'), opts.sumDiag = false; end
 if ~isfield(opts,'cropHW'), opts.cropHW = [7 10 14 20]; end
 if ~isfield(opts,'thrWin'), opts.thrWin = 0; end
+if ~isfield(opts,'fixedMask'), opts.fixedMask = false; end
+if ~isfield(opts,'posWin'), opts.posWin = 15; end
 file_path = [char(file_path), filesep];
 tiff_files = dir([file_path,'*.tif']);
 
@@ -61,6 +73,7 @@ if opts.sumDiag
     sums.cropSumW = repmat({cell(1,1)}, 1, numel(opts.cropHW));
     sums.ringSum = cell(1,1); sums.nearCell = cell(1,1);
 end
+if opts.fixedMask, sums.maskFrac = cell(1,1); end
 
 for f = 1:numel(tiff_files)
     [~, base] = fileparts(tiff_files(f).name);
@@ -96,7 +109,32 @@ for f = 1:numel(tiff_files)
                 TH = movmedian(TH, opts.thrWin, 1, 'omitnan');
             end
 
-            for n = 1:length(spot_x)
+            if opts.fixedMask   % one mask per granule, from the average of all its crops
+                xs = movmedian(spot_x, opts.posWin); ys = movmedian(spot_y, opts.posWin);
+                C = nan(2*sub_frame_length+1, 2*sub_frame_length+1, length(spot_x));
+                for n = 1:length(spot_x)
+                    C(:,:,n) = cropPad(movArray(spot_frames(n)).data, xs(n), ys(n), sub_frame_length);
+                end
+                avg = mean(C, 3, 'omitnan'); ok = ~isnan(avg);
+                thF = multithresh(avg(ok), 4);
+                spotM = ok & avg >= thF(3); cellM = ok & avg >= thF(1) & avg < thF(3);
+                mask_frac = nan(frameIdx(end),1);
+                for n = 1:length(spot_x)
+                    sf = C(:,:,n); sp = spotM & ~isnan(sf); ce = cellM & ~isnan(sf);
+                    cellMean = mean(sf(ce));
+                    spot_intensity(frameIdx(n),1) = mean(sf(sp)) - opts.offset;
+                    background_intensity(frameIdx(n),1) = cellMean - opts.offset;
+                    spot_sum(frameIdx(n),1) = sum(sf(sp) - cellMean);
+                    v = sf(~isnan(sf)); bd = [sf(1,:), sf(end,:), sf(2:end-1,1)', sf(2:end-1,end)']; bd = bd(~isnan(bd));
+                    crop_sum(frameIdx(n),1) = sum(v - median(bd));
+                    spot_area(frameIdx(n),1) = nnz(sp);
+                    ex = max(sf - cellMean, 0); ex(isnan(ex)) = 0;
+                    mask_frac(frameIdx(n),1) = sum(ex(sp)) / max(sum(ex(:)), eps);
+                end
+                sums.maskFrac = [sums.maskFrac, {fillmissing(mask_frac,'linear')}];
+            end
+
+            for n = 1:length(spot_x) * ~opts.fixedMask
                frame = movArray(spot_frames(n)).data; % complete current frame
                % Extract sub frame around the spot coordinates
                sub_frame_bounds = [max(spot_y(n)-sub_frame_length,1),...
@@ -164,4 +202,11 @@ function sub_frame = crop15(frame, x, y, hw)
 % the same crop as the main loop
 b = round([max(y-hw,1), min(y+hw,size(frame,1)), max(x-hw,1), min(x+hw,size(frame,2))]);
 sub_frame = frame(b(1):b(2), b(3):b(4));
+end
+
+function sub = cropPad(frame, x, y, hw)
+% 15x15 crop centred on round(x, y); pixels outside the image are NaN
+sub = nan(2*hw+1); r0 = round(y) - hw; c0 = round(x) - hw;
+r = max(r0,1):min(r0+2*hw,size(frame,1)); c = max(c0,1):min(c0+2*hw,size(frame,2));
+sub(r - r0 + 1, c - c0 + 1) = double(frame(r, c));
 end

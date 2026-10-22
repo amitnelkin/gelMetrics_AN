@@ -1,4 +1,4 @@
-function static_control(workRoot, datasets, outName)
+function static_control(workRoot, datasets, outName, versions)
 % STATIC_CONTROL  Pixel-level negative control for the extraction (RESULTS.md
 % section 23): does the extraction itself (per-frame or steady multithresh
 % thresholds) create apparent granule dynamics?
@@ -20,6 +20,8 @@ function static_control(workRoot, datasets, outName)
 % Writes analysis_outputs/steady/static_control.csv (or outName).
 if nargin < 2, datasets = {'4PP7', '4PP7-FUS'}; end
 if nargin < 3, outName = 'static_control.csv'; end
+if nargin < 4, versions = [0 31]; end   % thresholds: 0 per frame, >0 running median, -1 one fixed mask (section 33)
+vname = @(w) [repmat('vfix', 1, double(w < 0)), repmat(sprintf('v%d', w), 1, double(w >= 0))];
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
 off = 200; rng(2023);
@@ -27,7 +29,8 @@ tVec = (0:360) * 10/60; rows = cell(0, 15);
 for d = 1:numel(datasets)
     ds = datasets{d}; wd = fullfile(workRoot, ds, 'work');
     tifs = dir(fullfile(wd, '*.tif')); [~, o] = sort({tifs.name}); tifs = tifs(o);
-    X = struct('v0', {{}}, 'v31', {{}}); Bk = X; mv = [];
+    X = struct(); for w = versions, X.(vname(w)) = {}; end
+    Bk = X; mv = [];
     for f = 1:numel(tifs)
         [~, base] = fileparts(tifs(f).name);
         mov = generate_movArray([wd filesep], tifs(f).name);
@@ -58,8 +61,8 @@ for d = 1:numel(datasets)
                 C(:, :, q) = st(bb(1):bb(2), bb(3):bb(4), fr0(q));
             end
             nT = min(31, numel(xs)); T = median(C(:, :, 1:nT), 3) - off; bl0 = mean(bl(fr0(1:nT)));
-            for w = [0 31]
-                fn = sprintf('v%d', w);
+            for w = versions
+                fn = vname(w);
                 if ~okc, X.(fn){end+1} = []; Bk.(fn){end+1} = []; continue, end
                 Y = zeros(15, 15, numel(xs), 'single');
                 for q = 1:numel(xs)
@@ -67,7 +70,11 @@ for d = 1:numel(datasets)
                     Y(:, :, q) = max(off + I + randn(15, 15, 'single') .* sqrt(max(pf(1) * I + pf(2), 1)), 0);
                 end
                 TH = nan(n, 4);
-                for q = 1:numel(xs), TH(idx(q), :) = double(multithresh(Y(:, :, q), 4)); end
+                if w < 0   % one fixed mask from the granule's average crop
+                    TH(idx, :) = repmat(double(multithresh(mean(Y, 3), 4)), numel(xs), 1);
+                else
+                    for q = 1:numel(xs), TH(idx(q), :) = double(multithresh(Y(:, :, q), 4)); end
+                end
                 if w > 0, TH = movmedian(TH, w, 1, 'omitnan'); end
                 ss = nan(n, 1); cm = nan(n, 1);
                 for q = 1:numel(xs)
@@ -82,7 +89,7 @@ for d = 1:numel(datasets)
         clear st
         fprintf('%s %s done\n', ds, base);
     end
-    for fn = {'v0', 'v31'}
+    for fn = arrayfun(vname, versions, 'UniformOutput', false)
         Ssum = X.(fn{1})(:); Bc = Bk.(fn{1})(:);
         keep = cellfun(@numel, Ssum) >= 180 & ~cellfun(@(c) any(isnan(c)), Ssum); Ssum = Ssum(keep); Bc = Bc(keep); mk = mv(keep);
         S = cellfun(@(s, b) s(:) + b(:), Ssum, Bc, 'UniformOutput', false);

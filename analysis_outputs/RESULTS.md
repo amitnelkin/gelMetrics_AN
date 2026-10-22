@@ -1566,3 +1566,55 @@ Script: `checks/ms_fig13.py` (simulated rows from `checks/ms_sim_test.m`, plus `
 
 - In absolute terms FUS traces are *less* noisy (10.7k vs 19.6k), because photon noise grows only with the square root of the signal. But the granule is 2.5× dimmer, so the same kind of noise is a larger fraction of it. Bursts are measured as a fraction of the granule, so noise alone produces fractionally larger "bursts" in FUS.
 - At 30x the two proteins give similar brightness and relative noise, so this part is small and not significant (p = 0.19).
+
+## 33. A fixed granule mask (R5): less noise, but it measures granule movement
+
+Scripts:
+- `collect_intensity.m` (`opts.fixedMask`, `opts.posWin`; default off = published behaviour unchanged);
+- `checks/reextract_fixed.m` → `in_vivo_reextracted/after_R5_fixedmask/`;
+- `checks/static_control.m` (new version −1 = fixed mask) → `analysis_outputs/steady/static_control_fixed.csv`;
+- `checks/compare_masks.py` and `checks/fixedmask_motion.py` → `analysis_outputs/fixedmask/` (`compare.csv`, `tests.csv`, `motion.csv`, `compare_masks.png/pdf`).
+
+**Design (R5).**
+- The track position is smoothed (running median over 15 frames, fixed in advance).
+- The 15×15 crops of all of a granule's frames are averaged, and multithresh(4) is run once on that average image.
+- The resulting spot pixels (top two classes) and cell pixels (middle two) are used unchanged in every frame, so there is no mask drift.
+- Same tracks, crop, offset and classes as R2. All six datasets keep exactly the same traces.
+- In vivo only: there are no in vitro movies.
+
+**Results against each extraction's own unchanging-granule control:**
+
+| dataset | noise R2 / R4 / R5 (% per frame) | R5 control noise | R5 turnover beyond noise: real / control (%/h) | R5 real − control | share of light in mask, first / last 30 frames |
+|---|---|---|---|---|---|
+| 4PP7 | 16.9 / 7.2 / 4.1 | 6.0 | 14.2 / 4.4 | 9.7 | 0.82 / 0.81 |
+| 4PP7-FUS | 22.2 / 10.6 / 6.6 | 8.4 | 15.6 / 0.7 | 14.9 | 0.76 / 0.75 |
+| 30PP7 | 21.5 / 9.8 / 5.7 | 8.0 | 11.3 / −0.3 | 11.6 | 0.70 / 0.74 |
+| 30PP7-FUS | 24.1 / 12.2 / 6.9 | 11.1 | 16.4 / 2.1 | 14.3 | 0.63 / 0.67 |
+| 5Qb | 11.8 / 4.5 / 2.2 | 4.8 | 24.7 / 6.5 | 18.1 | 0.81 / 0.81 |
+| 10Qb | 11.7 / 4.3 / 2.1 | 4.8 | 16.5 / 0.3 | 16.2 | 0.81 / 0.80 |
+
+**Condition comparisons:**
+
+| comparison | R2: size beyond noise p (one-sided) | R4: turnover vs control z | R5: turnover vs control z | R5: size beyond noise p (one-sided) |
+|---|---|---|---|---|
+| 4PP7-FUS vs 4PP7 | 0.032 | 1.4 | 0.7 | 0.32 |
+| 30PP7-FUS vs 30PP7 | 0.39 | −0.8 | 0.5 | 0.13 |
+| 5Qb vs 4PP7 | < 0.001 | 2.5 | 1.1 | 0.009 |
+| 10Qb vs 30PP7 | 0.11 | 0.8 | 0.7 | 0.043 |
+
+**Is R5's new signal granule exchange or granule movement?** (`fixedmask_motion.py`)
+- Slow changes (13-frame smoothing, as the detector sees them) in the spot sum move together with changes in the share of the granule's light that falls inside the fixed mask.
+- Median correlation: 0.76-0.90 for PP7 datasets, 0.57 for Qβ.
+- Exchange changes how much light there is, but hardly its share inside a fixed mask. A granule shifting, deforming or drifting in focus relative to the mask changes the share.
+
+**Reading (plain).**
+1. The fixed mask works as intended against noise. Frame noise drops about 4× (e.g. 4PP7 16.9% → 4.1%). Its control shows no slow artefact: turnover about 0-7 %/h, and burst-free copies reproduce about 100% of the control's bursts.
+2. With noise this low, every dataset shows turnover beyond noise (10-18 %/h). But the check above shows that most of that slow signal in PP7 follows the granule moving or reshaping within the mask. The unchanging-granule control is centred on its track and cannot move, so it does not contain this. **R5's "dynamics" in PP7 are therefore largely granule motion, not exchange.** In Qβ the link is weaker (0.57), consistent with Qβ having genuine exchange (sections 18-24).
+3. **The 4x FUS difference does not get stronger; it disappears** (z 0.7, p 0.32). The 30x pair still does not differ. Qβ vs PP7 remains (5Qb vs 4PP7 p = 0.009).
+4. The R5 control is noisier than the real data (4PP7: 6.0 vs 4.1%). The pixel-noise model, extrapolated above the calibrated intensity range (section 21), overestimates the photon noise of bright granule pixels by about 1.5×. The controls are therefore somewhat conservative. With per-frame thresholds (R2) the mask jitter dominated, which is why the noise matched there.
+- **Net:** no mask design tried so far makes the 4x FUS effect stronger.
+  - Per-frame thresholds: borderline (one-sided p 0.03).
+  - Steady thresholds: borderline against a large artefact.
+  - Fixed mask: absent, and it measures movement.
+- The robust results (Qβ more dynamic than PP7; no 30x FUS effect) hold in all three extractions.
+- A movement-insensitive measure would need either granule light summed without a mask (but section 16 showed crop sums are dominated by cell light), or a real static sample to calibrate the movement contribution.
