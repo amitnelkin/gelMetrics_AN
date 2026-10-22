@@ -1677,3 +1677,67 @@ The PI is right for this trace: from SP 18 on, neither shows a burst.
    - PP7 dynamics are below the detection limit of this method at the current imaging noise. The data neither show nor exclude bursts.
    - Qβ (noise about 11%) is above it.
    - Raising SP does not help: it removes noise and real bursts alike, and biases the sizes that remain.
+
+## 35. Large slow climbs and drops (no run rule); smoothing window × higher SP
+
+### 35a. Why the slow +38% rise in the example is not a burst
+- The detector needs ≥ SP consecutive frames of the same sign (12 at SP 12; one wrong-way frame inside five is forgiven) in the 13-frame-smoothed signal.
+- In the example 4PP7-FUS trace, the level rises 15,700 → 21,600 (+38%) over about 12 min (frames 225-295), but as a staircase of short climbs. The longest unbroken climb is 9 frames, because the raw frame noise (about 4,700, ~25% of the level) still leaves wiggles of about ±1,300 after smoothing.
+- The detector therefore catches fast, clean steps and misses slow or bumpy changes, however large.
+
+### 35b. Counting large slow changes, real vs burst-free copies
+Scripts: `checks/slow_changes.py [--absolute]` and `checks/slow_changes_test.py [--absolute]` → `analysis_outputs/slow_changes/` (relative) and `analysis_outputs/slow_changes_absolute/`.
+
+**Method.**
+- Signal as the detector sees it: 13-frame moving mean of S, divided by the fitted cell background.
+- An event is a change ≥ 20 / 30 / 40% (relative to the starting value) within ≤ 15 min, counted without overlap. Rises and drops are counted separately.
+- Copies: the dataset's bleaching shape plus white noise at the trace's own level, 5 per trace.
+- **Absolute version:** the same, but the event is a change ≥ thr × the median PP7 granule level (54,573), i.e. the same amount of light for every granule.
+- p values: movie-level permutation, 10000×.
+
+**Excess events per granule-hour (real − copies, rises + drops):**
+
+| | 4PP7 | 4PP7-FUS | 30PP7 | 30PP7-FUS | 5Qb | 10Qb |
+|---|---|---|---|---|---|---|
+| relative ≥ 30% | 0.06 | 0.75 | 0.57 | 0.57 | 0.02 | 0.12 |
+| absolute ≥ 30% of a PP7 granule | 0.86 | 0.32 | 0.87 | 0.19 | 4.7 | 7.4 |
+
+**Condition comparisons:**
+
+| comparison | relative 20% | relative 30% | relative 40% | absolute 20% | absolute 30% | absolute 40% |
+|---|---|---|---|---|---|---|
+| 4PP7-FUS vs 4PP7 | **+0.96, p 0.004** | **+0.69, p 0.003** | +0.17, p 0.13 | −0.64, p 0.02 | −0.54, p 0.21 | −0.30, p 0.22 |
+| 30PP7-FUS vs 30PP7 | 0.00, p 1.0 | −0.01, p 0.97 | +0.01, p 0.96 | −1.04, p 0.42 | −0.68, p 0.36 | −0.51, p 0.46 |
+| Qβ vs PP7 | lower or equal | lower | equal | **much higher, p ≤ 0.001** | **higher, p ≤ 0.001** | **higher, p ≤ 0.001** |
+
+**Reading (plain).**
+- **As a fraction of their own size,** 4x PP7-FUS granules show clearly more large slow changes than noise produces, and more than 4x PP7 (p ≈ 0.003). There is no such difference at 30x. This is the manuscript's low-valency FUS pattern, seen in slow changes that the run-based detector misses.
+- **The excess follows granule brightness:** the brightest granules (4PP7, Qβ) show the least relative excess. Counted as the same **amount of light** for every granule, the FUS excess is no longer larger, and if anything goes the other way (p 0.02 at 20%, n.s. at 30-40%). Qβ, the brightest, shows by far the most.
+- **So the two scales say different things,** and which one matters is a biological choice:
+  - FUS granules at 4x lose and gain a **larger fraction of themselves** in large slow events;
+  - but not a larger **amount of material**: they are about 2× dimmer, so the same exchange is a bigger share of them.
+- **Caveats:**
+  - Three thresholds were tested; the 30% one was chosen from the example before computing.
+  - The copies match the noise but not granule movement or focus drift, which can also produce slow changes (section 33 showed movement matters for fixed masks).
+  - Dimmer granules may be affected more by such effects in relative terms.
+
+### 35c. Smoothing window × higher SP
+Scripts: `checks/detection_grid.m` → `detection_grid('in_vivo_reextracted/after_R2_sums', 'detection_grid_win_sp', [12 15 18 21], [5 9 13 21 31], false)`, `checks/sim_high_sp.m` (now with a window loop) → `sim_win_sp.csv`, and `checks/win_sp.py` → `analysis_outputs/detection_grid_win_sp/` (`summary.csv`, `fus_z.csv`, `win_sp.png`).
+
+**PP7-like simulation** (bursts ≈ 11% of the granule, frame noise 18%). True bursts found / false share of detected bursts:
+
+| SP \ window | 5 | 9 | 13 | 21 | 31 |
+|---|---|---|---|---|---|
+| 12 | 6% / 0.90 | 16% / 0.87 | 30% / 0.81 | 36% / 0.75 | 44% / 0.74 |
+| 18 | 0% / 1.00 | 2% / 0.70 | 6% / 0.45 | 18% / 0.50 | 23% / 0.54 |
+| 21 | 0% / 1.50 | 1% / 0.58 | 2% / 0.42 | 11% / 0.45 | 16% / 0.44 |
+
+Median detected size at window 31 and SP 12 is 12% (true 11%), vs 21% at window 13.
+
+**In vivo** (real / copy bursts, window 31): 4PP7 SP 18 12/6; 30PP7 SP 18 52/26, SP 21 20/7; Qβ SP 21 44/9 and 54/17.
+
+**Reading.**
+- **Wider windows (21-31 frames) help:** they find more of the true bursts (up to 44% at SP 12), with sizes closer to the truth. The false share stays at 0.44-0.75, so even the best PP7-like setting has about half of its detected bursts from noise.
+- **Short windows (5-9) are worse at every SP.**
+- **In vivo,** wide windows plus high SP leave a modest excess over noise in some PP7 datasets (e.g. 30PP7) and a clear one in Qβ.
+- **4x FUS vs PP7 on turnover beyond noise:** z −0.4 to 1.9 across all 20 settings. Not significant at any of them.
