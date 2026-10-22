@@ -139,6 +139,29 @@ Everything downstream of extraction:
 - Possible next analyses: run `window_duration_test.m`; a movement-insensitive granule measure.
 - Summary deck for the PI: `analysis_outputs/deck/GelMetrics_revision_summary.pptx`, 14 slides, built by `checks/make_deck.py`. Speaker notes are in `checks/deck_notes.py`; one entry per slide, so edit both together.
 
+## In progress: manuscript revision documents (started 2026-10-22)
+The user asked for three deliverables (inputs: `MS.docx`, `Reviewer_Comments_AN101026.docx`, both untracked in the repo root):
+1. **Reviewer response file**, completed with answers (keep the reviewer text; fill every 'Author response'; drop the internal Roee/Amit comments).
+2. **Revised MS** (`MS.docx` → revised copy with Word tracked changes):
+   - keep the writing style, figure style (MATLAB look: boxed axes, inward ticks, bold (a) labels, salmon-red histograms, blue open circles, red dashed lines) and the narrative;
+   - do not touch unchanged intro/methods (e.g. bacteria, imaging); not too technical; only what the reviewers asked for;
+   - separate main vs supplementary (Appendix) figures; tell the user what changed where.
+3. **Control file**: section by section, what changed (or not) and why.
+
+**Decisions from the user (binding):**
+- Report λ·k0 / burst size, turnover and net change with noise controls, instead of λ and k0.
+- 4x FUS: a fractional, brightness-dependent effect; highlight p = 0.031 (one-sided, pre-specified; two-sided 0.061) with caveats.
+- Discuss the lack of a fixed-granule control: not possible; modelled controls (burst-free copies, synthetic static granule) instead.
+- FRAP gave no significant results: drop FRAP entirely (no placeholders); answer R2 7 and 10b with prior work and the new analyses.
+- Response tone (default, user did not object): concede where the data agree with the reviewer and point to the new analyses; keep drafted wording where it still holds (Otsu, PFS, out-of-equilibrium, mammalian cells, R1 3).
+
+**Plan (not yet started when the session paused):**
+- Tools on the laptop: no pandoc/LibreOffice/Node/python-docx; Word is installed → edit via Word COM (PowerShell) with TrackRevisions on; render to PDF via Word to check.
+- Main figures: remake Fig. 4 (Okabe-Ito, current fixed simulation; update Sec. III counts); revise Fig. 5 (λ not recovered, λ·k0 recovered, detection limit at real noise); Figs. 6-9 = burst sizes of granules vs burst-free copies with noise-corrected numbers; Fig. 10 = summary of burst size / turnover / net change per condition (+ FUS fractional vs absolute).
+- Appendix figures: Fig. 15 and 16 redone on re-extracted data (old ones used DIC-contaminated PP7 traces); new appendix figures for noise sources/static control, SP x window sensitivity, Fig. 13 revisited, slow changes, time halves, two-channel extraction fix.
+- Data for figures: `control_table/`, `gap_test/`, `robustness/*_bursts.csv`, `lambda_k0_shape/`, `ms_sim_test/`, `detection_grid*/`, `slow_changes*/`, `halves/`, `steady/`, `noise_background/`, `fig16_sp/`, `after_R2_offset/*_run.mat`.
+- MS text error found: Sec. III '4.8, 3.2, 1.7 segments per 1000 time points' are per trace (360 points).
+
 ## Where things are (scripts → outputs)
 - **Pipeline:** `BatchParticleTracker.ijm`, `read_tables.m`, `collect_intensity.m` (+ wrapper `Collect_intensity_data.m`), `generate_movArray.m`, `analysis.m` (optional 7th output `segInfo` per burst), `getPosition.m`, `modifiedPoissonFit.m`, `generateSim.m` (optional k0), runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` (run via `checks/run_runners.m`).
 - **Helpers:** `checks/gm_loadDataset.m`, `analysis/gm_amplitudes_by_trace.m`, `analysis/gelmetricsMLE.m`, `analysis/gelmetricsJoint.m`.
