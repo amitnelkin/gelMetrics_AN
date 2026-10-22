@@ -1531,3 +1531,38 @@ Script: `checks/ms_fig13.py` (simulated rows from `checks/ms_sim_test.m`, plus `
 - Top-3 success is 100% for true λ 2-4 and λ 2 at SNR 5. It is 0-20% for λ 5, 0-80% for λ 1 (score-dependent), and 0% for λ 2 at SNR 0.5.
 - The fixed guess "λ ∈ {2, 3, 4}", which ignores the data, succeeds in 71% of these datasets.
 - So the method is no better than chance at ranking λ. Its top-3 hits come from the middle candidates it always favours.
+
+## 32. Two clarifications: the static control on the steady-threshold plot; what "set by noise" means
+
+**32a. `steady_with_static.png`** (`checks/plot_steady_static.py`, values in `analysis_outputs/steady/steady_with_static.csv`). This is the section 23 three-panel comparison, now with the unchanging-granule control drawn next to every real value, for all six datasets:
+- frame noise (real vs control);
+- share of bursts that noise also produces;
+- turnover beyond noise, filled = real, open = control.
+
+**Turnover beyond noise, %/h, real vs control:**
+
+| dataset | per-frame (R2) real | R2 control | steady (R4) real | R4 control |
+|---|---|---|---|---|
+| 4PP7 | 1.6 | 1.6 | 12.3 | 13.0 |
+| 4PP7-FUS | 3.0 | 2.3 | 22.7 | 14.2 |
+| 30PP7 | 1.5 | 3.1 | 15.8 | 10.8 |
+| 30PP7-FUS | 2.2 | 0.3 | 15.0 | 14.1 |
+| 5Qb | 9.3 | 3.0 | 22.4 | 14.0 |
+| 10Qb | 9.7 | 1.6 | 21.3 | 13.0 |
+
+**Reading.**
+- **Noise:** the control reproduces the real noise in every dataset and both extractions (within 1-2 points), so the trace noise is measurement noise.
+- **Per-frame thresholds:** the control shows ≈ 0 turnover, so the white-noise copies are a valid noise floor. PP7 real ≈ control, while Qβ is clearly above its control.
+- **Steady thresholds:** the control itself shows 11-14 %/h, which is the artefact. Only 4PP7-FUS and Qβ rise clearly above their controls.
+
+**32b. Why the "set by brightness / noise" part of the 4x gap is significant (p = 0.01).**
+- That bar is the difference between the noise-only copies of FUS and of PP7: how much bigger the bursts are that pure noise produces in FUS traces.
+- It is significant because the FUS traces are noisier **relative to the granule**, not because FUS adds noise:
+
+| | integrated granule intensity | frame noise, absolute | frame noise, relative |
+|---|---|---|---|
+| 4PP7 | 123,800 | 19,600 | 16% |
+| 4PP7-FUS | 50,000 | 10,700 | 22% |
+
+- In absolute terms FUS traces are *less* noisy (10.7k vs 19.6k), because photon noise grows only with the square root of the signal. But the granule is 2.5× dimmer, so the same kind of noise is a larger fraction of it. Bursts are measured as a fraction of the granule, so noise alone produces fractionally larger "bursts" in FUS.
+- At 30x the two proteins give similar brightness and relative noise, so this part is small and not significant (p = 0.19).
