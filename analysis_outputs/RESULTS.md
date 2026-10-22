@@ -1741,3 +1741,38 @@ Median detected size at window 31 and SP 12 is 12% (true 11%), vs 21% at window 
 - **Short windows (5-9) are worse at every SP.**
 - **In vivo,** wide windows plus high SP leave a modest excess over noise in some PP7 datasets (e.g. 30PP7) and a clear one in Qβ.
 - **4x FUS vs PP7 on turnover beyond noise:** z −0.4 to 1.9 across all 20 settings. Not significant at any of them.
+
+## 36. First vs second 30 minutes (time-uniformity / ageing)
+
+- Script: `checks/halves.py` → `analysis_outputs/halves/` (`summary.csv`, `halves.png`). Reviewer 2 point 5.
+- Bursts from the detection grid (window 13, SP 12), assigned to the half in which they start. Net change: slope fitted separately to frames 1-180 and 181-end.
+- Second − first half, with a nested movie → granule bootstrap 95% CI. Granules are paired: each keeps both its halves.
+
+**First → second half (difference [95% CI], p):**
+
+| dataset | median burst size (%) | burst size beyond noise (pts) | turnover beyond noise (%/h) | net change (%/h) |
+|---|---|---|---|---|
+| 4PP7 | 10.5 → 11.6 (p 0.67) | −2.4 → −0.5 (p 0.49) | 3.4 → −0.5 (p 0.60) | 2.2 → 1.5 (p 0.80) |
+| 4PP7-FUS | 16.8 → 17.4 (p 0.89) | 2.0 → 1.1 (p 0.82) | 2.2 → 4.1 (p 0.82) | −12.6 → 0.0 (p 0.08) |
+| 30PP7 | 16.3 → 14.8 (p 0.60) | 2.8 → 0.1 (p 0.35) | 5.2 → −2.8 (p 0.10) | −4.5 → −0.8 (p 0.38) |
+| 30PP7-FUS | 17.1 → 17.2 (p 0.96) | 1.0 → 1.1 (p 0.91) | 1.5 → 3.0 (p 0.82) | −5.5 → 2.6 (p 0.17) |
+| 5Qb | 8.9 → 9.6 (p 0.37) | 1.9 → 1.9 (p 0.78) | **6.9 → 12.1 (p 0.04)** | 3.3 → 4.3 (p 0.81) |
+| 10Qb | 9.2 → 8.9 (p 0.82) | 2.6 → 2.4 (p 0.93) | 9.4 → 10.1 (p 0.73) | **11.4 → 4.0 (p 0.003)** |
+| in vitro 1:1 | 8.0 → 7.9 (p 0.84) | −3.0 → 4.4 (p 0.19) | **−3.2 → 23.6 (p 0.006)** | −18.3 → −29.1 (p 0.37) |
+| in vitro 10:1 | **14.6 → 10.1 (p 0.014)** | 5.7 → 2.8 (p 0.21) | **76.2 → 18.2 (p 0.007)** | −36.4 → −25.9 (p 0.24) |
+| in vitro 100:1 | **13.5 → 19.0 (p 0.036)** | 3.6 → 5.8 (p 0.51) | **−12.6 → 115.6 (p < 0.001)** | **−34.6 → −90.4 (p < 0.001)** |
+
+**Reading (plain).**
+- **In vivo, the parameters are stable over the hour.** No PP7 or PP7-FUS measure changes significantly between halves.
+- Qβ shows two modest changes: 5Qb turnover up (p 0.04), and the 10Qb net gain smaller (p 0.003). With 36 comparisons, about 2 would reach p < 0.05 by chance, so treat single hits with caution.
+- **In vitro is not stable over the hour, and the direction differs by condition:**
+  - 1:1 and 100:1 become much more dynamic in the second half; 100:1 also loses material twice as fast (−35 → −90 %/h).
+  - 10:1 slows down (turnover 76 → 18 %/h).
+  - Whole-hour averages for in vitro therefore mix two different regimes.
+- **Possible causes in vitro, not separable from these data:**
+  - real ageing or coarsening of the condensates;
+  - granules getting dimmer late in the movie, so the same absolute loss is a larger percentage (section 22);
+  - focus drift.
+- **For the paper:**
+  - in vivo results can be reported as whole-hour values;
+  - in vitro should either be reported per half, or come with this time dependence stated.

@@ -143,6 +143,10 @@ code { font-family: var(--mono); font-size: .85em; }
       <img src="fig/net_loss.png" alt="Net change beyond bleaching per granule for all datasets" loading="lazy">
       <figcaption><b>Net gain or loss beyond bleaching.</b> Each granule's fade rate compared with its own cell background (same protein, same light); no burst detection involved. In vivo granules are in balance. In vitro granules lose material, more at higher protein:RNA (−21, −40, −71 %/h).</figcaption>
     </figure>
+    <figure>
+      <img src="fig/halves.png" alt="First vs second 30 minutes for burst size, burst size beyond noise, turnover beyond noise and net change, all datasets" loading="lazy">
+      <figcaption><b>First vs second 30 minutes.</b> In vivo, nothing changes between halves, so whole-hour values are fair. In vitro, 1:1 and 100:1 become much more dynamic late in the movie (100:1 net loss −35 → −90 %/h), while 10:1 slows (turnover 76 → 18 %/h).</figcaption>
+    </figure>
   </section>
 
   <section>
@@ -152,7 +156,8 @@ code { font-family: var(--mono); font-size: .85em; }
       <li><strong>In vitro raw movies do not exist,</strong> so in vitro rests on the stored traces (camera offset assumed). Focus drift could also look like net loss.</li>
       <li><strong>Sample size.</strong> A firm 4x FUS claim needs about 2–5× more movies per condition; more granules per movie help less than more movies.</li>
       <li><strong>Extraction alternatives.</strong> Steady thresholds lower the noise but add a slow artefact. A fixed mask lowers it 4×, but its slow signal in PP7 follows granule movement. The published per-frame masks stay the main analysis.</li>
-      <li><strong>Not done yet:</strong> first vs second half of each movie (ageing); which event durations the smoothing window suppresses.</li>
+      <li><strong>Time-uniformity.</strong> In vivo parameters are stable between the first and second 30 minutes. In vitro they are not: 1:1 and 100:1 speed up and 10:1 slows down, so whole-hour in vitro values mix two regimes (figure above).</li>
+      <li><strong>Not done yet:</strong> which event durations the smoothing window suppresses.</li>
     </ul>
   </section>
 
