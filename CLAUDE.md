@@ -1,6 +1,6 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-22)
 
-This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-33). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-36). Read the relevant section there before redoing anything.
 
 ## Context
 - Repo: https://github.com/amitnelkin/gelMetrics_AN, branch **`revision`** (never commit to `main`). Code for the manuscript *GelMetrics: an algorithm for analyzing the dynamics of gel-like phase-separated condensates* (Nelkin et al., ref. VM10081E), under revision. `MS.pdf` is in the repo root (not committed; ask the user if missing).
@@ -117,6 +117,9 @@ Everything downstream of extraction:
    - R5 fixed mask: 4× less noise and a clean control, but its slow signal in PP7 tracks the granule moving relative to the mask (correlation 0.76-0.90). Under R5 the 4x FUS effect vanishes.
    - **No mask design makes FUS stronger. R2 stays primary.**
 10. The noise-free fluctuation G30 (section 19) is consistent with all of the above. In vivo conditions are not distinguishable by it.
+11. **Raising SP (section 34):** real PP7 traces and their burst-free copies lose bursts together; by SP 18-22 both are nearly empty, while Qβ keeps an excess. In a PP7-like simulation the detector finds 30% of true bursts at SP 12 (81% of detections are noise) and 6% at SP 18, at about 3× their true size. The manuscript's simulation was about 25× less noisy than real PP7.
+12. **Large slow changes (section 35):** counted without the run rule, 4x FUS granules show more ≥30% changes than noise, and more than 4x PP7 (p ≈ 0.003), as a fraction of themselves; counted as a fixed amount of light, the FUS excess disappears. Wider smoothing windows (21-31) find more true bursts, but about half the detections are still noise; 4x FUS vs PP7 turnover is not significant at any of 20 settings.
+13. **First vs second 30 min (section 36):** in vivo measures are stable between halves. In vitro is not: 1:1 and 100:1 become more dynamic late (100:1 net loss −35 → −90 %/h), 10:1 slows (turnover 76 → 18 %/h). Report in vitro per half, or state the time dependence.
 
 ## Status of the original "analyses to produce"
 | # | analysis | status |
@@ -126,14 +129,14 @@ Everything downstream of extraction:
 | 3 | simulation recovery grid λ × SNR | done (sections 5, 26, 30, 31) |
 | 4 | noise floor / SP choice | done: no acceptable SP; noise-corrected measures instead (sections 18-21) |
 | 5 | sensitivity table | SP × window grid done (section 20), top-trim (26a). The λ-based sweep was dropped along with λ. |
-| 6 | granule/movie bootstrap; time halves | movie-level bootstrap/permutation everywhere; **first vs second 30-min halves not done** |
+| 6 | granule/movie bootstrap; time halves | movie-level bootstrap/permutation everywhere; first vs second 30-min halves done (section 36) |
 | 7 | smoothing-window sensitivity | done in the detection grid (section 20); `checks/window_duration_test.m` (which event durations the window suppresses) **written, not run** |
 
 ## Open items / decisions for the user
 - Which numbers the paper reports. The recommendation is the control-table parameters, not λ and k0.
 - 4x FUS: present as a trend, or collect more movies.
 - Is there a fixed / crosslinked granule movie? It would be the direct, model-free noise control. Not available so far.
-- Possible next analyses: first vs second half of the movies (aging); run `window_duration_test.m`; a movement-insensitive granule measure.
+- Possible next analyses: run `window_duration_test.m`; a movement-insensitive granule measure.
 - Summary deck for the PI: `analysis_outputs/deck/GelMetrics_revision_summary.pptx`, 14 slides, built by `checks/make_deck.py`. Speaker notes are in `checks/deck_notes.py`; one entry per slide, so edit both together.
 
 ## Where things are (scripts → outputs)
@@ -153,7 +156,8 @@ Everything downstream of extraction:
   - `checks/lambda_k0_degeneracy.py` (section 25);
   - `checks/export_amps_shape.m`, `lambda_k0_shape.py [--notrim] [--plot]` (sections 26-28);
   - `checks/ms_sim_test.m` (args: λ list, noises, tag), `ms_eq19_fit.py`, `ms_fig13.py` (sections 30-31).
-- **Deck:** `checks/make_deck.py`, `checks/deck_notes.py` → `analysis_outputs/deck/`.
+- **High SP, slow changes, time halves:** `checks/example_traces_sp.m`, `high_sp.py`, `sim_high_sp.m`, `sim_high_sp_plot.py` (section 34); `checks/slow_changes.py [--absolute]`, `slow_changes_test.py`, `win_sp.py` (section 35); `checks/halves.py` (section 36).
+- **Deck and summary page:** `checks/make_deck.py`, `checks/deck_notes.py` → `analysis_outputs/deck/`; `analysis_outputs/summary/index.html`.
 
 ## Working style that worked
 - Fix the decision rule before looking at outcomes (e.g. the setting chosen by noise, not by p value). Report the whole grid.
