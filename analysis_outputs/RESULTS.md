@@ -1618,3 +1618,62 @@ Scripts:
   - Fixed mask: absent, and it measures movement.
 - The robust results (Qβ more dynamic than PP7; no 30x FUS effect) hold in all three extractions.
 - A movement-insensitive measure would need either granule light summed without a mask (but section 16 showed crop sums are dominated by cell light), or a real static sample to calibrate the movement contribution.
+
+## 34. Raising SP: real traces vs burst-free copies (in vivo), and what it costs (simulations)
+
+Scripts:
+- `checks/example_traces_sp.m` → `analysis_outputs/noise_background/example_traces_sp_<dataset>.png`;
+- `checks/detection_grid.m` run as `detection_grid('in_vivo_reextracted/after_R2_sums', 'detection_grid_highSP', [10 12 14 16 18 20 22 25], 13, false)`;
+- `checks/high_sp.py` → `analysis_outputs/detection_grid_highSP/` (`summary.csv`, `high_sp.png`);
+- `checks/sim_high_sp.m` and `checks/sim_high_sp_plot.py` → `sim_summary.csv`, `sim_high_sp.png`.
+
+The PI's question: at a proper stringency, should the example trace (section 21) show any bursts at all? The test raises SP until noise alone produces (almost) nothing, and checks whether anything real is left.
+
+**Example (the same 4PP7-FUS trace and copy as section 21):**
+
+| SP | 12 | 15 | 18 | 21 | 25 |
+|---|---|---|---|---|---|
+| real trace (negative bursts) | 2 | 1 | 0 | 0 | 0 |
+| burst-free copy (negative / positive) | 1 / 5 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+The PI is right for this trace: from SP 18 on, neither shows a burst.
+
+**All in vivo granules** (R2, spot sum, window 13). Negative bursts, real / burst-free copies:
+
+| SP | 4PP7 | 4PP7-FUS | 30PP7 | 30PP7-FUS | 5Qb | 10Qb |
+|---|---|---|---|---|---|---|
+| 12 | 106 / 92 | 124 / 122 | 207 / 217 | 149 / 141 | 313 / 204 | 472 / 286 |
+| 16 | 20 / 13 | 28 / 18 | 40 / 41 | 26 / 14 | 74 / 33 | 90 / 48 |
+| 18 | 5 / 3 | 9 / 8 | 13 / 18 | 10 / 4 | 38 / 17 | 35 / 19 |
+| 20 | 2 / 2 | 3 / 2 | 4 / 5 | 6 / 1 | 18 / 5 | 14 / 6 |
+| 22 | 1 / 1 | 1 / 0 | 1 / 3 | 1 / 0 | 6 / 3 | 6 / 1 |
+
+**Turnover beyond noise (%/h, 95% CI):**
+- PP7 datasets: within ±1 of 0 from SP 18 on. 30PP7-FUS was 5.3 [0.4, 10.0] at SP 14 and 2.9 [0.1, 5.8] at SP 16.
+- Qβ: still positive at SP 18 (1.3-1.6, CI excludes 0).
+
+**Simulations with known truth** (λ = 2; 500 traces; detector as the real data):
+- **MS-like:** noise 0.7% of the level, as MS section III; bursts about 2% of the granule.
+- **PP7-like:** noise 18% of the level, as the real PP7 frame noise; bursts about 11% of the granule.
+
+| SP | MS-like: true bursts found | MS-like: false / detected | PP7-like: true bursts found | PP7-like: false / detected | PP7-like: median detected size (true 11%) |
+|---|---|---|---|---|---|
+| 10 | 92% | 0.55 | 38% | 0.88 | 18% |
+| 12 | 88% | 0.43 | 30% | 0.81 | 21% |
+| 14 | 65% | 0.26 | 17% | 0.68 | 24% |
+| 16 | 44% | 0.21 | 10% | 0.55 | 26% |
+| 18 | 28% | 0.17 | 6% | 0.45 | 29% |
+| 20 | 16% | 0.14 | 3% | 0.44 | 33% |
+| 25 | 5% | 0.10 | 0.5% | 0.30 | 44% |
+
+**Reading (plain).**
+1. **The PI is right that no SP separates PP7 bursts from noise.** As SP rises, the real traces and their burst-free copies lose bursts together. By SP 18-22 both are essentially empty: a handful of bursts in about 100-150 granules. Only Qβ keeps a real excess at high SP (e.g. SP 20: 18 real vs 5 in the copies).
+2. **But "no bursts detected" does not mean "no bursts happened".** In the PP7-like simulation, bursts exist by construction (about 2.5 losses per granule-hour, each about 11% of the granule).
+   - At the manuscript's SP 12 the detector finds only 30% of them, and 81% of what it reports is noise. That is about what we see in real PP7 (88-94%).
+   - At SP 18 it finds 6% of them, and those are biased to 3× their true size: only the largest survive, inflated by noise.
+   - At this noise level the method cannot tell "PP7 granules exchange in ~10% steps" from "PP7 granules do nothing".
+3. **The manuscript's own simulation was about 25× less noisy than the real PP7 data** (0.7% vs 18%). That is why burst detection looked fine there (88% of bursts found at SP 12) and fails on the real data.
+4. **For the paper:**
+   - PP7 dynamics are below the detection limit of this method at the current imaging noise. The data neither show nor exclude bursts.
+   - Qβ (noise about 11%) is above it.
+   - Raising SP does not help: it removes noise and real bursts alike, and biases the sizes that remain.
