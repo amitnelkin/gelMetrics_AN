@@ -1,0 +1,9 @@
+dataset,rule,setting,granules,granules_with_burst,expected_from_noise,p_excess,bursts_neg,bursts_pos,median_size
+4PP7,A own,SP 28,76,0,0.08,1.0,0,0,
+4PP7,A common,SP 32,76,0,0.08,1.0,0,0,
+4PP7,B own,size > 31%,76,0,0.08,1.0,0,0,
+4PP7,B common,size > 40%,76,0,0.08,1.0,0,0,
+4PP7-FUS,A own,SP 32,94,0,0.09,1.0,0,0,
+4PP7-FUS,A common,SP 32,94,0,0.09,1.0,0,0,
+4PP7-FUS,B own,size > 40%,94,0,0.09,1.0,0,0,
+4PP7-FUS,B common,size > 40%,94,0,0.09,1.0,0,0,
