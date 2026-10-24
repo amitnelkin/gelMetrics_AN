@@ -1779,7 +1779,7 @@ Median detected size at window 31 and SP 12 is 12% (true 11%), vs 21% at window 
 
 ## 37. A strict "1 in 1000" false-burst rule (4PP7 vs 4PP7-FUS)
 
-Scripts: `checks/fp1000.m` (100 seeded burst-free copies per granule, built as in `detection_grid.m`; detector `analysis.m`, window 13, SP 12-40) and `checks/fp1000.py` -> `analysis_outputs/fp1000/` (`summary.csv`, `compare.csv`, `rates_by_SP.csv`, `fp1000.png`; `segs.csv` not committed, about 100 MB).
+Scripts: `checks/fp1000.m` (100 seeded burst-free copies per granule, built as in `detection_grid.m`; detector `analysis.m`, window 13, SP 12-40) and `checks/fp1000.py` -> `analysis_outputs/fp1000/` (`summary.csv`, `compare.csv`, `rates_by_SP.csv`, `fp1000.png`; `segs.csv` not committed; regenerate with `fp1000` in about 15 min).
 
 The user's question: set the detection so that a granule without exchange shows a false burst with a chance of 1 in 1000, then apply the same rule to the real granules. Rule fixed before looking at the real granules, either sign counted:
 - A: lowest SP at which at most 1 in 1000 copies has any burst.
