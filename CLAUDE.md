@@ -1,6 +1,6 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-49). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-50). Read the relevant section there before redoing anything.
 
 **In vitro into the manuscript: done as change list v2, `revision_docs/vitro_change_list_v2.md` (local; section 44), from the section 43 primary data. The user applies it by hand. Still open: the reason the three in vitro movies were dropped (for Methods VIII.E), and item A7 (FUS brightness per movie vs per granule). `CLAUDE_laptop_vitro.md` is the finished brief.**
 

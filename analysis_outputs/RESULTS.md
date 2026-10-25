@@ -2068,3 +2068,13 @@ At the user's request, both change lists (`vitro_change_list_v2.md` section A an
 - **Checks:** all 23 text edits verified in the accepted-view text. An aligned paragraph diff shows that only the intended paragraphs changed. Table I, Figs. 6, 14 and 18 were checked by rendering.
 - **Method:** each edit was anchored by short text pieces, because Word's Find also matches earlier tracked deletions. Pictures were replaced only right before a caption that is not inside a tracked deletion. An old deleted "FIG. 14" caption from the removed appendix figures otherwise captured the first attempt.
 - **Not yet in the Word files:** the response letter and control-file items (B and C of v2, items 3-4 of the seed list); `MS_revised_clean.docx` is stale.
+
+## 50. Letter and control file updated; clean manuscript refreshed (2026-10-25)
+
+At the user's request, the same way as section 49 (dated backups `* - backup - 251025 before vitro update.docx`, %TEMP% copies, hash check before writing, tracked changes by Amit Nelkin):
+- **`Response_to_reviewers.docx`:** v2 items B2-B6 and seed-list item 3. All 6 edits were verified in the accepted text; 5 blocks changed.
+- **`Revision_control.docx`:**
+  - v2 C1-C4 (Table I row, V.A row, VIII.E row, figure-table rows 6/14/18);
+  - the old in vitro "no movie identifiers" item was removed;
+  - 4 new check-list items plus the seed-variation item (seed list 4) were added after the FRAP item.
+- **`MS_revised_clean.docx`:** regenerated from the updated tracked file with every change accepted (24 pages).
