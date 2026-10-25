@@ -79,7 +79,7 @@ Everything downstream of extraction:
 | extra (not in stored data) | 100ng_ul_RNA_1mg_ml_protein | 15 | vitro_100ngul_1mgml |
 
 - **Scripts:** `checks/vitro_compare.py` (verification), `checks/vitro_new.py` (all parameters, movie-level), and `detection_grid.m` with the `vitroFolder`, `vitroJobs` and `doVivo` arguments.
-- **Not yet redone on the new data:** the static control and the camera-noise calibration for in vitro (both need the `work` TIFFs; lab PC only).
+- **Controls on the new data (section 39):** camera noise ratio is about 2.4, and an unchanging granule reads about 0 turnover beyond noise, so the copies are a valid floor in vitro. The in vitro manuscript figures with the new data are made by `py checks/ms_figures.py --vitro-new` → `analysis_outputs/ms_revision/figs_vitro_new/` (Figs. 6, 14, 18). The user applies the text changes by hand.
 
 ## Disk: `..\zigzag_scratch\` (about 11 GB after the 2026-10-25 cleanup)
 - On 2026-10-25, `tif\` (the 2-channel TIFFs) and the diagnostic leftovers were deleted, about 33 GB in total.

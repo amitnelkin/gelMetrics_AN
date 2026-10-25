@@ -3,7 +3,11 @@
 blue open circles, red dashed lines). Reviewer points: R2 4a/4b/5/6 and the
 minor point on Fig. 4 colours (Okabe-Ito for Fig. 4).
 
-Usage (repo root):  py -3 checks/ms_figures.py
+Usage (repo root):  py -3 checks/ms_figures.py [--vitro-new]
+--vitro-new (RESULTS.md section 39): the in vitro panels use the data re-extracted from the
+raw titration movies (vitro_new/, detection_grid_vitro_new*/, noise_background_vitro/,
+steady/static_control_vitro_summary.csv) instead of the stored traces, with movie-level CIs;
+only Figs. 6, 18 and 22 (manuscript Figs. 6, 14, 18) are drawn, into figs_vitro_new/.
 Writes analysis_outputs/ms_revision/figs/fig*.png (300 dpi) and .pdf.
 
 Inputs (all committed): ms_revision/fig4_*.csv (checks/ms_fig4_sim.m),
@@ -70,6 +74,18 @@ CT = pd.read_csv(os.path.join(A, 'control_table', 'control_table.csv')).set_inde
 GB = pd.read_csv(os.path.join(A, 'ms_grid_w13sp12', 'bursts.csv'))
 GB = GB[(GB.levelBefore > 0) & (GB.amp < 0)].copy()
 GB['f'] = 100 * GB.amp.abs() / GB.levelBefore
+import sys
+VNEW = '--vitro-new' in sys.argv
+if VNEW:
+    OUT = os.path.join(A, 'ms_revision', 'figs_vitro_new'); os.makedirs(OUT, exist_ok=True)
+    vn = pd.read_csv(os.path.join(A, 'vitro_new', 'summary.csv')).set_index('dataset').loc[VITRO]
+    for new, old in [('meanBurst', 'mean_burst'), ('turnover', 'turn0'), ('net', 'net0')]:
+        for suf in ['', '_lo', '_hi']:
+            CT.loc[VITRO, new + suf] = vn[old + suf].values
+    CT.loc[VITRO, 'sizeReal'] = vn.size_real.values; CT.loc[VITRO, 'sizeCopy'] = vn.size_copy.values
+    gv = pd.read_csv(os.path.join(A, 'detection_grid_vitro_new', 'bursts.csv'))
+    gv = gv[(gv.levelBefore > 0) & (gv.amp < 0) & gv.dataset.isin(VITRO)].copy(); gv['f'] = 100 * gv.amp.abs() / gv.levelBefore
+    GB = pd.concat([GB[~GB.dataset.isin(VITRO)], gv])
 
 
 # ---------------------------------------------------------------- Fig. 4
@@ -346,9 +362,16 @@ def fig17():
 # ---------------------------------------------------------------- Appendix: Fig. 18 (noise floor and its source)
 def fig18():
     nf = pd.read_csv(os.path.join(A, 'robustness', 'noise_floor_allSP.csv'))
+    if VNEW:
+        b = pd.read_csv(os.path.join(A, 'detection_grid_vitro_new_sp', 'bursts.csv'))
+        b = b[b.dataset.isin(VITRO)].groupby(['dataset', 'SP', 'kind']).size().unstack(fill_value=0).reset_index()
+        b = pd.DataFrame(dict(dataset=b.dataset, measure='mean', SP=b.SP, realNeg=b.real, falseNeg=b.surr, FDR=b.surr / b.real))
+        nf = pd.concat([nf[~nf.dataset.isin(VITRO)], b])
     nb = pd.read_csv(os.path.join(A, 'noise_background', 'summary.csv')).set_index('dataset')
     st = pd.read_csv(os.path.join(A, 'steady', 'static_control_summary.csv'))
-    fig, ax = plt.subplots(1, 3, figsize=(6.5, 2.3))
+    if VNEW:
+        st = pd.concat([st, pd.read_csv(os.path.join(A, 'steady', 'static_control_vitro_summary.csv'))])
+    fig, ax = plt.subplots(1, 3, figsize=(6.5, 2.3)) if not VNEW else plt.subplots(1, 3, figsize=(7.2, 2.5), gridspec_kw={'width_ratios': [1, 1.5, 1.05]})
     a = ax[0]
     for i, ds in enumerate(VIVO + VITRO):
         m = 'spotsum' if ds in VIVO else 'mean'
@@ -359,23 +382,26 @@ def fig18():
     a.set_xlabel('Stringency parameter j'); a.set_ylabel('Bursts in copies ÷ bursts in granules'); a.set_ylim(0, 2.6); a.set_xlim(9.5, 20.5)
     a.legend(fontsize=5, ncol=2, loc='upper left'); label(a, 'a')
     a = ax[1]
-    r = [float(str(nb.loc[ds, 'ratioMean']).split()[0]) for ds in VIVO]
-    rc = [float(str(nb.loc[ds, 'ratioCell']).split()[0]) for ds in VIVO]
-    x = np.arange(len(VIVO))
-    a.bar(x - 0.18, r, 0.36, color=[COL[d] for d in VIVO], alpha=0.85, label='granule (spot mean)')
-    a.bar(x + 0.18, rc, 0.36, color='0.75', label='cell background')
+    NB = VIVO
+    if VNEW:
+        nb = pd.concat([nb, pd.read_csv(os.path.join(A, 'noise_background_vitro', 'summary.csv')).set_index('dataset')]); NB = VIVO + VITRO
+    r = [float(str(nb.loc[ds, 'ratioMean']).split()[0]) for ds in NB]
+    rc = [float(str(nb.loc[ds, 'ratioCell']).split()[0]) for ds in NB]
+    x = np.arange(len(NB))
+    a.bar(x - 0.18, r, 0.36, color=[COL.get(d, HIST) for d in NB], alpha=0.85, label='granule (spot mean)')
+    a.bar(x + 0.18, rc, 0.36, color='0.75', label='cell background' if not VNEW else 'cell / dilute-phase background')
     a.axhline(1, color='k', lw=0.5, ls='--')
-    a.set_xticks(x); a.set_xticklabels([SHORT[d].replace(', ', '\n') for d in VIVO], fontsize=5.5)
-    a.set_ylabel('Measured ÷ camera-predicted noise'); a.legend(fontsize=5.5, loc='upper left'); label(a, 'b')
+    a.set_xticks(x); a.set_xticklabels([SHORT[d].replace(', ', '\n').replace('in vitro ', 'vitro\n') for d in NB], fontsize=5.5 if not VNEW else 5)
+    a.set_ylabel('Measured ÷ camera-predicted noise' if not VNEW else 'Measured ÷ camera-' + chr(10) + 'predicted noise'); a.legend(fontsize=5.5, loc='upper left'); label(a, 'b')
     a = ax[2]
     s = st[st.version.str.startswith('per-frame')].set_index('dataset')
-    keys = [k for k in VIVO if k in s.index]
+    keys = [k for k in (VIVO + VITRO if VNEW else VIVO) if k in s.index]
     x = np.arange(len(keys))
-    a.bar(x - 0.18, s.loc[keys, 'real_excess_w13'], 0.36, color=[COL[k] for k in keys], alpha=0.85, label='granules')
+    a.bar(x - 0.18, s.loc[keys, 'real_excess_w13'], 0.36, color=[COL.get(k, HIST) for k in keys], alpha=0.85, label='granules')
     a.bar(x + 0.18, s.loc[keys, 'static_excess_w13'], 0.36, color='0.75', label='static synthetic granule')
     a.errorbar(x + 0.18, s.loc[keys, 'static_excess_w13'], yerr=1.96 * s.loc[keys, 'static_excess_se_w13'], fmt='none', ecolor='k', lw=0.7, capsize=2)
     a.axhline(0, color='k', lw=0.5)
-    a.set_xticks(x); a.set_xticklabels([SHORT[k].replace(', ', '\n') for k in keys], fontsize=5.5)
+    a.set_xticks(x); a.set_xticklabels([SHORT[k].replace(', ', '\n').replace('in vitro ', 'vitro\n') for k in keys], fontsize=5.5 if not VNEW else 5)
     a.set_ylabel('Turnover beyond noise (%/h)'); a.legend(fontsize=5.5, loc='upper left'); label(a, 'c')
     fig.tight_layout()
     save(fig, 'fig18')
@@ -468,6 +494,10 @@ def fig21():
 # ---------------------------------------------------------------- Appendix: Fig. 22 (first vs second half)
 def fig22():
     h = pd.read_csv(os.path.join(A, 'halves', 'summary.csv'))
+    if VNEW:
+        vn = pd.read_csv(os.path.join(A, 'vitro_new', 'summary.csv')).set_index('dataset').loc[VITRO]
+        add = [dict(dataset=d, measure=m, first=vn.loc[d, m + '1'], second=vn.loc[d, m + '2'], p=vn.loc[d, f'halves_{m}_p']) for d in VITRO for m in ('turn', 'net')]
+        h = pd.concat([h[~h.dataset.isin(VITRO)], pd.DataFrame(add)])
     print('halves measures:', h.measure.unique())
     keys = VIVO + VITRO
     fig, ax = plt.subplots(1, 2, figsize=(6.5, 2.4))
@@ -488,7 +518,10 @@ def fig22():
     save(fig, 'fig22')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and VNEW:
+    for f in [fig6, fig18, fig22]:
+        f()
+elif __name__ == '__main__':
     for f in [fig4, fig5, fig6, lambda: fig_pair(['4PP7', '30PP7'], 'fig7'), lambda: fig_pair(['5Qb', '10Qb'], 'fig8'),
               fig9, fig10, fig15, fig16, fig17, fig18, fig19, fig20, fig21, fig22]:
         try:

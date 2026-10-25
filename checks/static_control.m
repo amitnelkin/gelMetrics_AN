@@ -1,4 +1,4 @@
-function static_control(workRoot, datasets, outName, versions)
+function static_control(workRoot, datasets, outName, versions, measure)
 % STATIC_CONTROL  Pixel-level negative control for the extraction (RESULTS.md
 % section 23): does the extraction itself (per-frame or steady multithresh
 % thresholds) create apparent granule dynamics?
@@ -18,9 +18,12 @@ function static_control(workRoot, datasets, outName, versions)
 % function D(1 frame), D(30 frames) of y = spotSum / cubicTrend - 1 (as
 % noise_methods_real.m). Seeded. Tracks whose crop touches the image edge are skipped.
 % Writes analysis_outputs/steady/static_control.csv (or outName).
+% Optional (section 39): measure = 'sum' (default, spot sum + cell mean as in vivo) or
+% 'mean' (spot mean, offset removed, as the in vitro traces); D1/D30 then use the spot mean.
 if nargin < 2, datasets = {'4PP7', '4PP7-FUS'}; end
 if nargin < 3, outName = 'static_control.csv'; end
-if nargin < 4, versions = [0 31]; end   % thresholds: 0 per frame, >0 running median, -1 one fixed mask (section 33)
+if nargin < 4, versions = [0 31]; end
+if nargin < 5, measure = 'sum'; end   % thresholds: 0 per frame, >0 running median, -1 one fixed mask (section 33)
 vname = @(w) [repmat('vfix', 1, double(w < 0)), repmat(sprintf('v%d', w), 1, double(w >= 0))];
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
@@ -81,6 +84,7 @@ for d = 1:numel(datasets)
                     sub = double(Y(:, :, q)); th = TH(idx(q), :);
                     sp = sub >= th(3); ce = sub >= th(1) & sub < th(3);
                     cm(idx(q)) = mean(sub(ce)); ss(idx(q)) = sum(sub(sp) - cm(idx(q))); cm(idx(q)) = cm(idx(q)) - off;
+                    if strcmp(measure, 'mean'), ss(idx(q)) = mean(sub(sp)) - off; end
                 end
                 X.(fn){end+1} = fillmissing(ss, 'linear'); Bk.(fn){end+1} = fillmissing(cm, 'linear');
             end
@@ -93,6 +97,7 @@ for d = 1:numel(datasets)
         Ssum = X.(fn{1})(:); Bc = Bk.(fn{1})(:);
         keep = cellfun(@numel, Ssum) >= 180 & ~cellfun(@(c) any(isnan(c)), Ssum); Ssum = Ssum(keep); Bc = Bc(keep); mk = mv(keep);
         S = cellfun(@(s, b) s(:) + b(:), Ssum, Bc, 'UniformOutput', false);
+        if strcmp(measure, 'mean'), S = cellfun(@(s) s(:), Ssum, 'UniformOutput', false); end
         Lm = min(cellfun(@numel, S)); shp = zeros(numel(S), Lm);
         for i = 1:numel(S)
             s = S{i}(:); x = (1:numel(s))'; trd = polyval(polyfit(x, s, 3), x); shp(i,:) = trd(1:Lm)' / mean(trd(1:Lm));

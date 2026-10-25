@@ -1,4 +1,4 @@
-function noise_from_background(datasets)
+function noise_from_background(datasets, outSub)
 % NOISE_FROM_BACKGROUND  Independent check of the per-trace noise level used for
 % the burst-free surrogates (RESULTS.md section 21; reviewer point R2 6).
 %
@@ -26,10 +26,13 @@ function noise_from_background(datasets)
 % per-frame threshold, or fast real changes).
 % Movies: ..\zigzag_scratch\reextract\<dataset>\work (fluorescence channel only).
 % Writes analysis_outputs/noise_background/{calibration.csv, traces.csv}.
+% Optional (section 39): outSub = output folder under analysis_outputs, e.g.
+% noise_from_background({'vitro_1000ng_10ug', ...}, 'noise_background_vitro').
 if nargin < 1, datasets = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir);
-outDir = fullfile(repoDir, 'analysis_outputs', 'noise_background');
+if nargin < 2, outSub = 'noise_background'; end
+outDir = fullfile(repoDir, 'analysis_outputs', outSub);
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 scratch = fullfile(fileparts(repoDir), 'zigzag_scratch', 'reextract');
 off = 200; hw = 7; cal = cell(0, 8); tr = cell(0, 14);

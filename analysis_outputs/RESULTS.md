@@ -1834,3 +1834,25 @@ First vs second 30 min: 100:1 turnover −8 → 117 %/h and net change −21 →
 - With movies as replicates, the titration trend is **not significant at 0.05** (100:1 vs 1:1: p 0.08-0.18). The earlier z = −4.5 (section 22) treated granules as independent. 10:1 has only 5 movies.
 - The 100:1 loss and turnover are concentrated in the second half hour (dissolution or focus drift late in the movie; can't be told apart).
 - The extra condition (10× less RNA at 1 mg/ml protein) gives dim, slowly changing granules, closest to 1:1.
+
+## 39. In vitro noise controls on the raw movies, and the in vitro manuscript figures redrawn
+
+**Controls** (`checks/vitro_controls.py`; MATLAB `noise_from_background(ds, 'noise_background_vitro')` and `static_control(root, ds, 'static_control_vitro.csv', 0, 'mean')`, both with new optional arguments whose defaults leave the in vivo runs unchanged; about 12 min in total). Table: `analysis_outputs/steady/vitro_controls.md`.
+
+| condition | granules | measured ÷ camera noise, granule (spot mean) | same, background | turnover beyond noise, unchanging granule (%/h, ±2 SE) | real granules (%/h) | copies ÷ detections, unchanging / real |
+|---|---|---|---|---|---|---|
+| 1:1 | 52 | 2.6 | 4.9 | −0.5 ± 4.7 | 13.2 | 0.94 / 0.75 |
+| 10:1 | 81 | 2.4 | 3.6 | −3.7 ± 4.7 | 42.1 | 1.20 / 0.64 |
+| 100:1 | 58 | 2.4 | 4.6 | −0.4 ± 5.4 | 45.3 | 1.21 / 0.72 |
+| extra | 133 | 2.1 | 3.7 | 1.2 ± 4.4 | 14.0 | 0.89 / 0.68 |
+
+- In vitro traces are about 2.4× noisier than camera + photon noise, as PP7 in vivo (2.2-2.4), because of the per-frame mask.
+- An unchanging granule reads about 0 turnover beyond noise in every condition, so the burst-free copies are a valid noise floor in vitro too. Its copies give as many bursts as its trace (ratio 0.9-1.2), while real in vitro granules have about 30% more bursts than their copies (ratio 0.64-0.75).
+- SP grid 10-20 on the new data (`detection_grid_vitro_new_sp/`): copies ÷ granules stays at 0.3-1.0, as with the stored traces.
+
+**Figures** (`py checks/ms_figures.py --vitro-new` → `analysis_outputs/ms_revision/figs_vitro_new/`; the default run is unchanged):
+- fig6 = manuscript Fig. 6: in vitro bursts, mean burst, turnover and net change, with movie-level CIs;
+- fig18 = Fig. 14: panels (b) and (c) now include in vitro;
+- fig22 = Fig. 18: first vs second half.
+
+In vitro halves on the new data: only 100:1 changes significantly (turnover −8 → 117 %/h, net change −21 → −116 %/h). The stored-data changes in 1:1 (turnover p = 0.006) and 10:1 (turnover 76 → 18, p = 0.007) are not significant with movies as replicates (p 0.23, 0.32).
