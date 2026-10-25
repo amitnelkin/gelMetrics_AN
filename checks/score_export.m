@@ -11,7 +11,7 @@ function score_export(what)
 %        simulated signal (granule level known from the simulation).
 % Writes analysis_outputs/scores/<what>_bursts.csv, <what>_traces.csv, <what>_sigma.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'scores');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 tVec = (0:360) * 10/60; bu = cell(0, 9); tr = cell(0, 5); sg = cell(0, 5);

@@ -24,7 +24,7 @@ if nargin < 2 || isempty(stages)
 end
 checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);
-addpath(repoDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy'));
 if nargin < 3, datasets = {'4PP7','4PP7-FUS','30PP7','30PP7-FUS'}; end  % also used for 5Qb/10Qb
 if nargin < 4, outRoot = 'in_vivo_reextracted'; end
 

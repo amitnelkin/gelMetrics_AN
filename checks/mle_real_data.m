@@ -7,7 +7,7 @@
 % 13; top trim 10%. Same code path as checks/mle_sim_validation.m.
 % Writes analysis_outputs/mle_real/mle_real.csv, surfaces.mat, boot.mat.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'mle_real');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset';

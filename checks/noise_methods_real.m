@@ -17,7 +17,7 @@ if nargin < 2, suFolder = 'in_vivo_reextracted/after_R2_sums'; end
 if nargin < 3, outFile = fullfile('noise_methods', 'real_sf.csv'); end
 if nargin < 4, doVitro = true; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_methods');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2i = 'in_vivo_reextracted/after_R2_offset'; R2 = r2Folder; SU = suFolder;

@@ -9,7 +9,7 @@ function example_traces()
 % (first such trace). RESULTS.md section 21.
 % Writes analysis_outputs/noise_background/example_traces.csv, example_bursts.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_background');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 jobs = {'4PP7-FUS', 'in_vivo_reextracted/after_R2_sums', '4PP7-FUS_spotsum', true; ...

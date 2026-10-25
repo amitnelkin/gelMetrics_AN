@@ -14,7 +14,7 @@
 % CIs: 50 granule-bootstrap resamples per joint fit (traces resampled within
 % each dataset; seeded). Writes analysis_outputs/valency/real_fits.csv, real_boot.mat.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'valency');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset'; IV = 'in_vitro_experiments';

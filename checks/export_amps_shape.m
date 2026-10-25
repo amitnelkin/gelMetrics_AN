@@ -11,7 +11,7 @@ function export_amps_shape()
 % Writes analysis_outputs/lambda_k0_shape/amplitudes.csv
 % (kind, dataset, lambdaTrue, noise, trace, movie, amp).
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'lambda_k0_shape'); if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset';
 info = [readtable(fullfile(repoDir, R2, 'extraction_info.csv')); readtable(fullfile(repoDir, R2, 'extraction_info_5Qb_10Qb.csv'))];

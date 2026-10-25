@@ -14,7 +14,7 @@
 % 150 tracks, k0 = 60, SP 15, window 13. Both burst signs.
 % Writes analysis_outputs/estimators/sim_estimates.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'estimators');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 W = [.5 .25 .25; 1/3 1/3 1/3; 1 0 0; 0 1 0; 0 0 1; .25 .5 .25; .25 .25 .5];

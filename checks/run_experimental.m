@@ -16,11 +16,11 @@ function rows = run_experimental(name, folder, SP, GOF, outDir)
 
 checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);
-addpath(repoDir); addpath(checksDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir);
 global GM_FITLOG GM_RUNOUT
 GM_FITLOG = {}; GM_RUNOUT = [];
 
-src = strrep(fileread(fullfile(repoDir, 'ExperimentalAnalysis.m')), sprintf('\r'), '');
+src = strrep(fileread(fullfile(repoDir, 'legacy', 'ExperimentalAnalysis_WS.m')), sprintf('\r'), '');
 src = regexprep(src, '^\s*(close all|clearvars|clear|clc)\s*;[^\n]*$', '', 'lineanchors');
 src = gm_strip_plot_lines(src);
 src = regexprep(src, 'stringencyParameter\s*=\s*\d+\s*;', sprintf('stringencyParameter = %d;', SP), 'once');

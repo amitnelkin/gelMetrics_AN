@@ -12,7 +12,7 @@
 %    the truth and k0 free per simulation.
 % Writes analysis_outputs/noise_models/calibration.csv (floorK per SP; a; b).
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_models');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 tVec = (0:360) * 10/60;

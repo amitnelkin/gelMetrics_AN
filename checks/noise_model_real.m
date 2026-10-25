@@ -13,7 +13,7 @@ function noise_model_real(part)
 % Data: in vitro stored; PP7, PP7-FUS, Qbeta from the R2 re-extraction.
 % Writes analysis_outputs/noise_models/real_separate.csv / real_joint.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_models');
 C = readtable(fullfile(outDir, 'calibration.csv'));
 R2 = 'in_vivo_reextracted/after_R2_offset'; IV = 'in_vitro_experiments';

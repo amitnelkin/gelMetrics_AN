@@ -1980,3 +1980,53 @@ Main text changes:
 - The in vitro controls are added to Appendix E: noise ratio 2.3-2.7; static granule −3 to 0 %/h vs 12-48 %/h.
 - In vitro copies ÷ granules at j 10-14 is 0.65-0.92.
 - Fig. 6 burst counts: 99 / 93 / 89.
+
+## 45. Repository for new users: GelMetricsReport / GelMetricsCompare; WS fit moved to legacy/
+
+**What changed in the repository:**
+- **`GelMetricsReport.m`** (new): every Table I measure for one condition, with nested movie → granule bootstrap CIs. It uses the same definitions as `control_table.py` / `vitro_new.py`: detector `analysis.m`, window 13, SP 12; burst-free copies as in `detection_grid.m`; net change = Theil-Sen slope of ln(granule / background).
+- **`GelMetricsCompare.m`** (new): movie-level permutation test between two conditions.
+- **Loaders:** `gm_paper_dataset.m` (the paper's datasets, with movie ids) and `gm_load_extraction.m` (a user's own extraction).
+- **New `ExperimentalAnalysis.m` and `SimulationRunWithAnalysis.m`** use them.
+- **`Collect_intensity_data.m`** also saves `spotsum.mat` and `movies.mat`. The extracted values are unchanged.
+- **Moved to `legacy/`:** `modifiedPoissonFit.m`, `modelCDF.m` and the old runners (`*_WS.m`). `checks/*.m` add `legacy/` to the path (43 files, a one-line change each), so every old check still runs.
+- **README rewritten.**
+
+**Reproduction of the paper numbers:**
+- Identical: brightness, frame noise (in vitro), mean and median burst size, and net change (e.g. in vitro −21.2 / −39.2 / −70.3).
+- In vivo frame noise differs slightly by definition (4x FUS 21.5 vs 22.2 in Table I).
+- The copy-based measures (burst size of copies, beyond noise, turnover) depend on the random draw of the copies.
+
+**Random variation of the noise copies (new finding):**
+- With one copy per granule, as in the paper, burst size beyond noise varies between seeds by up to about 2 points: 4x FUS 1.4-2.6, in vitro 1:1 −2.9 to 0.7, 100:1 5.0-8.9 over 10 seeds. Turnover beyond noise varies by up to about 7 %/h.
+- With 20 copies per granule (`opts.nCopies = 20`) the spread is within about 0.5 points.
+- 20-copy values (95% CI): see the tables below.
+
+| dataset | beyond noise (pts) | turnover beyond noise (%/h) |
+|---|---|---|
+| 4PP7 | −0.4 [−1.7, 1.8] | 2.9 [−2.3, 7.9] |
+| 4PP7-FUS | 2.0 [0.0, 3.7] | 4.8 [−1.4, 10.6] |
+| 30PP7 | 1.2 [−0.3, 2.8] | 4.4 [−0.1, 10.0] |
+| 30PP7-FUS | 1.4 [0.1, 2.9] | 3.3 [−1.8, 7.9] |
+| 5Qb | 2.0 [1.3, 2.8] | 9.1 [5.5, 12.7] |
+| 10Qb | 2.1 [1.4, 3.0] | 9.7 [6.6, 12.8] |
+| vitro 1:1 | −0.6 [−5.5, 4.8] | 10.0 [−5.4, 32.0] |
+| vitro 10:1 | 2.7 [0.1, 9.8] | 50.4 [1.1, 119.4] |
+| vitro 100:1 | 7.3 [0.6, 25.0] | 43.8 [5.3, 100.2] |
+
+Movie-level comparisons with 20 copies (5000 shuffles, two-sided):
+
+| comparison | burst size (% of granule) | beyond noise | turnover | net change |
+|---|---|---|---|---|
+| 4x FUS vs PP7 | 17.2 vs 11.0, p = 0.0006 | 2.0 vs −0.4, p = 0.18 | p = 0.53 | p = 0.15 |
+| 30x FUS vs PP7 | p = 0.11 | p = 0.73 | p = 0.71 | p = 0.26 |
+| 5Qb vs 4PP7 | | p = 0.0002 | p = 0.022 | p = 0.33 |
+| 10Qb vs 30PP7 | | p = 0.30 | p = 0.028 | p = 0.0002 |
+| in vitro 100:1 vs 1:1 | p = 0.030 | p = 0.034 | p = 0.17 | p = 0.016 |
+| in vitro 10:1 vs 1:1 | p = 0.17 | p = 0.30 | p = 0.27 | p = 0.60 |
+
+**Reading:**
+- With stable copies, the 4x FUS excess beyond noise is 2.4 points (paper, one copy: 3.5), two-sided p = 0.18. The paper gives two-sided 0.061 and one-sided 0.031, from a different gap statistic on one copy set. **The FUS trend is weaker than the paper states.**
+- Qβ vs PP7 (turnover) and in vitro 100:1 vs 1:1 (net change) are unchanged.
+- In vitro 100:1 vs 1:1 burst size beyond noise becomes significant (p = 0.034; paper 0.096).
+- Decision for the user: whether the paper's copy-based numbers should be redone with 20 copies.

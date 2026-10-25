@@ -10,7 +10,7 @@ function d = gm_noplot(percentOverride)
 % hardcoded "percent = 15;" (how the paper figures with GOF = 10 were made).
 % Returns the temp folder; remove it with rmpath(d); rmdir(d,'s').
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-src = fileread(fullfile(repoDir, 'modifiedPoissonFit.m'));
+src = fileread(fullfile(repoDir, 'legacy', 'modifiedPoissonFit.m'));
 i0 = strfind(src, '% Plot a subset of the results');
 assert(numel(i0) == 1, 'gm_noplot: plotting section marker not found');
 src = [src(1:i0-1) sprintf('pvec = []; %% plotting removed by gm_noplot\r\nend\r\n')];

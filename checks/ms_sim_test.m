@@ -15,7 +15,7 @@ function ms_sim_test(lams, noises, tag)
 % Optional (section 31): lams, noises and a file tag, e.g. ms_sim_test(2, [12 120], '_snr')
 % for the MS Fig. 13 rows lambda 2 at SNR 5 and 0.5 (k0/noise); ids then start at 1001.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'ms_sim_test'); if ~exist(outDir, 'dir'), mkdir(outDir); end
 if nargin < 1, lams = [0.5 1 2 3 4 5]; end
 if nargin < 2, noises = [40 4]; end

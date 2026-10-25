@@ -13,7 +13,7 @@
 % Writes analysis_outputs/estimators/real_map.csv, real_weights.csv,
 % real_trims.csv, real_counts.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'estimators');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset';

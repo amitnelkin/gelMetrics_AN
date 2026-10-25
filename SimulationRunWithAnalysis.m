@@ -1,115 +1,33 @@
-close all;   % Close all open figure windows
-clear;       % Clear workspace
-rng(1);      % fixed seed so simulation figures are reproducible
-
-% Algorithm Parameters
-movingAverageWindowSpan = 13;             % Moving average window span for signal denoising
-stringencyParameter = 15;                 % Parameter for burst events detection
-timeVecTotal = linspace(0, 60, 360);      % Time steps vector
+% SIMULATIONRUNWITHANALYSIS  The revised GelMetrics analysis on simulated granules
+% with known dynamics (generateSim.m), through the same code as the experimental data.
+% Bursty granules: material leaves and enters in Poisson-distributed numbers of units
+% (lambda units of k0 each, mean burst size lambda*k0). Constant granules: no bursts
+% at all, so everything detected in them is noise.
+close all; clearvars; clc;
+rng(1);                    % fixed seed: reproducible simulations
 
 % Simulation parameters
-simType = 3;                                     % Simulation type 
-numTracks = 1000;                                % Number of tracks to simulate
-t = linspace(0, 60, 360);                        % Time vector for simulation
-noiseStd = 40;                                   % Standard deviation of noise
-expConst = 0.0026;                               % Exponential constant for photobleaching [1/min]: median of per-dataset fits to the real backgrounds, offset 200 removed (checks/fit_bleaching.py); was 0.0005 = 3% over 60 min
-lambda_sim = 2;                                  % Poisson parameter
+numTracks = 200;           % granules
+trackLength = 361;         % time points (60 min at 10 s)
+expConst = 0.0026;         % photobleaching rate (1/min), median of the measured backgrounds
+noiseStd = 40;             % frame noise (a.u.)
+lambda_sim = 2;            % mean number of units per burst
+k0_sim = 60;               % intensity of one unit (a.u.)
 
-% generateSim function generates simulated trajectories
-% Function recieces as input: 
-% numTracks - number of tracks to generate
-% trackLength - the number of points in a track
-% simType - 1 for constant, 2 for slope, 3 for bursts 
-% expConst - constant for photobleaching exponential component
-% noiseStd - standard deviation of the gaussian noise component
-% lambda - Poisson parameter for the bursty signals (only relevant for
-% simType = 3)
-[signals, backgrounds] = generateSim(numTracks,numel(t),simType,expConst,noiseStd,lambda_sim);
+% Analysis settings (as for the experimental data)
+opts.window = 13; opts.SP = 12; opts.frameInterval = 10; opts.minFrames = 180;
+opts.nCopies = 20;
 
-% Signal plotting controls
-% To plot a few sample signals you can change these variables
-% plotMin is the first signal plotted
-% plotMax is the last signal plotted
-% Example: to plot the first 5 signals change plotMax to 5
+[S, Bg] = generateSim(numTracks, trackLength, 3, expConst, noiseStd, lambda_sim, k0_sim);
+D.name = sprintf('bursty (lambda %g, k0 %g)', lambda_sim, k0_sim);
+D.spotMean = num2cell(S, 2); D.background = num2cell(Bg, 2);
+R = GelMetricsReport(D, opts);
+fprintf('  true mean burst size lambda*k0 = %g a.u.\n', lambda_sim * k0_sim);
 
-plotMin = 0;
-plotMax = 5;
+[S, Bg] = generateSim(numTracks, trackLength, 1, expConst, noiseStd, lambda_sim, k0_sim);
+D0.name = 'constant (no bursts)';
+D0.spotMean = num2cell(S, 2); D0.background = num2cell(Bg, 2);
+R0 = GelMetricsReport(D0, opts);
+fprintf('  constant granules: burst size beyond noise and turnover beyond noise should be ~0\n');
 
-
-% Initialize cell arrays to store analysis results in case of comparison of
-% stingency parameters
-ampPosTotal = cell(length(stringencyParameter), 1);
-ampNegTotal = cell(length(stringencyParameter), 1);
-ampVarTotal = cell(length(stringencyParameter), 1);
-
-eventsPerSignalTotal = cell(length(stringencyParameter), 1);       % Total events per signal
-
-% Loop through each match probability
-for SP = 1:length(stringencyParameter)
-    
-    % Perform analysis
-    [timeBetweenPos, timeBetweenNeg, ampPos, ampNeg, ampVar, eventsPerSignal] = ...
-        analysis(signals, backgrounds, timeVecTotal, ...
-        movingAverageWindowSpan, stringencyParameter(SP), plotMin, plotMax);
-
-    % Remove the -Inf placeholder used to initialize the variable
-    ampPos = ampPos(2:end);
-    ampNeg = ampNeg(2:end);
-    ampVar = ampVar(2:end);
-    
-    timeBetweenPos = timeBetweenPos(2:end);
-    timeBetweenNeg = timeBetweenNeg(2:end);
-    
-    % Store various analysis results if comparing between different
-    % stringency parameters
-    ampPosTotal{SP} = ampPos;
-    ampVarTotal{SP} = ampVar;
-    ampNegTotal{SP} = ampNeg;
-
-    eventsPerSignalTotal{SP} = eventsPerSignal; 
-
-    % Plot histograms and statistical analysis results
-    figure;
-    yyaxis left
-    histogram(ampVar(abs(ampVar) < 250), 25);
-    ylabel('Counts');
-    yyaxis right
-    var_gauss = pdf('Normal', -250:0.5:250, 0, std(ampVar(abs(ampVar) < 100)));
-    plot(-250:0.5:250, var_gauss);
-    ylabel('PDF');
-    xlabel('Intensity [A.U]');
-    title('Quiescent Amplitudes');
-
-
-    % Plot histogram of all amplitudes with 3 Gaussians overlaid corresponding
-    % to Negative, Zero, Positive
-
-    figure; 
-    histogram(ampPos, 'FaceColor', 'g', 'BinWidth', 5, 'Normalization', 'probability'); hold on;
-    histogram(ampVar, 'FaceColor', 'b', 'BinWidth', 5, 'Normalization', 'probability');
-    histogram(ampNeg, 'FaceColor', 'r', 'BinWidth', 5, 'Normalization', 'probability');
-    xlim([-600, 600]); 
-    ylabel('Frequency');
-    title('3 Amplitude phases');
-    xlabel('Amplitudes [A.U]');
-    
-    
-    lambda = 1:5;
-    
-    % Poisson analysis on positive amplitudes
-    khat = var(abs(ampPos))/mean(abs(ampPos));
-    khat_SEhat_coeff = sqrt(2)/sqrt(length(ampPos)) ;
-    khat_SEhat = khat * khat_SEhat_coeff;
-    K0Vector = max(1, floor(khat - 13 * khat_SEhat)):ceil(khat + 13 * khat_SEhat); % Symmetric k0 grid, +-13 standard errors around the k0 estimator (was -8/+18, tuned to a bias seen in simulation)
-    modifiedPoissonFit(rmoutliers(ampPos,"percentiles",[0,90]),lambda,K0Vector,10,'Positive amplitudes',15); % same trim and truncation as ExperimentalAnalysis.m
-    
-    
-    % Poisson analysis on negative amplitudes
-    khat = var(abs(ampNeg))/mean(abs(ampNeg));
-    khat_SEhat_coeff = sqrt(2)/sqrt(length(ampNeg)) ;
-    khat_SEhat = khat * khat_SEhat_coeff;
-    K0Vector = max(1, floor(khat - 13 * khat_SEhat)):ceil(khat + 13 * khat_SEhat); % Symmetric k0 grid, +-13 standard errors around the k0 estimator (was -8/+18, tuned to a bias seen in simulation)
-    modifiedPoissonFit(rmoutliers(abs(ampNeg),"percentiles",[0,90]),lambda,K0Vector,10,'Negative amplitudes',15); % same trim and truncation as ExperimentalAnalysis.m
-
-end
-
+% Simulations have no movies: every granule is its own replicate here.

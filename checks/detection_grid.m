@@ -22,7 +22,7 @@ if nargin < 6, vitroFolder = 'in_vitro_experiments'; end
 if nargin < 7, vitroJobs = {'protein_RNA_1_1','protein_RNA_1_1'; 'protein_RNA_10_1','protein_RNA_10_1'; 'protein_RNA_100_1','protein_RNA_100_1'}; end
 if nargin < 8, doVivo = true; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', outName);
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset'; SU = suFolder;

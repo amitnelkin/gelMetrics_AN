@@ -34,7 +34,7 @@ d0 = struct('SPs', 10:15, 'win', 13, 'minLen', 180, 'surrogate', 'none');
 fn = fieldnames(d0);
 for i = 1:numel(fn), if ~isfield(opts, fn{i}), opts.(fn{i}) = d0.(fn{i}); end, end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'robustness');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset'; SU = 'in_vivo_reextracted/after_R2_sums';

@@ -15,7 +15,7 @@ function noise_model_validation(k0list, tag, only)
 % only (optional): cell of model names to run (e.g. the mixH models).
 % Writes analysis_outputs/noise_models/validation_<tag>.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_models');
 C = readtable(fullfile(outDir, 'calibration.csv'));
 SP = 15; fk = C.floorK(C.SP == SP); ab = [C.a(1) C.b(1)]; hk = C.h0K(C.SP == SP);

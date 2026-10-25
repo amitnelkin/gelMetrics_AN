@@ -12,7 +12,7 @@
 % 'fixed' (ratio = assumed); joint 'bounded' (1 <= ratio <= assumed).
 % Writes analysis_outputs/valency/sim_validation.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'valency');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 % lamLo lamHi k0Lo trueRatio assumedRatio

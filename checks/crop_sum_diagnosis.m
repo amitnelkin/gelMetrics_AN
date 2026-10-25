@@ -16,7 +16,7 @@ function crop_sum_diagnosis(workRoot)
 %    same frames.
 % Writes analysis_outputs/crop_diagnosis/radial.csv, fractions.csv, nearcell.csv.
 checksDir = fileparts(mfilename('fullpath')); repoDir = fileparts(checksDir);
-addpath(repoDir); addpath(checksDir); addpath(fullfile(repoDir, 'analysis'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir); addpath(fullfile(repoDir, 'analysis'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'crop_diagnosis');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'};

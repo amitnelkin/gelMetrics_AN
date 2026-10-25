@@ -14,7 +14,7 @@ function sim_high_sp(wins, SPs, outName)
 % Optional (section 35): wins (default 13), SPs (default 10-25), outName, e.g.
 % sim_high_sp([5 9 13 21 31], [12 15 18 21], 'sim_win_sp.csv').
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'detection_grid_highSP'); if ~exist(outDir, 'dir'), mkdir(outDir); end
 sets = {'MS-like (noise 0.7%)', 40, 60; 'PP7-like (noise 18%)', 1100, 300};
 if nargin < 1, wins = 13; end

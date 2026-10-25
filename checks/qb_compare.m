@@ -12,7 +12,7 @@
 %    100-resample granule bootstrap) negative bursts; sigma from ampVar.
 % Writes analysis_outputs/qb_compare/traces.csv, bursts.csv, fits.csv, amplitudes.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'qb_compare');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 V = {'stored_MS', 'in_vivo_experiments'; 'R2_reextracted', 'in_vivo_reextracted/after_R2_offset'};

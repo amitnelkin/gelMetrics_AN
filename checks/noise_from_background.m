@@ -30,7 +30,7 @@ function noise_from_background(datasets, outSub)
 % noise_from_background({'vitro_1000ng_10ug', ...}, 'noise_background_vitro').
 if nargin < 1, datasets = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy'));
 if nargin < 2, outSub = 'noise_background'; end
 outDir = fullfile(repoDir, 'analysis_outputs', outSub);
 if ~exist(outDir, 'dir'), mkdir(outDir); end

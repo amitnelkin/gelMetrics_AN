@@ -15,7 +15,7 @@
 %     granule permutation (500 perms) and, for reference, chi2(2).
 % Writes analysis_outputs/fus_test_4x/fus_test_4x.csv and amplitudes_4x.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'fus_test_4x');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 versions = {'R2_reextracted', 'in_vivo_reextracted/after_R2_offset';

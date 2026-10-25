@@ -7,7 +7,7 @@ function example_traces_sp(SPs)
 % Writes analysis_outputs/noise_background/example_traces_sp.csv, example_bursts_sp.csv.
 if nargin < 1, SPs = [12 15 18 21 25]; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_background');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 jobs = {'4PP7-FUS', 'in_vivo_reextracted/after_R2_sums', '4PP7-FUS_spotsum', true; ...

@@ -7,7 +7,7 @@ function reextract_sums(workRoot)
 % Writes in_vivo_reextracted/after_R2_sums/<ds>_spotsum_data.mat, _cropsum_data.mat
 % (variable intensity) and matching _background.mat (the cell-class mean, as R2).
 checksDir = fileparts(mfilename('fullpath')); repoDir = fileparts(checksDir);
-addpath(repoDir); addpath(checksDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir);
 outDir = fullfile(repoDir, 'in_vivo_reextracted', 'after_R2_sums');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 for ds = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}

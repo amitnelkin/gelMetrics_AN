@@ -11,7 +11,7 @@ if nargin < 1, nCopies = 100; end
 if nargin < 2, SPs = [12 16 20 24 28 32 36 40]; end
 if nargin < 3, datasets = {'4PP7', '4PP7-FUS'}; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'fp1000');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset'; SU = 'in_vivo_reextracted/after_R2_sums';

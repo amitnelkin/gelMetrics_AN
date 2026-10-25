@@ -7,7 +7,7 @@
 % trace at SP 10, 12, 15 (the Sec. III calibration). Seeded.
 % Output: analysis_outputs/ms_revision/fig4_*.csv
 clear; close all;
-repoDir = '..'; addpath(repoDir);
+repoDir = '..'; addpath(repoDir); addpath(fullfile(repoDir, 'legacy'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'ms_revision'); if ~exist(outDir, 'dir'), mkdir(outDir); end
 nTr = 1000; T = 360; noiseSD = 40; expC = 0.0026; lam = 2; win = 13;
 tVec = linspace(0, 60, T);

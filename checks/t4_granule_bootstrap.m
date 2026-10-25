@@ -6,7 +6,7 @@
 
 clear; close all;
 repoDir = '..';   % repo root when this script lives in checks/
-addpath(repoDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy'));
 ws = warning('off', 'all');
 fprintf('Scorer: %s (set env GM_SCORER=orig|patched; see gm_score.m)\n', gm_scorer());
 

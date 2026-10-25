@@ -19,7 +19,7 @@ function report_params_sim()
 % Writes analysis_outputs/report_params/sim_traces.csv (one row per trace) and
 % sim_signals.mat (signals for the net-change slopes).
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'report_params'); if ~exist(outDir, 'dir'), mkdir(outDir); end
 sims = {'no bursts', 1, 0, 40; 'lambda 1', 3, 1, 40; 'lambda 2', 3, 2, 40; 'lambda 4', 3, 4, 40; ...
         'lambda 2, SNR 5', 3, 2, 12; 'lambda 2, SNR 0.5', 3, 2, 120};

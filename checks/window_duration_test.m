@@ -11,7 +11,7 @@ function window_duration_test(SP)
 %     negative bursts detected around the pair (1 = merged, 2 = resolved).
 % Writes analysis_outputs/robustness/window_duration.csv, window_spacing.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'robustness');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 tVec = (0:360) * 10/60; n = 150; L = 361; mid = 180;

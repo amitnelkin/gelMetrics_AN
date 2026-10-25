@@ -1,6 +1,6 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-44). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-45). Read the relevant section there before redoing anything.
 
 **In vitro into the manuscript: done as change list v2, `revision_docs/vitro_change_list_v2.md` (local; section 44), from the section 43 primary data. The user applies it by hand. Still open: the reason the three in vitro movies were dropped (for Methods VIII.E), and item A7 (FUS brightness per movie vs per granule). `CLAUDE_laptop_vitro.md` is the finished brief.**
 
@@ -172,6 +172,7 @@ Everything downstream of extraction:
 - Open items for the user are listed at the end of Revision_control.docx (Fig. 10(a) arrow label 'lambda', Eq. 1.1 as Word equation, etc.).
 
 ## Where things are (scripts → outputs)
+- **User-facing analysis (section 45):** `GelMetricsReport.m` (all Table I measures + CIs, `opts.nCopies`), `GelMetricsCompare.m` (movie-level test), `gm_paper_dataset.m`, `gm_load_extraction.m`; runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` call them. The WS fit and the old runners are in `legacy/` (`modifiedPoissonFit.m`, `modelCDF.m`, `*_WS.m`); `checks/*.m` add `legacy/` to the path. **One noise copy per granule (as in the paper) varies by up to ~2 points of burst size beyond noise between seeds; use 20 copies.**
 - **Pipeline:** `BatchParticleTracker.ijm`, `read_tables.m`, `collect_intensity.m` (+ wrapper `Collect_intensity_data.m`), `generate_movArray.m`, `analysis.m` (optional 7th output `segInfo` per burst), `getPosition.m`, `modifiedPoissonFit.m`, `generateSim.m` (optional k0), runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` (run via `checks/run_runners.m`).
 - **Helpers:** `checks/gm_loadDataset.m`, `analysis/gm_amplitudes_by_trace.m`, `analysis/gelmetricsMLE.m`, `analysis/gelmetricsJoint.m`.
 - **Noise floor and detection:**

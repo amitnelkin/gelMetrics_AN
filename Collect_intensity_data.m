@@ -15,8 +15,15 @@ clc;
 % Path to folder containing tif and mat files
 file_path = [uigetdir("*", ''), filesep];
 
-[intensity, background] = collect_intensity(file_path);
+[intensity, background, info, sums] = collect_intensity(file_path);
 % Intensity signal gathering is done.
 
-save([file_path, 'data.mat'],'intensity');
-save([file_path, 'background.mat'],'background');
+save([file_path, 'data.mat'],'intensity');           % spot mean (camera offset removed)
+save([file_path, 'background.mat'],'background');    % surrounding cell / dilute phase
+% For GelMetricsReport.m: the integrated granule intensity, and the movie of every trace
+% (movies are the independent replicates of the confidence intervals).
+spotSum = sums.spotSum;
+save([file_path, 'spotsum.mat'],'spotSum');
+movieNames = {info.movie};
+movieId = repelem((1:numel(info))', [info.nKept]');
+save([file_path, 'movies.mat'],'movieId','movieNames');

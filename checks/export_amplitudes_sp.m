@@ -8,7 +8,7 @@
 % window 13, traces >= 180 frames.
 % Writes analysis_outputs/fig16_sp/amplitudes_sp.csv (data, dataset, SP, sign, trace, amp).
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'fig16_sp');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 src = {'R2_reextracted', 'in_vivo_reextracted/after_R2_offset'; 'stored_MS', 'in_vivo_experiments'};

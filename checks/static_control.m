@@ -26,7 +26,7 @@ if nargin < 4, versions = [0 31]; end
 if nargin < 5, measure = 'sum'; end   % thresholds: 0 per frame, >0 running median, -1 one fixed mask (section 33)
 vname = @(w) [repmat('vfix', 1, double(w < 0)), repmat(sprintf('v%d', w), 1, double(w >= 0))];
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'checks'));
 off = 200; rng(2023);
 tVec = (0:360) * 10/60; rows = cell(0, 15);
 for d = 1:numel(datasets)

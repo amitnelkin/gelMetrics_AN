@@ -10,7 +10,7 @@ function reextract_fixed(workRoot, posWin)
 % light inside the fixed mask, per frame). The repo .mat files are untouched.
 if nargin < 2, posWin = 15; end
 checksDir = fileparts(mfilename('fullpath')); repoDir = fileparts(checksDir);
-addpath(repoDir); addpath(checksDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir);
 outDir = fullfile(repoDir, 'in_vivo_reextracted', 'after_R5_fixedmask');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 for ds = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}

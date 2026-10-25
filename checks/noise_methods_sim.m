@@ -18,7 +18,7 @@ function noise_methods_sim()
 %     tau = 1 2 3 6 12 18 30 45 60 frames, real and surrogate.
 % Writes analysis_outputs/noise_methods/sim_bursts.csv, sim_traces.csv, sim_sf.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_methods');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 taus = [1 2 3 6 12 18 30 45 60]; Lf = 361; nT = 100; tVec = (0:360) * 10/60; tMin = (0:Lf-1) * 10/60;

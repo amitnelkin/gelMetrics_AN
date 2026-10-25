@@ -10,7 +10,7 @@ function reextract_steady(workRoot, thrWin)
 % and <ds>_spotarea.mat (as after_R2_sums). The repo .mat files are untouched.
 if nargin < 2, thrWin = 31; end
 checksDir = fileparts(mfilename('fullpath')); repoDir = fileparts(checksDir);
-addpath(repoDir); addpath(checksDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir);
 outDir = fullfile(repoDir, 'in_vivo_reextracted', 'after_R4_steadythr');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 for ds = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}

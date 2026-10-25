@@ -4,7 +4,7 @@
 % (checks/plot_mle_histograms.py). Reviewer points R2 4a/4b (goodness of fit).
 % Writes analysis_outputs/mle_real/amplitudes.csv (dataset, sign, trace, amp).
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'mle_real');
 R2 = 'in_vivo_reextracted/after_R2_offset';
 D = {'protein_RNA_1_1','in_vitro_experiments',12; 'protein_RNA_10_1','in_vitro_experiments',12;

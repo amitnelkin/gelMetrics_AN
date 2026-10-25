@@ -8,7 +8,7 @@
 % fixed generateSim (symmetric bursts, bleached baseline, expConst 0.0026),
 % noiseStd 40, k0 = 60. Writes analysis_outputs/mle_validation/sim_validation.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'mle_validation');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 

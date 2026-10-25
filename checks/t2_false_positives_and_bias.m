@@ -8,7 +8,7 @@
 
 clear; close all;
 repoDir = '..';   % repo root when this script lives in checks/
-addpath(repoDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy'));
 ws = warning('off', 'all');
 
 nTracks = 300; win = 13; tVec = linspace(0, 60, 360);

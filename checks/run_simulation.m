@@ -9,11 +9,11 @@ function rows = run_simulation(outDir)
 
 checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);
-addpath(repoDir); addpath(checksDir);
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir);
 global GM_FITLOG GM_RUNOUT
 GM_FITLOG = {}; GM_RUNOUT = [];
 
-src = strrep(fileread(fullfile(repoDir, 'SimulationRunWithAnalysis.m')), sprintf('\r'), '');
+src = strrep(fileread(fullfile(repoDir, 'legacy', 'SimulationRunWithAnalysis_WS.m')), sprintf('\r'), '');
 src = regexprep(src, '^\s*(close all|clearvars|clear|clc)\s*;[^\n]*$', '', 'lineanchors');
 src = gm_strip_plot_lines(src);
 src = regexprep(src, 'plotMax\s*=\s*\d+\s*;', 'plotMax = 0;', 'once');

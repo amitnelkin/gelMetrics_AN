@@ -6,7 +6,7 @@
 % false-burst component can only absorb noise-sized events (R2 6).
 % Adds column h0K to analysis_outputs/noise_models/calibration.csv.
 repoDir = fileparts(fileparts(mfilename('fullpath')));
-addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
+addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_models');
 tVec = (0:360) * 10/60; rat = cell(1, 15);
 for nz = [20 40 80]
