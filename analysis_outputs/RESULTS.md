@@ -1924,3 +1924,41 @@ Outputs: `analysis_outputs/vitro_orig_verify/`.
   - In 10:1 the stored traces are short (median 94 frames vs 199), so fewer reach 30 min (37 vs 83).
   - So the "≥ 30 min" granule set differs.
   - The original tracking settings, and whether the movies were dropped on purpose (e.g. focus), are unknown.
+
+## 43. Primary in vitro data: the stored granules, re-read with the corrected pipeline
+
+**Decisions by the user (2026-10-25):**
+- 10:1 movie 5 and 100:1 movies 5 and 7 were dropped on purpose by the authors; the reason is still to come from the user.
+- The in vitro analysis should use the same granules and traces as the original data, but with the corrected pipeline.
+
+**Data** (`checks/vitro_same_granules.m` → `in_vitro_reextracted/same_granules_R2/`):
+- **Rebuilding the tracks:**
+  - every stored point (spot, cell) was matched exactly to a point of the original-code run on the re-tracked movies (section 41), which gives its movie, frame and x, y;
+  - 99.2% of the 44 885 stored points matched;
+  - the few missing interior points were interpolated; missing end points were dropped.
+- **Extraction:** the rebuilt tracks were read with `collect_intensity` R2 (page = frame + 1, x + 1, y + 1, offset 200, per-frame multithresh).
+- **Traces:** 77 / 88 / 55 of 78 / 90 / 57 come through (the rest fall under 24 points). Movie ids are in `extraction_info_same.csv`; the stored-trace map is in `same_granules_map.csv` and `*_stored_index.csv`.
+- **Bursts:** `detection_grid_vitro_same` (window 13, SP 12) and `detection_grid_vitro_same_sp` (SP 10-20).
+- **Parameters:** `py checks/vitro_new.py --same` → `analysis_outputs/vitro_same/`.
+
+| condition | granules ≥ 30 min (movies) | brightness | burst size, granules / copies (%) | beyond noise (pts) | median burst (a.u.) | turnover beyond noise (%/h) | net change (%/h) |
+|---|---|---|---|---|---|---|---|
+| 1:1 | 46 (12) | 915 | 7.1 / 6.7 | 0.4 [−4.2, 5.5] | 49 [30, 71] | 11.6 [−1.8, 31.6] | −21.2 [−47.2, −2.9] |
+| 10:1 | 37 (4) | 1709 | 11.5 / 9.6 | 1.8 [−1.7, 8.5] | 77 [55, 144] | 47.8 [0.2, 117.3] | −39.2 [−125.1, −7.6] |
+| 100:1 | 31 (8) | 1694 | 15.9 / 8.7 | 7.2 [0.1, 19.3] | 124 [26, 319] | 43.1 [4.6, 103.8] | −70.3 [−101.2, −44.8] |
+
+- **Same picture as the stored traces** (−21 / −40 / −71 %/h; brightness 914 / 1715 / 1726): the corrected reader and the offset change almost nothing for these granules.
+- **Movie-level permutation, 100:1 vs 1:1:**
+  - net change p = 0.015;
+  - burst size beyond noise p = 0.096;
+  - median burst p = 0.096;
+  - turnover p = 0.20.
+- **10:1 vs 1:1:** all p > 0.16 (4 movies).
+- **First vs second half:** only 100:1 changes (turnover −28 → 127 %/h, p < 0.001; net change −35 → −85 %/h, p = 0.006).
+- **Controls** (`checks/vitro_controls.py`, now without the dropped movies; the controls use the re-tracked granules of the same movies):
+  - measured ÷ camera noise: 2.6 / 2.3 / 2.7;
+  - unchanging granule: −0.5 ± 4.7, −3.0 ± 5.2, −2.3 ± 7.1 %/h.
+- **Variants kept for robustness:**
+  - `vitro_new/`: all re-tracked granules, without the dropped movies. 1:1 / 10:1 / 100:1 net change −24 / −44 / −64 %/h; 100:1 vs 1:1 p = 0.050.
+  - `vitro_new_all/`: every movie, the section 38 numbers, reproduced exactly.
+- **Figures:** `py checks/ms_figures.py --vitro-new` now draws Figs. 6, 14 and 18 from this primary data (`ms_revision/figs_vitro_new/`).

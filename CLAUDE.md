@@ -1,8 +1,8 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-36). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-43). Read the relevant section there before redoing anything.
 
-**In vitro results into the manuscript (section 40): done as a change list, `revision_docs/vitro_change_list.md` (local only). The user applies it by hand; no Word file was modified. `CLAUDE_laptop_vitro.md` is the finished task brief.**
+**OPEN TASK for the laptop chat (it has the Word files): `CLAUDE_laptop_vitro.md` (v2). Update the manuscript, Table I and the letter to the FINAL in vitro data (section 43: the stored granules re-read with the corrected pipeline; movies 10:1 #5 and 100:1 #5, #7 dropped on purpose). This supersedes the section 40 change list. Never overwrite the user's Word files.**
 
 ## Context
 - Repo: https://github.com/amitnelkin/gelMetrics_AN, branch **`revision`** (never commit to `main`). Code for the manuscript *GelMetrics: an algorithm for analyzing the dynamics of gel-like phase-separated condensates* (Nelkin et al., ref. VM10081E), under revision. `MS.pdf` is in the repo root (not committed; ask the user if missing).
@@ -67,7 +67,7 @@ Everything downstream of extraction:
 - the unchanging-granule control (`checks/static_control.m`);
 - the camera-noise calibration (`checks/noise_from_background.m`).
 - Their outputs are committed, so they don't need rerunning unless the extraction changes.
-- **In vitro:** the raw titration movies were found and re-extracted (section 38). The re-extracted R2 data in `in_vitro_reextracted/after_R2_offset/` (offset already removed: do not subtract 200 again) are now the in vitro primary data. The stored `in_vitro_experiments/` traces stay for comparison.
+- **In vitro:** the raw titration movies were found and re-extracted (sections 38-43). **Primary in vitro data = `in_vitro_reextracted/same_granules_R2/`**: the stored granules (tracks rebuilt by exact point matching), read with R2 (offset already removed: do not subtract 200 again); results in `analysis_outputs/vitro_same/` (`py checks/vitro_new.py --same`). Variants: `after_R2_offset/` (all re-tracked granules; `vitro_new/` without the dropped movies, `vitro_new_all/` with all). Dropped movies: `checks/vitro_movies.py`.
 
 ## In vitro raw movies (section 38)
 - `..\Raw_Results\Titration experiment\`, 42 single-channel movies. The tracking script is `..\zigzag_scratch\track_all_vitro.ps1`; it uses junctions in `..\zigzag_scratch\vitro_raw` because the folder name contains a space, which Bio-Formats can't handle. Outputs: `..\zigzag_scratch\reextract\vitro_*\{track,work}`.
@@ -132,7 +132,7 @@ Everything downstream of extraction:
    - Turnover beyond noise does not differ.
    - For 80% power, about 2-5× more movies are needed (about 50 per condition; section 20).
 7. **30x:** no FUS effect in any measure. **Qβ vs PP7:** robustly more dynamic (turnover beyond noise 9-10 %/h vs ≈ 0; p 0.002-0.02).
-8. **In vitro (re-extracted, movie-level, section 38):** net loss grows with protein:RNA (−24 / −41 / −53 %/h; stored traces −21 / −40 / −71), as do the burst size beyond noise and the turnover. With movies as replicates this is a trend only (100:1 vs 1:1: p 0.08-0.18). The earlier z = −4.5 was granule-level. The 100:1 change is concentrated in the second half hour. Caveat: focus drift can't be excluded.
+8. **In vitro (primary data, section 43; stored granules, corrected pipeline, movie-level):** net loss beyond bleaching grows with protein:RNA (−21 / −39 / −70 %/h; 100:1 vs 1:1 p = 0.015). Burst size beyond noise and median burst follow the same order (p ≈ 0.1); turnover is not significant. Only 100:1 changes between halves (late). The controls hold in vitro (section 39). Caveat: focus drift can't be excluded.
 9. **Alternative extractions (tests, not adopted):**
    - R4 steady thresholds: 2-3× less noise but a slow artefact (the control itself shows 11-14 %/h).
    - R5 fixed mask: 4× less noise and a clean control, but its slow signal in PP7 tracks the granule moving relative to the mask (correlation 0.76-0.90). Under R5 the 4x FUS effect vanishes.

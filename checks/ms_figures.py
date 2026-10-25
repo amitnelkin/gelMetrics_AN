@@ -4,9 +4,10 @@ blue open circles, red dashed lines). Reviewer points: R2 4a/4b/5/6 and the
 minor point on Fig. 4 colours (Okabe-Ito for Fig. 4).
 
 Usage (repo root):  py -3 checks/ms_figures.py [--vitro-new]
---vitro-new (RESULTS.md section 39): the in vitro panels use the data re-extracted from the
-raw titration movies (vitro_new/, detection_grid_vitro_new*/, noise_background_vitro/,
-steady/static_control_vitro_summary.csv) instead of the stored traces, with movie-level CIs;
+--vitro-new (RESULTS.md sections 39, 43): the in vitro panels use the stored granules re-read
+with the corrected pipeline (vitro_same/, detection_grid_vitro_same*/; controls from
+noise_background_vitro/, steady/static_control_vitro_summary.csv) instead of the stored traces,
+with movie-level CIs;
 only Figs. 6, 18 and 22 (manuscript Figs. 6, 14, 18) are drawn, into figs_vitro_new/.
 Writes analysis_outputs/ms_revision/figs/fig*.png (300 dpi) and .pdf.
 
@@ -78,12 +79,12 @@ import sys
 VNEW = '--vitro-new' in sys.argv
 if VNEW:
     OUT = os.path.join(A, 'ms_revision', 'figs_vitro_new'); os.makedirs(OUT, exist_ok=True)
-    vn = pd.read_csv(os.path.join(A, 'vitro_new', 'summary.csv')).set_index('dataset').loc[VITRO]
+    vn = pd.read_csv(os.path.join(A, 'vitro_same', 'summary.csv')).set_index('dataset').loc[VITRO]
     for new, old in [('meanBurst', 'mean_burst'), ('turnover', 'turn0'), ('net', 'net0')]:
         for suf in ['', '_lo', '_hi']:
             CT.loc[VITRO, new + suf] = vn[old + suf].values
     CT.loc[VITRO, 'sizeReal'] = vn.size_real.values; CT.loc[VITRO, 'sizeCopy'] = vn.size_copy.values
-    gv = pd.read_csv(os.path.join(A, 'detection_grid_vitro_new', 'bursts.csv'))
+    gv = pd.read_csv(os.path.join(A, 'detection_grid_vitro_same', 'bursts.csv'))
     gv = gv[(gv.levelBefore > 0) & (gv.amp < 0) & gv.dataset.isin(VITRO)].copy(); gv['f'] = 100 * gv.amp.abs() / gv.levelBefore
     GB = pd.concat([GB[~GB.dataset.isin(VITRO)], gv])
 
@@ -363,7 +364,7 @@ def fig17():
 def fig18():
     nf = pd.read_csv(os.path.join(A, 'robustness', 'noise_floor_allSP.csv'))
     if VNEW:
-        b = pd.read_csv(os.path.join(A, 'detection_grid_vitro_new_sp', 'bursts.csv'))
+        b = pd.read_csv(os.path.join(A, 'detection_grid_vitro_same_sp', 'bursts.csv'))
         b = b[b.dataset.isin(VITRO)].groupby(['dataset', 'SP', 'kind']).size().unstack(fill_value=0).reset_index()
         b = pd.DataFrame(dict(dataset=b.dataset, measure='mean', SP=b.SP, realNeg=b.real, falseNeg=b.surr, FDR=b.surr / b.real))
         nf = pd.concat([nf[~nf.dataset.isin(VITRO)], b])
@@ -495,7 +496,7 @@ def fig21():
 def fig22():
     h = pd.read_csv(os.path.join(A, 'halves', 'summary.csv'))
     if VNEW:
-        vn = pd.read_csv(os.path.join(A, 'vitro_new', 'summary.csv')).set_index('dataset').loc[VITRO]
+        vn = pd.read_csv(os.path.join(A, 'vitro_same', 'summary.csv')).set_index('dataset').loc[VITRO]
         add = [dict(dataset=d, measure=m, first=vn.loc[d, m + '1'], second=vn.loc[d, m + '2'], p=vn.loc[d, f'halves_{m}_p']) for d in VITRO for m in ('turn', 'net')]
         h = pd.concat([h[~h.dataset.isin(VITRO)], pd.DataFrame(add)])
     print('halves measures:', h.measure.unique())

@@ -16,26 +16,40 @@ beyond bleaching (%/h; Theil-Sen slope of ln((spot - cell) / cell)), and turnove
 net change per 30-min half. 95% CI: nested movie -> granule bootstrap (2000x).
 Comparisons: movie-level permutation p (10000x) for 10:1 vs 1:1, 100:1 vs 1:1 and
 extra vs 1:1. The stored-trace values (sections 22, 27-29, 36) are listed alongside.
-Usage: python checks/vitro_new.py
+Section 43: movies dropped on purpose by the authors (checks/vitro_movies.py: 10:1 movie 5,
+100:1 movies 5 and 7) are left out by default; --all keeps every movie (section 38 numbers)
+and writes analysis_outputs/vitro_new_all/.
+--same (section 43, the primary in vitro data): the stored granules re-read with the corrected
+pipeline (checks/vitro_same_granules.m -> in_vitro_reextracted/same_granules_R2, bursts from
+detection_grid_vitro_same); writes analysis_outputs/vitro_same/.
+Usage: python checks/vitro_new.py [--all | --same]
 Writes analysis_outputs/vitro_new/{summary.csv, tests.csv, summary.md, vitro_new.png/.pdf}."""
 import os
 import numpy as np
 import pandas as pd
 import scipy.io as sio
 from scipy.stats import theilslopes
+import sys
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-out = os.path.join('analysis_outputs', 'vitro_new'); os.makedirs(out, exist_ok=True)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from vitro_movies import dropped
+ALL = '--all' in sys.argv
+SAME = '--same' in sys.argv
+out = os.path.join('analysis_outputs', 'vitro_same' if SAME else 'vitro_new_all' if ALL else 'vitro_new'); os.makedirs(out, exist_ok=True)
 rng = np.random.default_rng(39); H = 10 / 3600; NB, NP, CUT = 2000, 10000, 180
 DS = {'protein_RNA_1_1': 'vitro_1000ngul_0p1mgml', 'protein_RNA_10_1': 'vitro_1000ng_10ug',
       'protein_RNA_100_1': 'vitro_1000ngul_1mgml', 'extra_100ngul_1mgml': 'vitro_100ngul_1mgml'}
 LAB = {'protein_RNA_1_1': '1:1', 'protein_RNA_10_1': '10:1', 'protein_RNA_100_1': '100:1', 'extra_100ngul_1mgml': 'extra (100 ng/µl RNA, 1 mg/ml protein)'}
-R2 = 'in_vitro_reextracted/after_R2_offset'
-G = pd.read_csv('analysis_outputs/detection_grid_vitro_new/bursts.csv')
+R2 = 'in_vitro_reextracted/after_R2_offset'; GD = 'analysis_outputs/detection_grid_vitro_new'
+if SAME:
+    DS = {'protein_RNA_1_1': 'same_1_1', 'protein_RNA_10_1': 'same_10_1', 'protein_RNA_100_1': 'same_100_1'}
+    R2 = 'in_vitro_reextracted/same_granules_R2'; GD = 'analysis_outputs/detection_grid_vitro_same'
+G = pd.read_csv(GD + '/bursts.csv')
 G = G[(G.levelBefore > 0)].copy(); G['f'] = G.amp.abs() / G.levelBefore
-T = pd.read_csv('analysis_outputs/detection_grid_vitro_new/traces.csv')
+T = pd.read_csv(GD + '/traces.csv')
 
 
 def load(p):
@@ -61,6 +75,8 @@ for lab, stem in DS.items():
     t = T[T.dataset == lab].reset_index(drop=True); assert len(t) == len(keep), (lab, len(t), len(keep))
     b = G[G.dataset == lab]; it = []
     for k, i in enumerate(keep):
+        if not ALL and dropped(lab, t.movie[k]):
+            continue
         s, c = S[i], B[i]; tr = t.trace[k]; L = len(s); bb = b[b.trace == tr]
         e = dict(movie=t.movie[k], L=L, level=np.median(s), noise=rs(s), amps=bb[bb.kind == 'real'].amp.abs().values)
         for h, sel in [(0, slice(None)), (1, bb.startFrame <= CUT), (2, bb.startFrame > CUT)]:
@@ -115,7 +131,7 @@ for lab, it in items.items():
 S = pd.DataFrame(rows); S.to_csv(os.path.join(out, 'summary.csv'), index=False)
 
 tests = []
-for a, b in [('protein_RNA_10_1', 'protein_RNA_1_1'), ('protein_RNA_100_1', 'protein_RNA_1_1'), ('extra_100ngul_1mgml', 'protein_RNA_1_1'), ('extra_100ngul_1mgml', 'protein_RNA_100_1')]:
+for a, b in [p for p in [('protein_RNA_10_1', 'protein_RNA_1_1'), ('protein_RNA_100_1', 'protein_RNA_1_1'), ('protein_RNA_100_1', 'protein_RNA_10_1'), ('extra_100ngul_1mgml', 'protein_RNA_1_1'), ('extra_100ngul_1mgml', 'protein_RNA_100_1')] if p[0] in DS and p[1] in DS]:
     ga, gb = by_movie(items[a]), by_movie(items[b]); units = list(ga.values()) + list(gb.values()); na = len(ga)
     oa, ob = stats(items[a]), stats(items[b])
     for k in ['beyond', 'turn0', 'net0', 'median_burst']:
@@ -142,10 +158,10 @@ with open(os.path.join(out, 'summary.md'), 'w', encoding='utf-8', newline=chr(13
 print(open(os.path.join(out, 'summary.md'), encoding='utf-8').read())
 
 fig, axs = plt.subplots(1, 4, figsize=(22, 5))
-x = np.arange(len(S)); cols = ['0.75', '0.5', '0.25', 'tab:purple']
+x = np.arange(len(S)); cols = ['0.75', '0.5', '0.25', 'tab:purple'][:len(S)]
 for ax, (k, t_) in zip(axs, [('beyond', 'burst size beyond noise (% points)'), ('turn0', 'turnover beyond noise (%/h)'), ('net0', 'net change beyond bleaching (%/h)'), ('median_burst', 'median burst amplitude (a.u.)')]):
     ax.bar(x, S[k], color=cols, edgecolor='k', lw=0.5)
     ax.errorbar(x, S[k], yerr=[S[k] - S[k + '_lo'], S[k + '_hi'] - S[k]], fmt='none', ecolor='k', capsize=4)
     ax.axhline(0, color='k', lw=0.7); ax.set_xticks(x); ax.set_xticklabels([l.split(' (')[0] for l in S.label], fontsize=9); ax.set_title(t_, fontsize=10, loc='left')
-fig.suptitle('In vitro, re-extracted from the titration movies (95% CI over movies, then granules)', fontsize=11)
+fig.suptitle(('In vitro, stored granules re-read with the corrected pipeline' if SAME else 'In vitro, re-extracted from the titration movies') + ' (95% CI over movies, then granules)', fontsize=11)
 fig.tight_layout(); fig.savefig(os.path.join(out, 'vitro_new.png'), dpi=130); fig.savefig(os.path.join(out, 'vitro_new.pdf'))
