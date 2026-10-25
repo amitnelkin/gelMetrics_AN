@@ -1,6 +1,6 @@
 function vitro_orig_verify()
 % VITRO_ORIG_VERIFY  Are the titration movies the source of the stored in vitro
-% data? (RESULTS.md section 40.) The ORIGINAL pipeline (f7eded0 read_tables.m +
+% data? (RESULTS.md section 41.) The ORIGINAL pipeline (f7eded0 read_tables.m +
 % Collect_intensity_data.m + generate_movArray.m, unchanged; a uigetdir shim
 % gives the folder, as checks for 4PP7 and Qb in sections 4 and 12) is run on the
 % re-tracked movies (..\zigzag_scratch\orig_vitro\<folder>: the movie TIFF and the
