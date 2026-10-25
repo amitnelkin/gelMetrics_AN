@@ -1,4 +1,4 @@
-function detection_grid(suFolder, outName, SPs, wins, doVitro)
+function detection_grid(suFolder, outName, SPs, wins, doVitro, vitroFolder, vitroJobs, doVivo)
 % DETECTION_GRID  Burst detection across stringency SP and smoothing window,
 % on the real traces and on burst-free surrogates (one shared bleaching shape
 % per dataset scaled to each trace + white noise at the trace's robust noise
@@ -15,23 +15,31 @@ if nargin < 2, outName = 'detection_grid'; end
 if nargin < 3, SPs = [3 4 5 6 8 10 12]; end
 if nargin < 4, wins = [5 7 9 13 17 21]; end
 if nargin < 5, doVitro = true; end
+% Optional (section 38): vitroFolder (default 'in_vitro_experiments'), vitroJobs = {label,
+% file stem; ...} (default the three stored datasets), doVivo (default true). For a
+% re-extracted folder its extraction_info*.csv gives the movie of each trace.
+if nargin < 6, vitroFolder = 'in_vitro_experiments'; end
+if nargin < 7, vitroJobs = {'protein_RNA_1_1','protein_RNA_1_1'; 'protein_RNA_10_1','protein_RNA_10_1'; 'protein_RNA_100_1','protein_RNA_100_1'}; end
+if nargin < 8, doVivo = true; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', outName);
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset'; SU = suFolder;
 info = [readtable(fullfile(repoDir, R2, 'extraction_info.csv')); readtable(fullfile(repoDir, R2, 'extraction_info_5Qb_10Qb.csv'))];
+vi = dir(fullfile(repoDir, vitroFolder, 'extraction_info*.csv'));
+for q = 1:numel(vi), info = [info; readtable(fullfile(vi(q).folder, vi(q).name))]; end %#ok<AGROW>
 jobs = {};
 for d = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}
-    jobs(end+1,:) = {d{1}, SU, [d{1} '_spotsum'], true}; %#ok<AGROW>
+    if doVivo, jobs(end+1,:) = {d{1}, SU, [d{1} '_spotsum'], true, d{1}}; end %#ok<AGROW>
 end
-for d = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}
-    if doVitro, jobs(end+1,:) = {d{1}, 'in_vitro_experiments', d{1}, false}; end %#ok<AGROW>
+for q = 1:size(vitroJobs, 1)
+    if doVitro, jobs(end+1,:) = {vitroJobs{q,1}, vitroFolder, vitroJobs{q,2}, false, vitroJobs{q,2}}; end %#ok<AGROW>
 end
 tVec = (0:360) * 10/60; bu = cell(0, 9); tr = cell(0, 4);
 for j = 1:size(jobs,1)
     [S, B] = gm_loadDataset(repoDir, jobs{j,2}, jobs{j,3});
-    I = info(strcmp(info.dataset, jobs{j,1}), :);
+    I = info(strcmp(info.dataset, jobs{j,5}), :);
     if isempty(I), mov = zeros(numel(S), 1); else, mov = repelem((1:height(I))', I.nKept); end
     keep = cellfun(@numel, S) >= 180; S = S(keep); B = B(keep); mov = mov(keep);
     if jobs{j,4}, S = cellfun(@(s, b) s(:) + b(:), S, B, 'UniformOutput', false); end

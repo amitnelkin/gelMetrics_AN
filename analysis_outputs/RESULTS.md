@@ -1800,3 +1800,37 @@ Share of granules with at least one burst, real / copies: SP 12 0.89 / 0.91 and 
 - Under a 1-in-1000 rule no 4PP7 or 4PP7-FUS granule has a burst, so there is nothing left to compare (p = 1).
 - At every looser setting the real granules have as many bursts as their noise copies. With a 1-in-100 size cutoff, 0% (4x) and 2% (FUS, 2 granules) of granules pass, as noise predicts (1%).
 - This matches section 34: the PP7 signal is below what the method can separate from noise, one event at a time. The noise-copy comparison (sections 18-29) remains the only way to see the small average differences.
+
+## 38. In vitro raw movies found: verification, re-extraction, movie-level statistics
+
+**Data.** The user located the titration movies (`Raw_Results\Titration experiment`, 4 folders, 42 movies, all single-channel, 361 frames, so the zigzag bug never affected in vitro). Re-tracked with the repo macro (`zigzag_scratch\track_all_vitro.ps1`; the space in the folder name breaks Bio-Formats, so directory junctions in `zigzag_scratch\vitro_raw` were used) and re-extracted with `checks/reextract_pp7.m` (new 4th argument `outRoot`) into `in_vitro_reextracted/after_R1_redchannel` and `after_R2_offset` (offset 200 removed).
+
+**Are these the source of the stored data?** Yes (`checks/vitro_compare.py`, `analysis_outputs/vitro_compare/`). 30-42% of the stored traces have a re-extracted twin within 1% (same length, ±1 frame shift), spread over nearly all movies; the rest differ by track splitting and the old reader's one-frame shift. The match gives a mapping **different from the folder guess**:
+
+| stored dataset | matching folder | movies |
+|---|---|---|
+| protein_RNA_1_1 | 1000ng_ul_RNA_0.1mg_ml_protein | 12 |
+| protein_RNA_10_1 | 1000ng_RNA_10ug_protein | 5 |
+| protein_RNA_100_1 | 1000ng_ul_RNA_1mg_ml_protein | 10 |
+| (not in stored data) | 100ng_ul_RNA_1mg_ml_protein, called "extra" | 15 |
+
+All other stored-folder pairs match 0%. The ratio names should be confirmed by the user.
+
+**Analysis** (`checks/vitro_new.py` → `analysis_outputs/vitro_new/`). Bursts from `checks/detection_grid.m` with the new arguments `vitroFolder`, `vitroJobs`, `doVivo` (spot mean, window 13, SP 12, as before), traces ≥ 180 frames, R2 data. 95% CI from a nested movie → granule bootstrap: movies are replicates for the first time in vitro. Stored-trace values (section 29 control table, granule bootstrap) are in brackets.
+
+| condition | granules (movies) | burst size beyond noise (pts) | turnover beyond noise (%/h) | net change beyond bleaching (%/h) |
+|---|---|---|---|---|
+| 1:1 | 53 (12) | −1.2 [−5.2, 5.2] (stored −2.5) | 13 [−4, 39] (9) | −24 [−54, −3] (−21) |
+| 10:1 | 86 (5) | 1.3 [−1.0, 7.2] (3.4) | 42 [4, 105] (50) | −41 [−108, −14] (−40) |
+| 100:1 | 59 (10) | 4.9 [0.6, 9.0] (5.1) | 45 [13, 74] (46) | −53 [−82, −34] (−71) |
+| extra | 139 (15) | 1.4 [−0.7, 6.2] | 14 [3, 32] | −15 [−33, −1] |
+
+Movie-level permutation p (movies shuffled, 10000x): 100:1 vs 1:1: beyond noise p = 0.10, turnover p = 0.18, net change p = 0.08; 10:1 vs 1:1: all p > 0.4. Extra vs 100:1: net change p = 0.01, median burst amplitude (15 vs 93 a.u.) p = 0.004. Extra granules are about 4× dimmer (217 vs 741-1456 a.u.) and noisier (6.4% vs 3-4% per frame).
+
+First vs second 30 min: 100:1 turnover −8 → 117 %/h and net change −21 → −116 %/h (both p ≤ 0.001), as with the stored traces (section 36: −13 → 116, −35 → −90). Other conditions: no significant change.
+
+**Conclusions.**
+- The re-extracted data reproduce the stored-trace numbers closely: same ordering 1:1 < 10:1 < 100:1 for burst size beyond noise, turnover and net loss.
+- With movies as replicates, the titration trend is **not significant at 0.05** (100:1 vs 1:1: p 0.08-0.18). The earlier z = −4.5 (section 22) treated granules as independent. 10:1 has only 5 movies.
+- The 100:1 loss and turnover are concentrated in the second half hour (dissolution or focus drift late in the movie; can't be told apart).
+- The extra condition (10× less RNA at 1 mg/ml protein) gives dim, slowly changing granules, closest to 1:1.

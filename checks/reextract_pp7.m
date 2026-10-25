@@ -1,4 +1,4 @@
-function reextract_pp7(workRoot, stages, datasets)
+function reextract_pp7(workRoot, stages, datasets, outRoot)
 % REEXTRACT_PP7  Re-extracts the PP7 datasets from the .nd2 movies with the
 % fixed extraction (zigzag cause: analysis_outputs/zigzag_diagnosis; general
 % data validity, R2 5). Never touches in_vivo_experiments/: writes
@@ -12,6 +12,10 @@ function reextract_pp7(workRoot, stages, datasets)
 %   after_R2_offset      + camera offset 200
 %   (after_R3_aperture, a 5 px aperture spot, was reverted: not a stage any more)
 % Also writes in_vivo_reextracted/<stage>/extraction_info.csv.
+% outRoot (optional, default 'in_vivo_reextracted'): output folder in the repo, e.g.
+% 'in_vitro_reextracted' for the titration movies (RESULTS.md section 38). The work
+% folder may hold the fluorescence-only TIFF written by the tracking macro instead of
+% the bfconvert output: the frames read are identical (checked on 4PP7 005, 30PP7 001).
 
 if nargin < 2 || isempty(stages)
     stages = {'after_R1_redchannel', struct('offset',0,  'aperture',0);
@@ -22,6 +26,7 @@ checksDir = fileparts(mfilename('fullpath'));
 repoDir = fileparts(checksDir);
 addpath(repoDir);
 if nargin < 3, datasets = {'4PP7','4PP7-FUS','30PP7','30PP7-FUS'}; end  % also used for 5Qb/10Qb
+if nargin < 4, outRoot = 'in_vivo_reextracted'; end
 
 here = pwd;
 for d = 1:numel(datasets)
@@ -30,7 +35,7 @@ end
 cd(here);
 
 for s = 1:size(stages,1)
-    outDir = fullfile(repoDir, 'in_vivo_reextracted', stages{s,1});
+    outDir = fullfile(repoDir, outRoot, stages{s,1});
     if ~exist(outDir,'dir'), mkdir(outDir); end
     allInfo = table();
     for d = 1:numel(datasets)

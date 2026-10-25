@@ -43,7 +43,7 @@ This file lets a new chat continue the revision work. It replaces the earlier CL
   - git `C:\Program Files\Git\cmd\git.exe`;
   - PowerPoint installed (render slides via COM for checks);
   - Fiji+MOSAIC `..\Fiji\Fiji.app` (GUI mode only: `ImageJ-win64.exe -macro`); bftools `..\bftools` (needs `JAVA_HOME` = Fiji's zulu8 JDK).
-  - The raw `.nd2` movies are only here (`..\Raw_Results\...`; Qβ in `Raw_Results\Naor_Data-All_night_induction\5Qb\250ms`, `10Qb`). Working copies are in `..\zigzag_scratch\reextract\<dataset>\{tif,track,work}`.
+  - The raw `.nd2` movies are only here (`..\Raw_Results\...`; Qβ in `Raw_Results\Naor_Data-All_night_induction\5Qb\250ms`, `10Qb`). Working copies are in `..\zigzag_scratch\reextract\<dataset>\{track,work}`.
 - **Laptop:**
   - MATLAB figure rendering hangs there: never render in MATLAB; use `checks/gm_noplot.m` / `gm_strip_plot_lines.m` when running repo code that plots.
   - Python via `py -3`.
@@ -56,7 +56,7 @@ This file lets a new chat continue the revision work. It replaces the earlier CL
 ## What works WITHOUT the .nd2 files (any machine with the repo)
 Everything downstream of extraction:
 - the re-extracted traces are committed in `in_vivo_reextracted/`;
-- the in vitro stored traces are in `in_vitro_experiments/`;
+- the in vitro re-extracted traces are in `in_vitro_reextracted/` (the stored originals are in `in_vitro_experiments/`);
 - all CSV outputs and the controls are in `analysis_outputs/`.
 - Two large `bursts.csv` files are not committed (`analysis_outputs/detection_grid/`, `steady/grid/`, `fixedmask/grid/`). Regenerate them with `checks/detection_grid.m` (minutes to ~1.5 h), which needs only the repo `.mat` files.
 
@@ -65,56 +65,26 @@ Everything downstream of extraction:
 - the unchanging-granule control (`checks/static_control.m`);
 - the camera-noise calibration (`checks/noise_from_background.m`).
 - Their outputs are committed, so they don't need rerunning unless the extraction changes.
-- **In vitro:** raw movies were found on 2026-10-25 (NEXT TASK below), not yet verified or used. Until then, in vitro rests on the stored traces (offset 200 assumed).
+- **In vitro:** the raw titration movies were found and re-extracted (section 38). The re-extracted R2 data in `in_vitro_reextracted/after_R2_offset/` (offset already removed: do not subtract 200 again) are now the in vitro primary data. The stored `in_vitro_experiments/` traces stay for comparison.
 
-## NEXT TASK: in vitro raw movies were found (2026-10-25)
-The user located in vitro raw data in `..\Raw_Results\Titration experiment\` (7.5 GB of .nd2):
+## In vitro raw movies (section 38)
+- `..\Raw_Results\Titration experiment\`, 42 single-channel movies. The tracking script is `..\zigzag_scratch\track_all_vitro.ps1`; it uses junctions in `..\zigzag_scratch\vitro_raw` because the folder name contains a space, which Bio-Formats can't handle. Outputs: `..\zigzag_scratch\reextract\vitro_*\{track,work}`.
+- **Mapping, from trace matching (it differs from the user's first guess; the user should confirm the ratio names):**
 
-| folder | movies | user's guess |
-|---|---|---|
-| `1000ng_ul_RNA_1mg_ml_protein` | 10 | 1:1 |
-| `100ng_ul_RNA_1mg_ml_protein` | 6 | 10:1 |
-| `1000ng_RNA_10ug_protein` | 5 | 100:1 |
-| `1000ng_ul_RNA_0.1mg_ml_protein` | 12 | probably irrelevant (RNA in excess) |
+| stored dataset | folder | movies | file stem |
+|---|---|---|---|
+| protein_RNA_1_1 | 1000ng_ul_RNA_0.1mg_ml_protein | 12 | vitro_1000ngul_0p1mgml |
+| protein_RNA_10_1 | 1000ng_RNA_10ug_protein | 5 | vitro_1000ng_10ug |
+| protein_RNA_100_1 | 1000ng_ul_RNA_1mg_ml_protein | 10 | vitro_1000ngul_1mgml |
+| extra (not in stored data) | 100ng_ul_RNA_1mg_ml_protein | 15 | vitro_100ngul_1mgml |
 
-**The user's request:** verify these files are the source of the stored in vitro data; if so, re-extract and redo the analyses.
+- **Scripts:** `checks/vitro_compare.py` (verification), `checks/vitro_new.py` (all parameters, movie-level), and `detection_grid.m` with the `vitroFolder`, `vitroJobs` and `doVivo` arguments.
+- **Not yet redone on the new data:** the static control and the camera-noise calibration for in vitro (both need the `work` TIFFs; lab PC only).
 
-**Step 1, verify; don't assume the mapping.** The concentration units in the folder names are inconsistent (ng/µl vs ng, mg/ml vs µg), so test every folder against every stored dataset.
-- Check the channel count of each .nd2 with bftools `showinf` (2-channel movies caused the PP7 zigzag bug).
-- Track a couple of movies per folder with the R1/R2 pipeline (fluorescence channel only, offset 200).
-- Compare with the stored data, as was done for Qβ (`checks/qb_compare.m`, RESULTS.md section 12): trace counts, trace lengths, intensity levels, burst counts.
-- Stored in vitro data (`in_vitro_experiments/`):
-
-| dataset | traces | traces ≥ 180 frames | max length | median spot level (raw) |
-|---|---|---|---|---|
-| protein_RNA_1_1 | 78 | 45 | 360 | 912 |
-| protein_RNA_10_1 | 90 | 37 | 360 | 1730 |
-| protein_RNA_100_1 | 57 | 31 | 360 | 1298 |
-
-- Report the match to the user before the full run.
-
-**Step 2, if it matches:**
-1. Convert with bftools and track with `BatchParticleTracker.ijm` (Fiji GUI mode), as for PP7 (`checks/reextract_pp7.m`; folder layout as in `..\zigzag_scratch\reextract\<dataset>\{tif,track,work}`).
-2. `read_tables.m`, then `collect_intensity` (R2 settings) → a new folder, e.g. `in_vitro_reextracted/after_R2_offset/`. Never touch `in_vitro_experiments/`.
-3. Redo the in vitro parts of the analyses on the new data:
-   - noise floor / burst-free copies: `detection_grid.m` (its doVitro jobs point at `in_vitro_experiments`; add a folder argument);
-   - the control table;
-   - net change: `net_loss.py`;
-   - first vs second half: `halves.py`;
-   - the unchanging-granule control: `static_control.m`;
-   - the camera-noise calibration: `noise_from_background.m`.
-4. In vitro then has movie ids, so use movie-level bootstrap and permutation as in vivo.
-5. Changes for the manuscript go to the user in chat (see "Manuscript revision documents": never rebuild over the user-edited .docx files).
-
-## Disk: `..\zigzag_scratch\` (~44 GB; Explorer may show more because `work\` holds hard links)
-| what | size | needed? |
-|---|---|---|
-| `reextract\<ds>\tif\` (bfconvert 2-channel TIFFs) | ~31 GB | no: regenerable from the .nd2 |
-| `reextract\<ds>\track\` (Fiji/Mosaic output: red-only TIFF + trajectories) and `work\` (hard links + renamed CSVs + `_xy.mat`) | ~10.6 GB | **yes**, for any re-extraction or movie-based control without redoing Fiji tracking |
-| `4PP7_nd2`, `r1test_*`, `only012`, `run`, `qb_test` (diagnostic leftovers) | ~3.3 GB | no |
-| `*.log`, `*.ps1`, the git bundle | small | no |
-
-The user decides about deleting; never delete it yourself.
+## Disk: `..\zigzag_scratch\` (about 11 GB after the 2026-10-25 cleanup)
+- On 2026-10-25, `tif\` (the 2-channel TIFFs) and the diagnostic leftovers were deleted, about 33 GB in total.
+- `work\*.tif` are now hard links to `track\<name>.tif`, the red-only TIFFs. All 56 in vivo movies were checked pixel-identical (`reextract\red_copy_check.csv`).
+- Keep `track\` and `work\`.
 
 ## Data and extraction stages (`in_vivo_reextracted/`)
 - **Datasets in vivo:**
@@ -160,7 +130,7 @@ The user decides about deleting; never delete it yourself.
    - Turnover beyond noise does not differ.
    - For 80% power, about 2-5× more movies are needed (about 50 per condition; section 20).
 7. **30x:** no FUS effect in any measure. **Qβ vs PP7:** robustly more dynamic (turnover beyond noise 9-10 %/h vs ≈ 0; p 0.002-0.02).
-8. **In vitro:** net loss beyond bleaching grows with protein:RNA (−21 / −40 / −71 %/h; 100:1 vs 1:1 z = −4.5), as do mean burst size and turnover. Caveat: focus drift can't be excluded.
+8. **In vitro (re-extracted, movie-level, section 38):** net loss grows with protein:RNA (−24 / −41 / −53 %/h; stored traces −21 / −40 / −71), as do the burst size beyond noise and the turnover. With movies as replicates this is a trend only (100:1 vs 1:1: p 0.08-0.18). The earlier z = −4.5 was granule-level. The 100:1 change is concentrated in the second half hour. Caveat: focus drift can't be excluded.
 9. **Alternative extractions (tests, not adopted):**
    - R4 steady thresholds: 2-3× less noise but a slow artefact (the control itself shows 11-14 %/h).
    - R5 fixed mask: 4× less noise and a clean control, but its slow signal in PP7 tracks the granule moving relative to the mask (correlation 0.76-0.90). Under R5 the 4x FUS effect vanishes.
