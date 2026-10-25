@@ -1856,3 +1856,24 @@ First vs second 30 min: 100:1 turnover −8 → 117 %/h and net change −21 →
 - fig22 = Fig. 18: first vs second half.
 
 In vitro halves on the new data: only 100:1 changes significantly (turnover −8 → 117 %/h, net change −21 → −116 %/h). The stored-data changes in 1:1 (turnover p = 0.006) and 10:1 (turnover 76 → 18, p = 0.007) are not significant with movies as replicates (p 0.23, 0.32).
+
+## 40. In vitro source confirmed with the ORIGINAL pipeline (bit-exact)
+
+**What was run** (`checks/vitro_orig_verify.m`, about 5 min):
+- the original f7eded0 `read_tables.m` + `Collect_intensity_data.m` + `generate_movArray.m`, unchanged (a `uigetdir` shim supplies the folder, as in sections 4 and 12);
+- input: the re-tracked titration movies (`..\zigzag_scratch\orig_vitro\<folder>`: movie TIFF + Mosaic CSV from `BatchParticleTracker.ijm`);
+- every stored trace (`in_vitro_experiments/`) searched among the new traces of all 4 folders: same length, every value identical (|diff| < 1e-9);
+- bursts: the original f7eded0 `analysis.m` (window 13, SP 14, as `ExperimentalAnalysis.m`) on the stored traces and on their bit-exact twins.
+
+Outputs: `analysis_outputs/vitro_orig_verify/`.
+
+| stored | folder | stored traces | bit-exact twins | rest: ≥ 50% of values found exactly in one new trace | bursts on twins, stored vs new |
+|---|---|---|---|---|---|
+| 1:1 | 1000ng_ul_RNA_0.1mg_ml_protein | 78 | 36 (46%) | 39 (median 100% of values) | 22 neg / 26 pos vs 22 / 26, **identical** |
+| 10:1 | 1000ng_RNA_10ug_protein | 90 | 24 (27%) | 64 (100%) | 35 / 30 vs 35 / 30, **identical** |
+| 100:1 | 1000ng_ul_RNA_1mg_ml_protein | 57 | 26 (46%) | 31 (99%) | 55 / 32 vs 55 / 32, **identical** |
+
+- Every other folder pairing: 0 bit-exact twins. The extra folder (100ng_ul_RNA_1mg_ml_protein) matches nothing.
+- The twins come from nearly every movie (11/12, 4/5, 8/10).
+- Of the stored traces, 75/78, 88/90 and 57/57 are found either exactly or with almost all their values inside one new trace. Floating-point values can't match by chance, so these are the same granules, with the trajectory split or linked differently by Mosaic. The original tracking run probably used other linking settings or another plugin version; the reason can't be checked without the original CSVs.
+- **Conclusion:** the mapping in section 38 is confirmed beyond doubt. On identical traces the original code gives identical bursts. The stored-vs-new differences in sections 38-39 come only from tracking (more, and differently split, tracks) and from the corrected reader (frame and xy off by one).

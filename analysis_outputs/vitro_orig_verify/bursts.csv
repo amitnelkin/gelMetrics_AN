@@ -1,0 +1,4 @@
+stored,folder,matchedTraces,negBurstsStored,negBurstsNew,identical,negBurstsStoredAll,negBurstsNewAll,note
+protein_RNA_1_1,vitro_1000ngul_0p1mgml,36,22,22,1,42,55,stored all: median |neg| 74.2; new all: 60.7
+protein_RNA_10_1,vitro_1000ng_10ug,24,35,35,1,58,111,stored all: median |neg| 115.0; new all: 89.7
+protein_RNA_100_1,vitro_1000ngul_1mgml,26,55,55,1,78,116,stored all: median |neg| 140.2; new all: 117.1

@@ -1,0 +1,13 @@
+stored,folder,storedTraces,bitExact,newTraces,moviesWithTwins
+protein_RNA_1_1,vitro_1000ngul_0p1mgml,78,36,107,"[1 2 3 4 5 6 7 8 10 11 12]"
+protein_RNA_1_1,vitro_1000ng_10ug,78,0,161,"zeros(1,0)"
+protein_RNA_1_1,vitro_1000ngul_1mgml,78,0,139,"zeros(1,0)"
+protein_RNA_1_1,vitro_100ngul_1mgml,78,0,268,"zeros(1,0)"
+protein_RNA_10_1,vitro_1000ngul_0p1mgml,90,0,107,"zeros(1,0)"
+protein_RNA_10_1,vitro_1000ng_10ug,90,24,161,"[1 2 3 4]"
+protein_RNA_10_1,vitro_1000ngul_1mgml,90,0,139,"zeros(1,0)"
+protein_RNA_10_1,vitro_100ngul_1mgml,90,0,268,"zeros(1,0)"
+protein_RNA_100_1,vitro_1000ngul_0p1mgml,57,0,107,"zeros(1,0)"
+protein_RNA_100_1,vitro_1000ng_10ug,57,0,161,"zeros(1,0)"
+protein_RNA_100_1,vitro_1000ngul_1mgml,57,26,139,"[1 2 3 4 6 8 9 10]"
+protein_RNA_100_1,vitro_100ngul_1mgml,57,0,268,"zeros(1,0)"
