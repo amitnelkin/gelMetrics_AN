@@ -1,6 +1,6 @@
-# CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
+# CLAUDE.md — GelMetrics revision (handoff, 2026-10-22)
 
-This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-36). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-33). Read the relevant section there before redoing anything.
 
 ## Context
 - Repo: https://github.com/amitnelkin/gelMetrics_AN, branch **`revision`** (never commit to `main`). Code for the manuscript *GelMetrics: an algorithm for analyzing the dynamics of gel-like phase-separated condensates* (Nelkin et al., ref. VM10081E), under revision. `MS.pdf` is in the repo root (not committed; ask the user if missing).
@@ -53,56 +53,6 @@ This file lets a new chat continue the revision work. It replaces the earlier CL
   - pandas: a column named `compare` clashes with `DataFrame.compare`; use `df['compare']`.
   - `PYTHONIOENCODING=utf-8` when printing λ/β.
 
-## NEXT TASK: in vitro raw movies were found (2026-10-25)
-The user located in vitro raw data in `..\Raw_Results\Titration experiment\` (7.5 GB, 2-channel .nd2 like the others):
-
-| folder | movies | user's guess |
-|---|---|---|
-| `1000ng_ul_RNA_1mg_ml_protein` | 10 | 1:1 |
-| `100ng_ul_RNA_1mg_ml_protein` | 6 | 10:1 |
-| `1000ng_RNA_10ug_protein` | 5 | 100:1 |
-| `1000ng_ul_RNA_0.1mg_ml_protein` | 12 | probably irrelevant (RNA in excess) |
-
-**The user's request:** verify these files are the source of the stored in vitro data; if so, re-extract and redo the analyses.
-
-**Step 1, verify; don't assume the mapping.** The concentration units in the folder names are inconsistent (ng/µl vs ng, mg/ml vs µg), so test every folder against every stored dataset.
-- Track a couple of movies per folder with the R1/R2 pipeline (red channel only, offset 200).
-- Compare with the stored data, as was done for Qβ (`checks/qb_compare.m`, RESULTS.md section 12): trace counts, trace lengths, intensity levels, burst counts.
-- Stored in vitro data (`in_vitro_experiments/`):
-
-| dataset | traces | traces ≥ 180 frames | max length | median spot level (raw) |
-|---|---|---|---|---|
-| protein_RNA_1_1 | 78 | 45 | 360 | 912 |
-| protein_RNA_10_1 | 90 | 37 | 360 | 1730 |
-| protein_RNA_100_1 | 57 | 31 | 360 | 1298 |
-
-- Report the match to the user before the full run.
-- The original bug (2-channel movies read page by page) may have affected in vitro too: check with `showinf` (bftools) how many channels each .nd2 has.
-
-**Step 2, if it matches:**
-1. Convert with bftools, then track with `BatchParticleTracker.ijm` (Fiji GUI mode). See the workflow in `..\zigzag_scratcheextract\<dataset>\` and `checks/reextract_pp7.m`.
-2. `read_tables.m`, then `collect_intensity` (R2 settings) → a new folder, e.g. `in_vitro_reextracted/after_R2_offset/`. Never touch `in_vitro_experiments/`.
-3. Then redo the in vitro parts of the analyses on the new data:
-   - noise floor / burst-free copies: `detection_grid.m` (the doVitro jobs point at `in_vitro_experiments`; add a folder argument);
-   - the control table;
-   - net change (`net_loss.py`);
-   - first vs second half (`halves.py`);
-   - the unchanging-granule control (`static_control.m`, needs the movies);
-   - the camera-noise calibration (`noise_from_background.m`).
-4. In vitro now gets movie ids, so use movie-level bootstrap and permutation as in vivo.
-
-**Ask before installing anything or running anything over ~1 hour.**
-
-## Disk: `..\zigzag_scratch\` (~44 GB; Explorer may show more because `work\` holds hard links)
-| what | size | needed? |
-|---|---|---|
-| `reextract\<ds>	if\` (bfconvert 2-channel TIFFs) | ~31 GB | no: regenerable from the .nd2 |
-| `reextract\<ds>	rack\` (Fiji/Mosaic output: red-only TIFF + trajectories) and `work\` (hard links + renamed CSVs + `_xy.mat`) | ~10.6 GB | **yes**, for any re-extraction or movie-based control without redoing Fiji tracking |
-| `4PP7_nd2`, `r1test_*`, `only012`, `run`, `qb_test` (diagnostic leftovers) | ~3.3 GB | no |
-| `*.log`, `*.ps1`, the git bundle | small | no |
-
-The user decides about deleting; never delete it yourself.
-
 ## What works WITHOUT the .nd2 files (any machine with the repo)
 Everything downstream of extraction:
 - the re-extracted traces are committed in `in_vivo_reextracted/`;
@@ -115,7 +65,7 @@ Everything downstream of extraction:
 - the unchanging-granule control (`checks/static_control.m`);
 - the camera-noise calibration (`checks/noise_from_background.m`).
 - Their outputs are committed, so they don't need rerunning unless the extraction changes.
-- **In vitro:** until the new raw data (NEXT TASK above) are verified, in vitro rests on the stored traces (offset 200 assumed).
+- **In vitro raw movies do not exist anywhere** (user confirmed). In vitro rests on the stored traces (offset 200 assumed).
 
 ## Data and extraction stages (`in_vivo_reextracted/`)
 - **Datasets in vivo:**
@@ -167,15 +117,6 @@ Everything downstream of extraction:
    - R5 fixed mask: 4× less noise and a clean control, but its slow signal in PP7 tracks the granule moving relative to the mask (correlation 0.76-0.90). Under R5 the 4x FUS effect vanishes.
    - **No mask design makes FUS stronger. R2 stays primary.**
 10. The noise-free fluctuation G30 (section 19) is consistent with all of the above. In vivo conditions are not distinguishable by it.
-11. **Raising SP (section 34):**
-    - Real PP7 traces and their burst-free copies lose bursts together; by SP 18-22 both are empty. Qβ keeps a real excess.
-    - Simulation with PP7-like noise (18%): the detector finds 30% of true bursts at SP 12 and 6% at SP 18, at 3× their true size. **PP7 dynamics are below this method's detection limit; "no bursts" ≠ "no exchange".**
-    - The manuscript's simulation was about 25× less noisy (0.7%).
-12. **Slow changes and windows (section 35):**
-    - The run rule misses slow climbs (example: +38% over 12 min, longest unbroken climb 9 frames).
-    - Counting ≥30% changes within 15 min, relative to the granule: 4x FUS > 4x PP7 (p 0.003), 30x no difference. In absolute light amount, the FUS excess disappears: it is brightness-dependent, and the right scale is a biology call.
-    - Wider smoothing windows (21-31) find more true bursts and give less biased sizes in simulation. FUS turnover is not significant at any window × SP.
-13. **First vs second 30 min (section 36):** in vivo stable. In vitro strongly time-dependent (1:1 and 100:1 speed up, 10:1 slows; 100:1 net loss −35 → −90 %/h).
 
 ## Status of the original "analyses to produce"
 | # | analysis | status |
@@ -185,15 +126,14 @@ Everything downstream of extraction:
 | 3 | simulation recovery grid λ × SNR | done (sections 5, 26, 30, 31) |
 | 4 | noise floor / SP choice | done: no acceptable SP; noise-corrected measures instead (sections 18-21) |
 | 5 | sensitivity table | SP × window grid done (section 20), top-trim (26a). The λ-based sweep was dropped along with λ. |
-| 6 | granule/movie bootstrap; time halves | movie-level bootstrap/permutation everywhere; halves done (section 36) |
+| 6 | granule/movie bootstrap; time halves | movie-level bootstrap/permutation everywhere; **first vs second 30-min halves not done** |
 | 7 | smoothing-window sensitivity | done in the detection grid (section 20); `checks/window_duration_test.m` (which event durations the window suppresses) **written, not run** |
 
 ## Open items / decisions for the user
 - Which numbers the paper reports. The recommendation is the control-table parameters, not λ and k0.
 - 4x FUS: present as a trend, or collect more movies.
 - Is there a fixed / crosslinked granule movie? It would be the direct, model-free noise control. Not available so far.
-- Possible next analyses: run `window_duration_test.m`; a movement-insensitive granule measure.
-- **Summary page for the PI** (private link, shared by the user): https://claude.ai/artifact/PBnENMdRBoEne4s4W8yj6N; source `analysis_outputs/summary/index.html` + `fig/`. Republish from that file path in the same session, or pass the URL from a new one.
+- Possible next analyses: first vs second half of the movies (aging); run `window_duration_test.m`; a movement-insensitive granule measure.
 - Summary deck for the PI: `analysis_outputs/deck/GelMetrics_revision_summary.pptx`, 14 slides, built by `checks/make_deck.py`. Speaker notes are in `checks/deck_notes.py`; one entry per slide, so edit both together.
 
 ## Where things are (scripts → outputs)
@@ -213,12 +153,7 @@ Everything downstream of extraction:
   - `checks/lambda_k0_degeneracy.py` (section 25);
   - `checks/export_amps_shape.m`, `lambda_k0_shape.py [--notrim] [--plot]` (sections 26-28);
   - `checks/ms_sim_test.m` (args: λ list, noises, tag), `ms_eq19_fit.py`, `ms_fig13.py` (sections 30-31).
-- **Raising SP, slow changes, halves:** `checks/example_traces_sp.m`, `high_sp.py`, `sim_high_sp.m` (args: windows, SPs, out name), `sim_high_sp_plot.py` (section 34); `checks/slow_changes.py [--absolute]`, `slow_changes_test.py`, `win_sp.py` (section 35); `checks/halves.py` (section 36).
-- **Deck and summary:** `checks/make_deck.py`, `checks/deck_notes.py` → `analysis_outputs/deck/`; `analysis_outputs/summary/`.
-- Large, uncommitted (regenerable with `detection_grid.m`): `bursts.csv` in `detection_grid/`, `detection_grid_highSP/`, `detection_grid_win_sp/`, `steady/grid/`, `fixedmask/grid/`.
-
-## Session notes
-- Remote Control drops when the app restarts the session (PC sleep, app update). Re-enable with the ccd_session_mgmt `set_remote_control` tool when the user asks. The app setting "Connect new sessions to Remote Control" is on.
+- **Deck:** `checks/make_deck.py`, `checks/deck_notes.py` → `analysis_outputs/deck/`.
 
 ## Working style that worked
 - Fix the decision rule before looking at outcomes (e.g. the setting chosen by noise, not by p value). Report the whole grid.
