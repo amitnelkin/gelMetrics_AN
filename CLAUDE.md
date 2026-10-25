@@ -1,8 +1,8 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-43). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-44). Read the relevant section there before redoing anything.
 
-**OPEN TASK for the laptop chat (it has the Word files): `CLAUDE_laptop_vitro.md` (v2). Update the manuscript, Table I and the letter to the FINAL in vitro data (section 43: the stored granules re-read with the corrected pipeline; movies 10:1 #5 and 100:1 #5, #7 dropped on purpose). This supersedes the section 40 change list. Never overwrite the user's Word files.**
+**In vitro into the manuscript: done as change list v2, `revision_docs/vitro_change_list_v2.md` (local; section 44), from the section 43 primary data. The user applies it by hand. Still open: the reason the three in vitro movies were dropped (for Methods VIII.E), and item A7 (FUS brightness per movie vs per granule). `CLAUDE_laptop_vitro.md` is the finished brief.**
 
 ## Context
 - Repo: https://github.com/amitnelkin/gelMetrics_AN, branch **`revision`** (never commit to `main`). Code for the manuscript *GelMetrics: an algorithm for analyzing the dynamics of gel-like phase-separated condensates* (Nelkin et al., ref. VM10081E), under revision. `MS.pdf` is in the repo root (not committed; ask the user if missing).

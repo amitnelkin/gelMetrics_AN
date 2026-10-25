@@ -1962,3 +1962,21 @@ Outputs: `analysis_outputs/vitro_orig_verify/`.
   - `vitro_new/`: all re-tracked granules, without the dropped movies. 1:1 / 10:1 / 100:1 net change −24 / −44 / −64 %/h; 100:1 vs 1:1 p = 0.050.
   - `vitro_new_all/`: every movie, the section 38 numbers, reproduced exactly.
 - **Figures:** `py checks/ms_figures.py --vitro-new` now draws Figs. 6, 14 and 18 from this primary data (`ms_revision/figs_vitro_new/`).
+
+## 44. Final in vitro data into the manuscript: change list v2 (laptop, 2026-10-25)
+
+No Word file was modified. The change list is `revision_docs/vitro_change_list_v2.md` (local only, not committed). It replaces `vitro_change_list.md` (section 40; kept as a record, never applied). It uses the section 43 primary data. All 26 old texts were checked to occur exactly once in the user's current files.
+
+Decisions by the user:
+- No reason is given yet for the three dropped movies; the user will add it to Methods VIII.E.
+- The 100:1 mean burst size (1075 [125, 2993] a.u.) is kept, with a note that a few very large bursts drive it (median 124).
+- Flory-Huggins: "consistent with", without "logarithmic" or "denser".
+- Brightness = median over movies (929 / 1726 / 1609); the beyond-noise column is added (as in section 40).
+
+Main text changes:
+- The V.A title becomes "Material loss increases with protein content in vitro" (net change 100:1 vs 1:1 p = 0.015). The abstract needs no change.
+- Burst size beyond noise and median burst are a trend (p = 0.10); turnover p = 0.20; 10:1 vs 1:1 p ≥ 0.17.
+- Only 100:1 changes between halves (turnover −28 → 127 %/h, net −35 → −85 %/h).
+- The in vitro controls are added to Appendix E: noise ratio 2.3-2.7; static granule −3 to 0 %/h vs 12-48 %/h.
+- In vitro copies ÷ granules at j 10-14 is 0.65-0.92.
+- Fig. 6 burst counts: 99 / 93 / 89.
