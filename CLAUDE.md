@@ -2,7 +2,7 @@
 
 This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-36). Read the relevant section there before redoing anything.
 
-**Open task for the laptop chat (has the Word files): `CLAUDE_laptop_vitro.md`, i.e. put the re-extracted in vitro results (sections 38-39) into the manuscript without overwriting the user's edits.**
+**In vitro results into the manuscript (section 40): done as a change list, `revision_docs/vitro_change_list.md` (local only). The user applies it by hand; no Word file was modified. `CLAUDE_laptop_vitro.md` is the finished task brief.**
 
 ## Context
 - Repo: https://github.com/amitnelkin/gelMetrics_AN, branch **`revision`** (never commit to `main`). Code for the manuscript *GelMetrics: an algorithm for analyzing the dynamics of gel-like phase-separated condensates* (Nelkin et al., ref. VM10081E), under revision. `MS.pdf` is in the repo root (not committed; ask the user if missing).

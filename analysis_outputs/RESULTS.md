@@ -1856,3 +1856,21 @@ First vs second 30 min: 100:1 turnover −8 → 117 %/h and net change −21 →
 - fig22 = Fig. 18: first vs second half.
 
 In vitro halves on the new data: only 100:1 changes significantly (turnover −8 → 117 %/h, net change −21 → −116 %/h). The stored-data changes in 1:1 (turnover p = 0.006) and 10:1 (turnover 76 → 18, p = 0.007) are not significant with movies as replicates (p 0.23, 0.32).
+
+## 40. In vitro results into the manuscript: change list (laptop, 2026-10-25)
+
+No Word file was modified. The change list is `revision_docs/vitro_change_list.md` (local only, not committed). It has every in vitro edit as section, exact old text and new text, for the user to apply in MS_revised_tracked.docx, Response_to_reviewers.docx and Revision_control.docx. Every old text was checked to occur exactly once in the user's current files.
+
+Decisions by the user:
+- Ratio labels and Methods concentrations unchanged.
+- Table I brightness = median over movies (all rows).
+- Mean burst size stays pooled, with a caption note that intensity units depend on brightness.
+- Flory-Huggins sentences softened to a possible interpretation.
+- Table I gets the "burst size beyond noise" column.
+
+Checks made for the user's questions:
+- **Why 100:1 brightness fell from 1726 to 741.** It is not a file or extraction error. Of the 31 stored 100:1 traces (≥ 30 min), 23 have a re-extracted twin, and twins have the same brightness (raw median 1722 vs 1799). The new tracking adds 35 dim granules (raw median 668; 17 of them from one dim movie), and the stored set has 8 very bright untwinned traces (2626). 100:1 movies differ about 20× in brightness (per-movie medians 184-3659 a.u.).
+- **Brightness, pooled vs median over movies:** 1:1 864 vs 810, 10:1 1456 vs 1442, 100:1 741 vs 1461. In vivo: 4PP7 5644 vs 5694, 30PP7 3998 vs 3618, 5Qb 13197 vs 12465, 10Qb 17534 vs 17738, 4PP7-FUS 3036 vs 1865, 30PP7-FUS 3436 vs 3387.
+- **4x FUS vs PP7 brightness on movie medians:** p = 0.0006 (30x: p = 0.74). The conclusion is unchanged; Fig. 9(c) still shows pooled medians (flagged to the user).
+- **Mean burst size (a.u.), pooled vs median of movie means:** 166 / 182 / 417 vs 50 / 62 / 130. The 100:1 value is driven by a few bright movies.
+- **Relative measures per movie:** burst size beyond noise 2.8 / 1.7 / 2.7 points (pooled −1.2 / 1.3 / 4.9).
