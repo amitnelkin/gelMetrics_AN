@@ -2034,3 +2034,16 @@ Movie-level comparisons with 20 copies (5000 shuffles, two-sided):
 ## 46. Decision on the noise-copy variation (2026-10-25)
 
 The user decided that the paper keeps its one-copy numbers and states the seed variation. A change list (local only, `revision_docs/copies_seed_change_list.md`) inserts it into Appendix E, Sec. V.C, the letter (point 6) and the control file's check list. The 20-copy values (section 45) are quoted there, including the weaker 4x FUS result (2.4 points, p = 0.18). The repository runners use 20 copies; `opts.nCopies = 1` gives the paper's procedure.
+
+## 47. 4x FUS vs PP7 with 50 noise copies (2026-10-25)
+
+`GelMetricsReport` with `nCopies = 50`, seeds 1-3; `GelMetricsCompare`, 10 000 movie shuffles. Run time 136 s for all three seeds (about 40 s per pair of reports and 6 s per test).
+
+| seed | PP7 beyond noise (pts) | FUS beyond noise (pts) | difference | p (two-sided) |
+|---|---|---|---|---|
+| 1 | −0.5 [−1.7, 1.7] | 1.9 [−0.3, 3.7] | 2.4 | 0.18 |
+| 2 | −0.4 [−1.6, 1.8] | 1.8 [0.0, 3.8] | 2.2 | 0.24 |
+| 3 | −0.4 [−1.6, 1.7] | 2.1 [−0.1, 3.9] | 2.5 | 0.18 |
+
+- 50 copies give the same answer as 20 (2.4 points, p = 0.18): the remaining uncertainty comes from the differences between movies (9 vs 12), not from the copies.
+- Unchanged: FUS bursts are larger as a fraction of the granule (17.2 vs 11.0%, p = 0.0004-0.0009) and FUS granules are dimmer (p = 0.0005-0.0007). Neither measure uses the copies.
