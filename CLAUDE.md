@@ -1,4 +1,4 @@
-# CLAUDE.md — GelMetrics revision (handoff, 2026-10-22)
+# CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
 This file lets a new chat continue the revision work. It replaces the earlier CLAUDE.md. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-36). Read the relevant section there before redoing anything.
 
@@ -65,7 +65,56 @@ Everything downstream of extraction:
 - the unchanging-granule control (`checks/static_control.m`);
 - the camera-noise calibration (`checks/noise_from_background.m`).
 - Their outputs are committed, so they don't need rerunning unless the extraction changes.
-- **In vitro raw movies do not exist anywhere** (user confirmed). In vitro rests on the stored traces (offset 200 assumed).
+- **In vitro:** raw movies were found on 2026-10-25 (NEXT TASK below), not yet verified or used. Until then, in vitro rests on the stored traces (offset 200 assumed).
+
+## NEXT TASK: in vitro raw movies were found (2026-10-25)
+The user located in vitro raw data in `..\Raw_Results\Titration experiment\` (7.5 GB of .nd2):
+
+| folder | movies | user's guess |
+|---|---|---|
+| `1000ng_ul_RNA_1mg_ml_protein` | 10 | 1:1 |
+| `100ng_ul_RNA_1mg_ml_protein` | 6 | 10:1 |
+| `1000ng_RNA_10ug_protein` | 5 | 100:1 |
+| `1000ng_ul_RNA_0.1mg_ml_protein` | 12 | probably irrelevant (RNA in excess) |
+
+**The user's request:** verify these files are the source of the stored in vitro data; if so, re-extract and redo the analyses.
+
+**Step 1, verify; don't assume the mapping.** The concentration units in the folder names are inconsistent (ng/µl vs ng, mg/ml vs µg), so test every folder against every stored dataset.
+- Check the channel count of each .nd2 with bftools `showinf` (2-channel movies caused the PP7 zigzag bug).
+- Track a couple of movies per folder with the R1/R2 pipeline (fluorescence channel only, offset 200).
+- Compare with the stored data, as was done for Qβ (`checks/qb_compare.m`, RESULTS.md section 12): trace counts, trace lengths, intensity levels, burst counts.
+- Stored in vitro data (`in_vitro_experiments/`):
+
+| dataset | traces | traces ≥ 180 frames | max length | median spot level (raw) |
+|---|---|---|---|---|
+| protein_RNA_1_1 | 78 | 45 | 360 | 912 |
+| protein_RNA_10_1 | 90 | 37 | 360 | 1730 |
+| protein_RNA_100_1 | 57 | 31 | 360 | 1298 |
+
+- Report the match to the user before the full run.
+
+**Step 2, if it matches:**
+1. Convert with bftools and track with `BatchParticleTracker.ijm` (Fiji GUI mode), as for PP7 (`checks/reextract_pp7.m`; folder layout as in `..\zigzag_scratch\reextract\<dataset>\{tif,track,work}`).
+2. `read_tables.m`, then `collect_intensity` (R2 settings) → a new folder, e.g. `in_vitro_reextracted/after_R2_offset/`. Never touch `in_vitro_experiments/`.
+3. Redo the in vitro parts of the analyses on the new data:
+   - noise floor / burst-free copies: `detection_grid.m` (its doVitro jobs point at `in_vitro_experiments`; add a folder argument);
+   - the control table;
+   - net change: `net_loss.py`;
+   - first vs second half: `halves.py`;
+   - the unchanging-granule control: `static_control.m`;
+   - the camera-noise calibration: `noise_from_background.m`.
+4. In vitro then has movie ids, so use movie-level bootstrap and permutation as in vivo.
+5. Changes for the manuscript go to the user in chat (see "Manuscript revision documents": never rebuild over the user-edited .docx files).
+
+## Disk: `..\zigzag_scratch\` (~44 GB; Explorer may show more because `work\` holds hard links)
+| what | size | needed? |
+|---|---|---|
+| `reextract\<ds>\tif\` (bfconvert 2-channel TIFFs) | ~31 GB | no: regenerable from the .nd2 |
+| `reextract\<ds>\track\` (Fiji/Mosaic output: red-only TIFF + trajectories) and `work\` (hard links + renamed CSVs + `_xy.mat`) | ~10.6 GB | **yes**, for any re-extraction or movie-based control without redoing Fiji tracking |
+| `4PP7_nd2`, `r1test_*`, `only012`, `run`, `qb_test` (diagnostic leftovers) | ~3.3 GB | no |
+| `*.log`, `*.ps1`, the git bundle | small | no |
+
+The user decides about deleting; never delete it yourself.
 
 ## Data and extraction stages (`in_vivo_reextracted/`)
 - **Datasets in vivo:**
@@ -169,6 +218,10 @@ Everything downstream of extraction:
   - `checks/ms_sim_test.m` (args: λ list, noises, tag), `ms_eq19_fit.py`, `ms_fig13.py` (sections 30-31).
 - **High SP, slow changes, time halves:** `checks/example_traces_sp.m`, `high_sp.py`, `sim_high_sp.m`, `sim_high_sp_plot.py` (section 34); `checks/slow_changes.py [--absolute]`, `slow_changes_test.py`, `win_sp.py` (section 35); `checks/halves.py` (section 36).
 - **Deck and summary page:** `checks/make_deck.py`, `checks/deck_notes.py` → `analysis_outputs/deck/`; `analysis_outputs/summary/index.html`.
+
+## Session notes
+- Remote Control drops when the app restarts the session (PC sleep, app update). Re-enable it with the ccd_session_mgmt `set_remote_control` tool when the user asks. The app setting "Connect new sessions to Remote Control" is on.
+- Another chat may push to `revision` in parallel: fetch before committing, and merge (never force-push or reset).
 
 ## Working style that worked
 - Fix the decision rule before looking at outcomes (e.g. the setting chosen by noise, not by p value). Report the whole grid.
