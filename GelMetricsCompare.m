@@ -5,7 +5,8 @@ function T = GelMetricsCompare(RA, RB, nPerm, seed)
 % For each measure: the difference A - B and a two-sided p value from shuffling
 % whole movies between the two conditions (movies are the replicates). Datasets
 % without movie ids are shuffled by granule.
-% Returns a table (measure, A, B, difference, p) and prints it.
+% Returns a table (measure, A, B, difference, p, p_AgtB) and prints it; p_AgtB is the
+% one-sided p for A > B (use it only when that direction was stated in advance).
 if nargin < 3, nPerm = 10000; end
 if nargin < 4, seed = 1; end
 rng(seed);
@@ -17,15 +18,15 @@ units = [arrayfun(@(k) itA(ga == k), 1:max(ga), 'UniformOutput', false), ...
          arrayfun(@(k) itB(gb == k), 1:max(gb), 'UniformOutput', false)];
 na = max(ga); nu = numel(units);
 f = @(it) cellfun(@(m) measure(it, m), meas);
-obs = f(itA) - f(itB); cnt = zeros(1, numel(meas));
+obs = f(itA) - f(itB); cnt = zeros(1, numel(meas)); cntG = cnt;
 for p = 1:nPerm
     o = randperm(nu);
     d = f(vertcat(units{o(1:na)})) - f(vertcat(units{o(na+1:end)}));
-    cnt = cnt + (abs(d) >= abs(obs) - 1e-12);
+    cnt = cnt + (abs(d) >= abs(obs) - 1e-12); cntG = cntG + (d >= obs - 1e-12);
 end
-pv = (cnt + 1) / (nPerm + 1);
-T = table(meas', cellfun(@(m) RA.(m), meas)', cellfun(@(m) RB.(m), meas)', obs', pv', ...
-    'VariableNames', {'measure', RA.name, RB.name, 'difference', 'p'});
+pv = (cnt + 1) / (nPerm + 1); pg = (cntG + 1) / (nPerm + 1);
+T = table(meas', cellfun(@(m) RA.(m), meas)', cellfun(@(m) RB.(m), meas)', obs', pv', pg', ...
+    'VariableNames', {'measure', RA.name, RB.name, 'difference', 'p', 'p_AgtB'});
 fprintf('\n%s vs %s (%d vs %d movies; p from %d movie shuffles)\n', RA.name, RB.name, na, nu - na, nPerm);
 disp(T);
 end

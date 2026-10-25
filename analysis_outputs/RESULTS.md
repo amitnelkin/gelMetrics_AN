@@ -2047,3 +2047,16 @@ The user decided that the paper keeps its one-copy numbers and states the seed v
 
 - 50 copies give the same answer as 20 (2.4 points, p = 0.18): the remaining uncertainty comes from the differences between movies (9 vs 12), not from the copies.
 - Unchanged: FUS bursts are larger as a fraction of the granule (17.2 vs 11.0%, p = 0.0004-0.0009) and FUS granules are dimmer (p = 0.0005-0.0007). Neither measure uses the copies.
+
+## 48. Was the 4x FUS one-sided p = 0.031 luck? (2026-10-25)
+
+`GelMetricsCompare` now also returns `p_AgtB`, the one-sided p for A > B. Same test as section 28a: whole movies shuffled, median burst size beyond noise. Run time 277 s.
+
+**The paper's one-copy procedure, repeated with 20 random draws of the copies** (seeds 101-120, 5000 shuffles each):
+- gap beyond noise: 1.3-3.3 points (median 2.4; the paper's draw gave 3.5, above every one of the 20);
+- one-sided p: 0.017-0.27, median 0.11, below 0.05 in **2 of 20** draws;
+- two-sided p: 0.029-0.53, median 0.23, below 0.05 in 1 of 20.
+
+**50 copies per granule** (seeds 1-3, 10 000 shuffles): gap 2.2-2.5 points, two-sided p 0.18-0.24, **one-sided p 0.09-0.12**.
+
+**Reading:** the paper's draw of the copies was a favourable one: about 1 draw in 10 gives one-sided p < 0.05. With a stable noise reference, the 4x FUS excess beyond noise is about 2.4 points, one-sided p ≈ 0.1: a trend, not significant.
