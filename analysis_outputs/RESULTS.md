@@ -2060,3 +2060,11 @@ The user decided that the paper keeps its one-copy numbers and states the seed v
 **50 copies per granule** (seeds 1-3, 10 000 shuffles): gap 2.2-2.5 points, two-sided p 0.18-0.24, **one-sided p 0.09-0.12**.
 
 **Reading:** the paper's draw of the copies was a favourable one: about 1 draw in 10 gives one-sided p < 0.05. With a stable noise reference, the 4x FUS excess beyond noise is about 2.4 points, one-sided p ≈ 0.1: a trend, not significant.
+
+## 49. In vitro v2 and seed-variation edits applied to the manuscript (2026-10-25)
+
+At the user's request, both change lists (`vitro_change_list_v2.md` section A and `copies_seed_change_list.md` items 1-2) and the three new figures (Figs. 6, 14, 18) were put into `revision_docs/MS_revised_tracked.docx` as tracked changes by Amit Nelkin.
+- **Backup first:** `MS_revised_tracked - backup - 251025 before vitro update.docx`. The work was done on a copy in %TEMP%; the original was overwritten only after a hash check that it had not changed since the backup.
+- **Checks:** all 23 text edits verified in the accepted-view text. An aligned paragraph diff shows that only the intended paragraphs changed. Table I, Figs. 6, 14 and 18 were checked by rendering.
+- **Method:** each edit was anchored by short text pieces, because Word's Find also matches earlier tracked deletions. Pictures were replaced only right before a caption that is not inside a tracked deletion. An old deleted "FIG. 14" caption from the removed appendix figures otherwise captured the first attempt.
+- **Not yet in the Word files:** the response letter and control-file items (B and C of v2, items 3-4 of the seed list); `MS_revised_clean.docx` is stale.

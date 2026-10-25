@@ -1,6 +1,6 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-46). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-49). Read the relevant section there before redoing anything.
 
 **In vitro into the manuscript: done as change list v2, `revision_docs/vitro_change_list_v2.md` (local; section 44), from the section 43 primary data. The user applies it by hand. Still open: the reason the three in vitro movies were dropped (for Methods VIII.E), and item A7 (FUS brightness per movie vs per granule). `CLAUDE_laptop_vitro.md` is the finished brief.**
 
@@ -167,7 +167,7 @@ Everything downstream of extraction:
   - Rebuild: `cd revision_docs/work; py -3 build_ops.py`, then apply_ops.ps1 (from MS_base.docx), finalize.ps1. **Run Word on copies in %TEMP% (outside OneDrive), then copy the outputs back:** OneDrive AutoSave silently wrote edits back into the input file once (2026-10-23). The scripts now also set `AutoSaveOn = $false`; MS.docx itself was never modified. Paragraph indices refer to MS_base.docx; if MS.docx changes, re-dump with dump.ps1 and re-check the indices.
 - Figures: `checks/ms_figures.py` -> `analysis_outputs/ms_revision/figs/` (MS style); data for Fig. 4 from `checks/ms_fig4_sim.m`; Fig. 15 from `run_runners('ms_fig15_R2', ...)`; file names keep the old numbers (fig15/16 = new Figs. 11/12, fig17-22 = new 13-18); burst files for Figs. 6-9 in `analysis_outputs/ms_grid_w13sp12/` (detection_grid, window 13, SP 12).
 - Decisions used: report burst size / turnover / net change with noise controls (not lambda, k0); 4x FUS = fractional, brightness-dependent effect (one-sided p = 0.031, two-sided 0.061); fixed-granule control not feasible because condensates cannot be 'paused': like an oil droplet they keep exchanging material to stay in equilibrium (user's reason, 2026-10-23); reference [30] stays (revised code goes to the same repository); FRAP dropped; concede-and-show-data tone.
-- **The user now edits the revision_docs/*.docx files by hand. Never rebuild and copy over them** (that wiped the user's edits once, 2026-10-24). Give any further change in chat (where, old text, new text, table values) and let the user apply it.
+- **The user now edits the revision_docs/*.docx files by hand. Never rebuild and copy over them** (that wiped the user's edits once, 2026-10-24). Give any further change in chat (where, old text, new text, table values) and let the user apply it. Exception (2026-10-25, on the user's explicit request): edits may go into the user's file as tracked changes, after a dated backup, working on a %TEMP% copy, with a hash check that the original is unchanged before writing (section 49).
 - Figures are now 1-18: old appendix Figs. 11-14 (tuning of the original WS fit) were removed at the user's request, Appendices A-B shortened, old 15-22 renumbered to 11-18 in the manuscript, letter and control file.
 - Open items for the user are listed at the end of Revision_control.docx (Fig. 10(a) arrow label 'lambda', Eq. 1.1 as Word equation, etc.).
 
