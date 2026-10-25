@@ -1894,3 +1894,33 @@ Outputs: `analysis_outputs/vitro_orig_verify/`.
 - The twins come from nearly every movie (11/12, 4/5, 8/10).
 - Of the stored traces, 75/78, 88/90 and 57/57 are found either exactly or with almost all their values inside one new trace. Floating-point values can't match by chance, so these are the same granules, with the trajectory split or linked differently by Mosaic. The original tracking run probably used other linking settings or another plugin version; the reason can't be checked without the original CSVs.
 - **Conclusion:** the mapping in section 38 is confirmed beyond doubt. On identical traces the original code gives identical bursts. The stored-vs-new differences in sections 38-39 come only from tracking (more, and differently split, tracks) and from the corrected reader (frame and xy off by one).
+
+## 42. Why the re-extracted in vitro numbers differ from the stored ones
+
+`checks/vitro_why.py` → `analysis_outputs/vitro_orig_verify/why.txt`. Traces ≥ 180 frames; raw brightness; net change = granule mean, as in section 22.
+
+| | traces ≥ 180 | median length (frames) | brightness (raw) | net change (%/h) |
+|---|---|---|---|---|
+| 1:1 stored | 45 | 224 | 1114 | −21.1 |
+| 1:1 new tracking, original code | 52 | 173 | 1062 | −19.5 |
+| 1:1 new tracking, fixed reader | 53 | 161 | 1064 | −24.2 |
+| 10:1 stored | 37 | 94 | 1915 | −39.7 |
+| 10:1 new tracking, original code | 83 | 199 | 1669 | −39.4 |
+| 10:1 new tracking, fixed reader | 86 | 190 | 1656 | −41.3 |
+| 100:1 stored | 31 | 232 | 1926 | −70.8 |
+| 100:1 new tracking, original code | 59 | 106 | 942 | −53.2 |
+| 100:1 new tracking, fixed reader | 59 | 105 | 941 | −53.4 |
+| 100:1 new tracking, original code, without movies 5 and 7 | 40 | | 1658 | −64.2 |
+
+- **The corrected reader changes little** (rows 2 vs 3): brightness ±1%, net change ≤ 5 points.
+- **The stored data leave out whole movies.**
+  - 10:1: movie 5 (20 traces) has no trace in the stored data.
+  - 100:1: movies 5 (40 traces, a dim movie) and 7 (2 traces) are missing.
+  - 1:1 includes all 12 movies.
+  - This corrects section 38, which said the stored data were not a subset of movies.
+  - Without those movies, 100:1 brightness returns from 942 to 1658 (stored 1926) and net change from −53 to −64 %/h (stored −71).
+- **Tracks are cut differently.**
+  - Many stored traces are pieces of longer new traces: 29 / 56 / 19 of 78 / 90 / 57.
+  - In 10:1 the stored traces are short (median 94 frames vs 199), so fewer reach 30 min (37 vs 83).
+  - So the "≥ 30 min" granule set differs.
+  - The original tracking settings, and whether the movies were dropped on purpose (e.g. focus), are unknown.

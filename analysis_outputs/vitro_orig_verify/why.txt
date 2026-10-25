@@ -1,0 +1,52 @@
+== protein_RNA_1_1 <- vitro_1000ngul_0p1mgml: stored 78 traces (17452 points), new 107 traces (20603 points)
+  new traces whose values are (mostly) in the stored data: 67 | not at all: 8
+   movie  1: new traces   8, of which in stored   7; new median level   1028
+   movie  2: new traces  10, of which in stored   4; new median level    261
+   movie  3: new traces   6, of which in stored   5; new median level    416
+   movie  4: new traces  13, of which in stored   9; new median level   1066
+   movie  5: new traces   7, of which in stored   7; new median level   2129
+   movie  6: new traces   5, of which in stored   5; new median level   2128
+   movie  7: new traces   4, of which in stored   4; new median level    528
+   movie  8: new traces   5, of which in stored   2; new median level    278
+   movie  9: new traces  21, of which in stored   8; new median level    697
+   movie 10: new traces  15, of which in stored   8; new median level    528
+   movie 11: new traces   9, of which in stored   5; new median level    642
+   movie 12: new traces   4, of which in stored   3; new median level    635
+   {'identical': 36, 'stored is a piece of a longer new trace': 29, 'stored is longer (new trace is a piece)': 5, 'other': 8}
+== protein_RNA_10_1 <- vitro_1000ng_10ug: stored 90 traces (15127 points), new 161 traces (32334 points)
+  new traces whose values are (mostly) in the stored data: 59 | not at all: 11
+   movie  1: new traces  44, of which in stored  20; new median level   1477
+   movie  2: new traces  41, of which in stored  17; new median level   1634
+   movie  3: new traces  31, of which in stored  12; new median level   1645
+   movie  4: new traces  25, of which in stored  10; new median level   1583
+   movie  5: new traces  20, of which in stored   0; new median level   1532
+   {'identical': 24, 'stored is a piece of a longer new trace': 56, 'stored is longer (new trace is a piece)': 1, 'other': 9}
+== protein_RNA_100_1 <- vitro_1000ngul_1mgml: stored 57 traces (12306 points), new 139 traces (23732 points)
+  new traces whose values are (mostly) in the stored data: 51 | not at all: 26
+   movie  1: new traces   9, of which in stored   3; new median level    266
+   movie  2: new traces   8, of which in stored   7; new median level    356
+   movie  3: new traces   7, of which in stored   4; new median level    429
+   movie  4: new traces  16, of which in stored   8; new median level   1140
+   movie  5: new traces  40, of which in stored   0; new median level    507
+   movie  6: new traces   7, of which in stored   4; new median level   1009
+   movie  7: new traces   2, of which in stored   0; new median level   3151
+   movie  8: new traces  29, of which in stored  12; new median level    686
+   movie  9: new traces  12, of which in stored   7; new median level   1566
+   movie 10: new traces   9, of which in stored   6; new median level   3102
+   {'identical': 26, 'stored is a piece of a longer new trace': 19, 'stored is longer (new trace is a piece)': 2, 'other': 10}
+version | traces >=180 | median length (all) | brightness raw | net change %/h (granule mean)
+== protein_RNA_1_1
+  stored                           |  45 |   224 |   1114 |  -21.1
+  new tracking, original code      |  52 |   173 |   1062 |  -19.5
+  new tracking, fixed reader (R1)  |  53 |   161 |   1064 |  -24.2
+== protein_RNA_10_1
+  stored                           |  37 |    94 |   1915 |  -39.7
+  new tracking, original code      |  83 |   199 |   1669 |  -39.4
+  new tracking, fixed reader (R1)  |  86 |   190 |   1656 |  -41.3
+== protein_RNA_100_1
+  stored                           |  31 |   232 |   1926 |  -70.8
+  new tracking, original code      |  59 |   106 |    942 |  -53.2
+  new tracking, fixed reader (R1)  |  59 |   105 |    941 |  -53.4
+--- new tracking, original code, without the movies absent from the stored data
+  protein_RNA_10_1: dropped movies [5] had 13 of 83 long traces; left 70 | brightness 1673 | net -41.8
+  protein_RNA_100_1: dropped movies [5, 7] had 19 of 59 long traces; left 40 | brightness 1658 | net -64.2
