@@ -28,7 +28,7 @@ For each condition, `GelMetricsReport.m` gives:
 Every measure has a 95% confidence interval (movies resampled, then granules within movies).
 `GelMetricsCompare.m` tests two conditions by shuffling whole movies between them.
 
-**Noise floor.** Every granule trace is compared with burst-free copies of itself: the same photobleaching trend and the same noise level, but no bursts, analyzed in the identical way. Bursts found in a copy are false. Only the part of a measure beyond its copies is attributed to the granule.
+**Noise floor.** Every granule trace is compared with burst-free copies of itself: the same photobleaching trend and the same noise level, but no bursts, analyzed in the identical way. Bursts found in a copy are false. Only the part of a measure beyond its copies is attributed to the granule. The copies are random: with one copy per trace (as used for the numbers in the paper), the copy-based measures change by up to ~2 percentage points of burst size between random draws. The runners therefore use 20 copies per trace (`opts.nCopies`); set `opts.nCopies = 1` to reproduce the paper's procedure.
 
 **λ and k0.** The original method fitted λ (units per burst) and k0 (intensity of one unit) with a weighted score (`modifiedPoissonFit.m`). Only their product, the mean burst size, can be estimated reliably, so the fit is no longer part of the analysis. It is kept in `legacy/` for reference.
 

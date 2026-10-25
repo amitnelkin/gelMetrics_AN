@@ -2030,3 +2030,7 @@ Movie-level comparisons with 20 copies (5000 shuffles, two-sided):
 - Qβ vs PP7 (turnover) and in vitro 100:1 vs 1:1 (net change) are unchanged.
 - In vitro 100:1 vs 1:1 burst size beyond noise becomes significant (p = 0.034; paper 0.096).
 - Decision for the user: whether the paper's copy-based numbers should be redone with 20 copies.
+
+## 46. Decision on the noise-copy variation (2026-10-25)
+
+The user decided that the paper keeps its one-copy numbers and states the seed variation. A change list (local only, `revision_docs/copies_seed_change_list.md`) inserts it into Appendix E, Sec. V.C, the letter (point 6) and the control file's check list. The 20-copy values (section 45) are quoted there, including the weaker 4x FUS result (2.4 points, p = 0.18). The repository runners use 20 copies; `opts.nCopies = 1` gives the paper's procedure.
