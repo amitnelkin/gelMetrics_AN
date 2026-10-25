@@ -1776,3 +1776,27 @@ Median detected size at window 31 and SP 12 is 12% (true 11%), vs 21% at window 
 - **For the paper:**
   - in vivo results can be reported as whole-hour values;
   - in vitro should either be reported per half, or come with this time dependence stated.
+
+## 37. A strict "1 in 1000" false-burst rule (4PP7 vs 4PP7-FUS)
+
+Scripts: `checks/fp1000.m` (100 seeded burst-free copies per granule, built as in `detection_grid.m`; detector `analysis.m`, window 13, SP 12-40) and `checks/fp1000.py` -> `analysis_outputs/fp1000/` (`summary.csv`, `compare.csv`, `rates_by_SP.csv`, `fp1000.png`; `segs.csv` not committed; regenerate with `fp1000` in about 15 min).
+
+The user's question: set the detection so that a granule without exchange shows a false burst with a chance of 1 in 1000, then apply the same rule to the real granules. Rule fixed before looking at the real granules, either sign counted:
+- A: lowest SP at which at most 1 in 1000 copies has any burst.
+- B: SP 12 plus a size cutoff (burst as a fraction of the granule) that at most 1 in 1000 copies exceeds.
+- Each set per condition and in common (the stricter of the two).
+
+| | 4PP7 (76 granules) | 4PP7-FUS (94 granules) |
+|---|---|---|
+| A: SP for 1 in 1000 | 28 | 32 |
+| B: size cutoff for 1 in 1000 | 31% of the granule | 40% |
+| Real granules with a burst (any rule) | 0 | 0 |
+| Expected from noise | 0.08 | 0.09 |
+| Largest real burst at SP 12 | 25% | 39% |
+
+Share of granules with at least one burst, real / copies: SP 12 0.89 / 0.91 and 0.94 / 0.90; SP 16 0.41 / 0.32 and 0.34 / 0.32; SP 20 0.04 / 0.06 and 0.07 / 0.06; SP 24 0.013 / 0.013 and 0 / 0.013.
+
+**Reading.**
+- Under a 1-in-1000 rule no 4PP7 or 4PP7-FUS granule has a burst, so there is nothing left to compare (p = 1).
+- At every looser setting the real granules have as many bursts as their noise copies. With a 1-in-100 size cutoff, 0% (4x) and 2% (FUS, 2 granules) of granules pass, as noise predicts (1%).
+- This matches section 34: the PP7 signal is below what the method can separate from noise, one event at a time. The noise-copy comparison (sections 18-29) remains the only way to see the small average differences.

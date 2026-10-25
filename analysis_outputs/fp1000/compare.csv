@@ -1,0 +1,5 @@
+rule,share_4x,share_FUS,p_movie_perm
+A own,0.0,0.0,1.0
+A common,0.0,0.0,1.0
+B own,0.0,0.0,1.0
+B common,0.0,0.0,1.0

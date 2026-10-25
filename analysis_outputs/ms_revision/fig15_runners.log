@@ -1,0 +1,837 @@
+
+######## 4PP7 (SP=10, GOF=15) ########
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc7be7a5c_9199_421d_931f_727961842203 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+   Found 167 positive burst events: 
+   Found 236 unclassified events: 
+   Found 176 negative burst events: 
+
+
+Positive amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Positive amplitudes results:
+  #1: lambda=1, k0=103, WS=0.0005
+  #2: lambda=2, k0=61, WS=0.0062
+  #3: lambda=3, k0=45, WS=0.012
+  #4: lambda=4, k0=35, WS=0.018
+  #5: lambda=5, k0=29, WS=0.024
+
+
+Negative amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Negative amplitudes results:
+  #1: lambda=1, k0=148, WS=0.0035
+  #2: lambda=5, k0=37, WS=0.0088
+  #3: lambda=4, k0=46, WS=0.016
+  #4: lambda=3, k0=62, WS=0.031
+  #5: lambda=2, k0=87, WS=0.045
+
+######## 4PP7-FUS (SP=10, GOF=15) ########
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp1685baad_7861_4837_812b_4c777cf0bd7c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+   Found 204 positive burst events: 
+   Found 284 unclassified events: 
+   Found 209 negative burst events: 
+
+
+Positive amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Positive amplitudes results:
+  #1: lambda=2, k0=53, WS=0.0013
+  #2: lambda=3, k0=38, WS=0.0018
+  #3: lambda=1, k0=83, WS=0.0052
+  #4: lambda=4, k0=29, WS=0.0063
+  #5: lambda=5, k0=24, WS=0.013
+
+
+Negative amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Negative amplitudes results:
+  #1: lambda=1, k0=80, WS=0.0016
+  #2: lambda=2, k0=50, WS=0.0045
+  #3: lambda=3, k0=36, WS=0.0094
+  #4: lambda=4, k0=28, WS=0.012
+  #5: lambda=5, k0=24, WS=0.016
+
+######## 30PP7 (SP=12, GOF=10) ########
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp3556d663_18bf_421f_bdaa_1bff00c19d14 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+   Found 212 positive burst events: 
+   Found 269 unclassified events: 
+   Found 225 negative burst events: 
+
+
+Positive amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 10
+
+Positive amplitudes results:
+  #1: lambda=1, k0=156, WS=0.0066
+  #2: lambda=2, k0=102, WS=0.022
+  #3: lambda=3, k0=75, WS=0.037
+  #4: lambda=4, k0=57, WS=0.052
+  #5: lambda=5, k0=47, WS=0.068
+
+
+Negative amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 10
+
+Negative amplitudes results:
+  #1: lambda=1, k0=141, WS=0.0017
+  #2: lambda=2, k0=89, WS=0.018
+  #3: lambda=3, k0=65, WS=0.032
+  #4: lambda=4, k0=53, WS=0.043
+  #5: lambda=5, k0=43, WS=0.051
+
+######## 30PP7-FUS (SP=12, GOF=10) ########
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc94a747a_1c64_4c2e_b4f2_aacb5a4c20d8 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc94a747a_1c64_4c2e_b4f2_aacb5a4c20d8 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpc94a747a_1c64_4c2e_b4f2_aacb5a4c20d8 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+   Found 162 positive burst events: 
+   Found 192 unclassified events: 
+   Found 156 negative burst events: 
+
+
+Positive amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 10
+
+Positive amplitudes results:
+  #1: lambda=1, k0=130, WS=0.0031
+  #2: lambda=2, k0=82, WS=0.02
+  #3: lambda=3, k0=59, WS=0.025
+  #4: lambda=4, k0=47, WS=0.03
+  #5: lambda=5, k0=38, WS=0.036
+
+
+Negative amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 10
+
+Negative amplitudes results:
+  #1: lambda=1, k0=146, WS=0.0047
+  #2: lambda=5, k0=42, WS=0.027
+  #3: lambda=4, k0=50, WS=0.03
+  #4: lambda=3, k0=64, WS=0.036
+  #5: lambda=2, k0=89, WS=0.039
+
+######## 5Qb (SP=14, GOF=15) ########
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+   Found 179 positive burst events: 
+   Found 210 unclassified events: 
+   Found 145 negative burst events: 
+[Warning: Truncation unsuccesful for lambda=1 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=2 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=3 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=4 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=5 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+
+
+Positive amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Positive amplitudes results:
+  #1: lambda=2, k0=203, WS=0.0081
+  #2: lambda=1, k0=329, WS=0.012
+  #3: lambda=3, k0=145, WS=0.017
+  #4: lambda=4, k0=115, WS=0.024
+  #5: lambda=5, k0=95, WS=0.035
+[Warning: Truncation unsuccesful for lambda=1 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=2 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=3 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=4 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=5 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tpfc43690a_89fa_45d3_a80b_9a185dc94551 (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+
+
+Negative amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Negative amplitudes results:
+  #1: lambda=1, k0=298, WS=0.0091
+  #2: lambda=2, k0=175, WS=0.028
+  #3: lambda=3, k0=128, WS=0.045
+  #4: lambda=4, k0=104, WS=0.057
+  #5: lambda=5, k0=86, WS=0.065
+
+######## 10Qb (SP=14, GOF=15) ########
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Polynomial is not unique; degree >= number of data points.] 
+[> In polyfit (line 80)
+In analysis (line 107)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 84)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+   Found 210 positive burst events: 
+   Found 270 unclassified events: 
+   Found 217 negative burst events: 
+[Warning: Truncation unsuccesful for lambda=1 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=1 and k0=2 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=2 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=2 and k0=2 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=3 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=3 and k0=2 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=4 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=5 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 133)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+
+
+Positive amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Positive amplitudes results:
+  #1: lambda=3, k0=179, WS=0.0015
+  #2: lambda=2, k0=246, WS=0.0055
+  #3: lambda=4, k0=141, WS=0.0066
+  #4: lambda=5, k0=118, WS=0.017
+  #5: lambda=1, k0=401, WS=0.044
+[Warning: Truncation unsuccesful for lambda=1 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=2 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=3 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=4 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+[Warning: Truncation unsuccesful for lambda=5 and k0=1 - working on full data] 
+[> In modifiedPoissonFit (line 55)
+In gm_logged_mpfit (line 8)
+In tp5968bc0b_5760_4c6d_afd8_72cee61cce5c (line 154)
+In run (line 112)
+In run_experimental (line 46)
+In run_runners (line 37)] 
+
+
+Negative amplitudes weights:
+  Weight MSE                : 0.5
+  Weight QQ                 : 0.25
+  Weight KS                 : 0.25
+  Truncation Percentile     : 15
+
+Negative amplitudes results:
+  #1: lambda=2, k0=250, WS=0.011
+  #2: lambda=1, k0=409, WS=0.021
+  #3: lambda=3, k0=179, WS=0.024
+  #4: lambda=4, k0=141, WS=0.039
+  #5: lambda=5, k0=115, WS=0.053
+       dataset       SP    GOF     sign      nAmpAll    nFit    lam1    k0_1    lamK0_1     score1      lam2    k0_2     score2      k0AtGridEdge    nTraces    nTraces180         stage     
+    _____________    __    ___    _______    _______    ____    ____    ____    _______    _________    ____    ____    _________    ____________    _______    __________    _______________
+
+    {'4PP7'     }    10    15     {'Pos'}      167      150      1      103       103      0.0005002     2       61     0.0062025       false          254          76        {'ms_fig15_R2'}
+    {'4PP7'     }    10    15     {'Neg'}      176      158      1      148       148      0.0035014     5       37     0.0088035       false          254          76        {'ms_fig15_R2'}
+    {'4PP7-FUS' }    10    15     {'Pos'}      204      184      2       53       106      0.0013005     3       38     0.0018007       false          379          94        {'ms_fig15_R2'}
+    {'4PP7-FUS' }    10    15     {'Neg'}      209      188      1       80        80      0.0016006     2       50     0.0045018       false          379          94        {'ms_fig15_R2'}
+    {'30PP7'    }    12    10     {'Pos'}      212      191      1      156       156      0.0066026     2      102      0.022209       false          272         145        {'ms_fig15_R2'}
+    {'30PP7'    }    12    10     {'Neg'}      225      203      1      141       141      0.0017007     2       89      0.017807       false          272         145        {'ms_fig15_R2'}
+    {'30PP7-FUS'}    12    10     {'Pos'}      162      146      1      130       130      0.0031012     2       82      0.020208       false          194         111        {'ms_fig15_R2'}
+    {'30PP7-FUS'}    12    10     {'Neg'}      156      140      1      146       146      0.0047019     5       42      0.027211       false          194         111        {'ms_fig15_R2'}
+    {'5Qb'      }    14    15     {'Pos'}      179      161      2      203       406      0.0081032     1      329      0.011705       false          296         191        {'ms_fig15_R2'}
+    {'5Qb'      }    14    15     {'Neg'}      145      131      1      298       298      0.0091036     2      175      0.028111       false          296         191        {'ms_fig15_R2'}
+    {'10Qb'     }    14    15     {'Pos'}      210      189      3      179       537      0.0015006     2      246     0.0055022       false          517         279        {'ms_fig15_R2'}
+    {'10Qb'     }    14    15     {'Neg'}      217      195      2      250       500       0.010504     1      409      0.021309       false          517         279        {'ms_fig15_R2'}
+
+
+ans =
+
+  1217 table
+
+       dataset       SP    GOF     sign      nAmpAll    nFit    lam1    k0_1    lamK0_1     score1      lam2    k0_2     score2      k0AtGridEdge    nTraces    nTraces180         stage     
+    _____________    __    ___    _______    _______    ____    ____    ____    _______    _________    ____    ____    _________    ____________    _______    __________    _______________
+
+    {'4PP7'     }    10    15     {'Pos'}      167      150      1      103       103      0.0005002     2       61     0.0062025       false          254          76        {'ms_fig15_R2'}
+    {'4PP7'     }    10    15     {'Neg'}      176      158      1      148       148      0.0035014     5       37     0.0088035       false          254          76        {'ms_fig15_R2'}
+    {'4PP7-FUS' }    10    15     {'Pos'}      204      184      2       53       106      0.0013005     3       38     0.0018007       false          379          94        {'ms_fig15_R2'}
+    {'4PP7-FUS' }    10    15     {'Neg'}      209      188      1       80        80      0.0016006     2       50     0.0045018       false          379          94        {'ms_fig15_R2'}
+    {'30PP7'    }    12    10     {'Pos'}      212      191      1      156       156      0.0066026     2      102      0.022209       false          272         145        {'ms_fig15_R2'}
+    {'30PP7'    }    12    10     {'Neg'}      225      203      1      141       141      0.0017007     2       89      0.017807       false          272         145        {'ms_fig15_R2'}
+    {'30PP7-FUS'}    12    10     {'Pos'}      162      146      1      130       130      0.0031012     2       82      0.020208       false          194         111        {'ms_fig15_R2'}
+    {'30PP7-FUS'}    12    10     {'Neg'}      156      140      1      146       146      0.0047019     5       42      0.027211       false          194         111        {'ms_fig15_R2'}
+    {'5Qb'      }    14    15     {'Pos'}      179      161      2      203       406      0.0081032     1      329      0.011705       false          296         191        {'ms_fig15_R2'}
+    {'5Qb'      }    14    15     {'Neg'}      145      131      1      298       298      0.0091036     2      175      0.028111       false          296         191        {'ms_fig15_R2'}
+    {'10Qb'     }    14    15     {'Pos'}      210      189      3      179       537      0.0015006     2      246     0.0055022       false          517         279        {'ms_fig15_R2'}
+    {'10Qb'     }    14    15     {'Neg'}      217      195      2      250       500       0.010504     1      409      0.021309       false          517         279        {'ms_fig15_R2'}
+
