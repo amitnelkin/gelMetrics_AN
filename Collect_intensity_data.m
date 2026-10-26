@@ -20,7 +20,7 @@ file_path = [uigetdir("*", ''), filesep];
 
 save([file_path, 'data.mat'],'intensity');           % spot mean (camera offset removed)
 save([file_path, 'background.mat'],'background');    % surrounding cell / dilute phase
-% For GelMetricsReport.m: the integrated granule intensity, and the movie of every trace
+% For ExperimentalAnalysis.m (burstMeasures.m): the integrated granule intensity, and the movie of every trace
 % (movies are the independent replicates of the confidence intervals).
 spotSum = sums.spotSum;
 save([file_path, 'spotsum.mat'],'spotSum');

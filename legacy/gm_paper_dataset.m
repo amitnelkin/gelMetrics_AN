@@ -15,7 +15,7 @@ function D = gm_paper_dataset(name, measure)
 % (GelMetricsReport with opts.seed = D.paperSeed and opts.nCopies = 1 reproduces them).
 % The original stored traces (in_vivo_experiments/, in_vitro_experiments/) are
 % kept for reference only; they contain the errors described in the paper.
-repo = fileparts(mfilename('fullpath'));
+repo = fileparts(fileparts(mfilename('fullpath')));   % this file is in legacy/
 L = @(p) dropFirst(load(fullfile(repo, p)));
 vitro = struct('vitro_1_1', 'same_1_1', 'vitro_10_1', 'same_10_1', 'vitro_100_1', 'same_100_1');
 D.name = name;

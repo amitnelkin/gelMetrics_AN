@@ -1,6 +1,8 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-53). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-54). Read the relevant section there before redoing anything.
+
+**OPEN TASK for the lab PC chat: `CLAUDE_labpc_figures2.md`, i.e. run the simplified `PaperFigures_revised.m`, `ExperimentalAnalysis.m` and `SimulationRunWithAnalysis.m` and check the drawings (section 54).**
 
 **OPEN TASK for the laptop chat: `CLAUDE_laptop_spotsum.md`. The user decided (2026-10-26, section 53) to use the spot sum in vitro as in vivo (spot mean only for brightness and a.u. amplitudes); the in vitro titration results change (no net loss, no ratio differences; granule area grows). Make a new change list for the manuscript; never overwrite the user's Word files.**
 
@@ -176,8 +178,8 @@ Everything downstream of extraction:
 - Open items for the user are listed at the end of Revision_control.docx (Fig. 10(a) arrow label 'lambda', Eq. 1.1 as Word equation, etc.).
 
 ## Where things are (scripts → outputs)
-- **User-facing analysis (section 45):** `GelMetricsReport.m` (all Table I measures + CIs, `opts.nCopies`), `GelMetricsCompare.m` (movie-level test), `gm_paper_dataset.m`, `gm_load_extraction.m`; runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` call them. The WS fit and the old runners are in `legacy/` (`modifiedPoissonFit.m`, `modelCDF.m`, `*_WS.m`); `checks/*.m` add `legacy/` to the path. **One noise copy per granule (as in the paper) varies by up to ~2 points of burst size beyond noise between seeds; use 20 copies. The paper keeps its one-copy numbers and states the variation (user decision; section 46, `revision_docs/copies_seed_change_list.md`).**
-- **Manuscript figures in MATLAB (section 51):** `PaperFigures_revised.m` (Figs. 5-9, one section each; `makePlots = false` prints the numbers only; exact paper numbers via `gm_paper_dataset(name).paperSeed`), helpers `gm_plot_bursthist.m`, `gm_plot_bars.m`, `gm_style.m`, `analysis/gm_eq19_fit.m`, `analysis/gm_shape_fit.m`. Drawing not yet checked (laptop MATLAB cannot draw). The user's `PaperFigures.m` (untracked) is theirs: do not touch.
+- **User-facing analysis (sections 45, 54; plain style, the user's request):** `ExperimentalAnalysis.m`, `PaperFigures_revised.m` (Figs. 5-9), `SimulationRunWithAnalysis.m` (scripts; loading, plotting and the Fig. 5 fits are local functions inside them) and the only function files `burstMeasures.m`, `summarizeGranules.m` (all formulas), `compareConditions.m`. Keep this plain style: no new helper files, no cellfun or anonymous functions. The earlier `GelMetricsReport`/`GelMetricsCompare`/`gm_*` are in `legacy/`. One noise copy per granule (as in the paper) varies by up to ~2 points between seeds; ExperimentalAnalysis uses 20, the figure script 1 (paper seeds 18-23, in vitro 18-20).
+- **Manuscript figures:** see the line above; `figures/` holds the PNGs.
 - **Pipeline:** `BatchParticleTracker.ijm`, `read_tables.m`, `collect_intensity.m` (+ wrapper `Collect_intensity_data.m`), `generate_movArray.m`, `analysis.m` (optional 7th output `segInfo` per burst), `getPosition.m`, `modifiedPoissonFit.m`, `generateSim.m` (optional k0), runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` (run via `checks/run_runners.m`).
 - **Helpers:** `checks/gm_loadDataset.m`, `analysis/gm_amplitudes_by_trace.m`, `analysis/gelmetricsMLE.m`, `analysis/gelmetricsJoint.m`.
 - **Noise floor and detection:**

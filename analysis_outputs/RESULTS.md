@@ -2168,3 +2168,24 @@ At the user's request, the same way as section 49 (dated backups `* - backup - 2
 - The controls come from `py checks/vitro_controls.py --sum`.
 - In Fig. 14(b) the in vitro bars stay on the spot-mean scale, like the in vivo bars; the spot-sum ratios are in `vitro_controls_sum.md`.
 - **Handoff:** `CLAUDE_laptop_spotsum.md`.
+
+## 54. The analysis code rewritten in a plain style (the user's request, 2026-10-26)
+
+**Why:** the user found the new scripts (`GelMetricsReport`, `GelMetricsCompare`, nine `gm_*` helpers) too complex to follow. The user asked for code that reads like their own, with as few files as possible, accepting less efficiency.
+
+**Now:**
+- **Function files (three):**
+  - `burstMeasures.m`: one condition; copies, detection, per-granule data, 95% CIs; plain loops, a comment per step.
+  - `summarizeGranules.m`: the formulas of every measure, in one place.
+  - `compareConditions.m`: the movie-shuffling test.
+- **Scripts:** `ExperimentalAnalysis.m`, `PaperFigures_revised.m` and `SimulationRunWithAnalysis.m`. Data loading (`loadPaperDataset`, `loadFolder`), plotting (`plotBurstHist`, `styleAxes`) and the Fig. 5 fits (`eq19Fit`, `shapeFit`) are local functions at the end of each script.
+- **The earlier helpers moved to `legacy/`:** `GelMetricsReport`, `GelMetricsCompare`, `gm_paper_dataset` (path fixed for its new folder), `gm_load_extraction`, `gm_plot_*`, `gm_style`, `gm_eq19_fit`, `gm_shape_fit`. `checks/vitro_spotsum_*.m` still find them, because they add `legacy/` to the path.
+- The in vitro data use the spot sum (section 53).
+
+**Checks:**
+- `burstMeasures` vs `GelMetricsReport` (paper seeds; 4PP7, 4PP7-FUS, in vitro 1:1 and 100:1): every measure and every CI differs by at most 3e-14.
+- `compareConditions` vs `GelMetricsCompare`: the same p values (identical shuffles).
+- `PaperFigures_revised.m` headless (`makePlots = false`, 632 s): every printed number of Figs. 5-9 is identical to the previous run. Fig. 6 matches `vitro_spotsum/reports.csv` (spot sum, one copy).
+- `ExperimentalAnalysis.m` (20 copies) and `SimulationRunWithAnalysis.m` give the section 45 numbers.
+- `checkcode`: no errors.
+- **The drawing code is not run yet:** task `CLAUDE_labpc_figures2.md` for the lab PC.

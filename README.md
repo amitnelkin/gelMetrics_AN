@@ -11,7 +11,7 @@
 - ImageJ FIJI with the Mosaic plugin, to detect and track bright spots in the microscopy movies.
 
 ### What the analysis reports
-For each condition, `GelMetricsReport.m` gives:
+For each condition, `burstMeasures.m` gives (the formulas are all in `summarizeGranules.m`):
 
 | measure | meaning |
 |---|---|
@@ -26,17 +26,17 @@ For each condition, `GelMetricsReport.m` gives:
 | first vs second 30 min | turnover and net change per half hour, with a test for a change |
 
 Every measure has a 95% confidence interval (movies resampled, then granules within movies).
-`GelMetricsCompare.m` tests two conditions by shuffling whole movies between them.
+`compareConditions.m` tests two conditions by shuffling whole movies between them.
 
-**Noise floor.** Every granule trace is compared with burst-free copies of itself: the same photobleaching trend and the same noise level, but no bursts, analyzed in the identical way. Bursts found in a copy are false. Only the part of a measure beyond its copies is attributed to the granule. The copies are random: with one copy per trace (as used for the numbers in the paper), the copy-based measures change by up to ~2 percentage points of burst size between random draws. The runners therefore use 20 copies per trace (`opts.nCopies`); set `opts.nCopies = 1` to reproduce the paper's procedure.
+**Noise floor.** Every granule trace is compared with burst-free copies of itself: the same photobleaching trend and the same noise level, but no bursts, analyzed in the identical way. Bursts found in a copy are false. Only the part of a measure beyond its copies is attributed to the granule. The copies are random: with one copy per trace (as used for the numbers in the paper), the copy-based measures change by up to ~2 percentage points of burst size between random draws. `ExperimentalAnalysis.m` therefore uses 20 copies per trace (`nCopies` at the top of the script); `PaperFigures_revised.m` uses 1, as the paper.
 
 **λ and k0.** The original method fitted λ (units per burst) and k0 (intensity of one unit) with a weighted score (`modifiedPoissonFit.m`). Only their product, the mean burst size, can be estimated reliably, so the fit is no longer part of the analysis. It is kept in `legacy/` for reference.
 
 ### Running the analysis
-- **Figures of the paper:** `PaperFigures_revised.m`, one section per figure (Figs. 5-9). Each section starts from the repository data, runs the same functions as below, and saves the figure in `figures/`. It reproduces the manuscript numbers (the noise copies use the paper's seeds); Figure 5 takes about 10 min.
+- **Figures of the paper:** `PaperFigures_revised.m`, one section per figure (Figs. 5-9). Each section starts from the repository data, runs the same code as `ExperimentalAnalysis.m`, and saves the figure in `figures/`. It reproduces the manuscript numbers (the noise copies use the paper's seeds); Figure 5 takes about 8 min. Run it from the repository folder.
 - **Experimental data:** `ExperimentalAnalysis.m`. Analyzes any number of conditions (datasets of the paper or your own folders), tests each against the first one, and draws the burst size distributions (as Figs. 6-9) and a summary of mean burst size, turnover and net change (as Figs. 6 and 10).
 - **Simulated data:** `SimulationRunWithAnalysis.m`. Bursty and constant (burst-free) simulated granules with known parameters, through the same code.
-- **Datasets of the paper:** `gm_paper_dataset('<name>')` with names `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
+- **Datasets of the paper:** at the top of `ExperimentalAnalysis.m`, by name: `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
   - The data are the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed).
   - `in_vivo_experiments/` and `in_vitro_experiments/` hold the original traces, for reference only.
 
@@ -48,19 +48,18 @@ Every measure has a 95% confidence interval (movies resampled, then granules wit
 4. Run `Collect_intensity_data.m` and select the folder containing the `.tif` movies and the `_xy.mat` files (one folder per condition).
    - Movies and track files are paired by name. Only the fluorescence channel is read, and the camera offset (200 a.u. for our EMCCD; set `opts.offset` in `collect_intensity.m` for your camera) is subtracted.
    - It writes `data.mat` (spot intensity), `background.mat` (surrounding intensity), `spotsum.mat` (integrated granule intensity) and `movies.mat` (the movie of every trace).
-5. In `ExperimentalAnalysis.m`, load each condition with `gm_load_extraction('<folder>')` and run it.
+5. In `ExperimentalAnalysis.m`, use Option 2: list your folders (`loadFolder('<folder>')`, one per condition) and run it.
 
 ### Main files
 | file | role |
 |---|---|
-| `GelMetricsReport.m` | all measures and confidence intervals for one condition |
-| `GelMetricsCompare.m` | movie-level test between two conditions |
-| `PaperFigures_revised.m` | the manuscript figures 5-9 |
-| `gm_plot_bursthist.m`, `gm_plot_bars.m`, `gm_style.m` | the figure panels (manuscript style) |
-| `analysis/gm_eq19_fit.m`, `analysis/gm_shape_fit.m` | the λ and λ·k0 fits of Fig. 5 (Eq. 1.9 and the original model curve) |
+| `ExperimentalAnalysis.m` | analysis of any conditions: numbers, tests and figures (loading and plotting are written inside the script) |
+| `burstMeasures.m` | one condition: burst-free copies, burst detection, every measure and its 95% CI |
+| `summarizeGranules.m` | the formulas of all the measures (used by the two files around it) |
+| `compareConditions.m` | movie-level test between two conditions |
+| `PaperFigures_revised.m` | the manuscript figures 5-9 (the λ fits of Fig. 5 are at the end of the file) |
 | `analysis.m`, `getPosition.m`, `runLengthEncode.m` | burst detection (smoothing, runs of monotone change) |
 | `collect_intensity.m`, `Collect_intensity_data.m`, `generate_movArray.m`, `read_tables.m` | extraction of the granule and background intensities from the movies |
 | `generateSim.m` | simulated granules |
-| `gm_load_extraction.m`, `gm_paper_dataset.m` | load your extraction / the paper's datasets |
-| `legacy/` | the original λ/k0 fit and runners, for reference |
+| `legacy/` | the original λ/k0 fit and runners, and an earlier, more compact version of the analysis (`GelMetricsReport.m` etc.), for reference |
 | `checks/`, `analysis/`, `analysis_outputs/` | the revision analyses behind every number of the paper (see `analysis_outputs/RESULTS.md`) |
