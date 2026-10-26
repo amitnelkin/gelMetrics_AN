@@ -1,4 +1,4 @@
-function D = gm_paper_dataset(name)
+function D = gm_paper_dataset(name, measure)
 % GM_PAPER_DATASET  The datasets of the revised paper, ready for GelMetricsReport.m.
 %   In vivo: '4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'
 %            (in_vivo_reextracted/: corrected extraction, camera offset removed,
@@ -6,6 +6,11 @@ function D = gm_paper_dataset(name)
 %   In vitro: 'vitro_1_1', 'vitro_10_1', 'vitro_100_1' (protein:RNA)
 %            (in_vitro_reextracted/same_granules_R2/: the original granules re-read
 %            with the corrected extraction, movie of every trace)
+% measure (in vitro only): 'spotsum' (default since 2026-10-26, the user's decision, RESULTS.md
+% section 53: D.spotSum = integrated granule light above the dilute phase, as in vivo; burst
+% fractions, turnover, frame noise and net change use it) or 'spotmean' (the earlier in vitro
+% version: fractions relative to spot mean - background; granules spread over time, so its
+% 'net loss' reflects the growing area, not lost material).
 % D.paperSeed: the random seed of the burst-free copies used for the paper's numbers
 % (GelMetricsReport with opts.seed = D.paperSeed and opts.nCopies = 1 reproduces them).
 % The original stored traces (in_vivo_experiments/, in_vitro_experiments/) are
@@ -17,6 +22,7 @@ D.name = name;
 if isfield(vitro, strrep(name, '-', '_'))
     f = vitro.(name); dir0 = 'in_vitro_reextracted/same_granules_R2';
     D.spotMean = L([dir0 '/' f '_data.mat']); D.background = L([dir0 '/' f '_background.mat']);
+    if nargin < 2 || ~strcmpi(measure, 'spotmean'), D.spotSum = L([dir0 '/' f '_spotsum_data.mat']); end
     info = readtable(fullfile(repo, dir0, 'extraction_info_same.csv'), 'Delimiter', ',', 'TextType', 'string');
     info = info(info.dataset == f, :);
 else

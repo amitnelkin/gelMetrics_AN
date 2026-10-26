@@ -22,6 +22,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from vitro_movies import dropped, keep_bursts
 
 rng = np.random.default_rng(40); H = 10 / 3600
+# --sum (section 53, the primary in vitro measure): spot-sum static control
+# (static_control_vitro_sum.csv, static_control.m measure 'sum'), real granules from
+# vitro_spotsum/ (GelMetricsReport, spot sum); writes *_sum_summary.csv / vitro_controls_sum.md.
+SUM = '--sum' in sys.argv; SFX = '_sum' if SUM else ''
 LAB = {'vitro_1000ngul_0p1mgml': 'protein_RNA_1_1', 'vitro_1000ng_10ug': 'protein_RNA_10_1',
        'vitro_1000ngul_1mgml': 'protein_RNA_100_1', 'vitro_100ngul_1mgml': 'extra_100ngul_1mgml'}
 NAME = {'protein_RNA_1_1': '1:1', 'protein_RNA_10_1': '10:1', 'protein_RNA_100_1': '100:1', 'extra_100ngul_1mgml': 'extra'}
@@ -52,10 +56,14 @@ def nested(stat, t, nb=1000):
     return np.std(v)
 
 
-S = pd.read_csv(os.path.join('analysis_outputs', 'steady', 'static_control_vitro.csv')); S['dataset'] = S.dataset.map(LAB)
+S = pd.read_csv(os.path.join('analysis_outputs', 'steady', f'static_control_vitro{SFX}.csv')); S['dataset'] = S.dataset.map(LAB)
 S = S[[not dropped(a, b) for a, b in zip(S.dataset, S.movie)]]
-vn = pd.read_csv(os.path.join('analysis_outputs', 'vitro_same', 'summary.csv')).set_index('dataset')
-G = pd.read_csv(os.path.join('analysis_outputs', 'detection_grid_vitro_same', 'bursts.csv'))
+if SUM:
+    vn = pd.read_csv(os.path.join('analysis_outputs', 'vitro_spotsum', 'summary.csv')).set_index('dataset').rename(columns={'turnover': 'turn0'})
+    G = pd.read_csv(os.path.join('analysis_outputs', 'vitro_spotsum', 'bursts.csv'))
+else:
+    vn = pd.read_csv(os.path.join('analysis_outputs', 'vitro_same', 'summary.csv')).set_index('dataset')
+    G = pd.read_csv(os.path.join('analysis_outputs', 'detection_grid_vitro_same', 'bursts.csv'))
 rows = []
 for ds in ORDER:
     if ds not in vn.index:
@@ -68,12 +76,12 @@ for ds in ORDER:
                      static_FDR_w13=t.nSurr13.sum() / max(t.nReal13.sum(), 1),
                      real_excess_w13=vn.loc[ds, 'turn0'], real_FDR_w13=(g.kind == 'surr').sum() / max((g.kind == 'real').sum(), 1),
                      static_G30=g30(tt), static_G30_se=nested(g30, tt.reset_index(drop=True))))
-R = pd.DataFrame(rows); R.to_csv(os.path.join('analysis_outputs', 'steady', 'static_control_vitro_summary.csv'), index=False)
+R = pd.DataFrame(rows); R.to_csv(os.path.join('analysis_outputs', 'steady', f'static_control_vitro{SFX}_summary.csv'), index=False)
 
-with open(os.path.join('analysis_outputs', 'steady', 'vitro_controls.md'), 'w', encoding='utf-8', newline=chr(13) + chr(10)) as fh:
-    fh.write('| condition | granules | measured ÷ camera noise, granule (spot mean) | measured ÷ camera noise, background | granule frame noise (% of level) | turnover beyond noise, unchanging granule (%/h, ±2 SE) | real granules (%/h) | copies ÷ detections, unchanging / real |' + chr(10))
+with open(os.path.join('analysis_outputs', 'steady', f'vitro_controls{SFX}.md'), 'w', encoding='utf-8', newline=chr(13) + chr(10)) as fh:
+    fh.write(f"| condition | granules | measured ÷ camera noise, granule ({'spot sum' if SUM else 'spot mean'}) | measured ÷ camera noise, background | granule frame noise (% of level) | turnover beyond noise, unchanging granule (%/h, ±2 SE) | real granules (%/h) | copies ÷ detections, unchanging / real |" + chr(10))
     fh.write('|---|---|---|---|---|---|---|---|' + chr(10))
     for _, r in R.iterrows():
         ds = r.dataset; n = NBs.loc[ds]
-        fh.write(f"| {NAME[ds]} | {r.granules} | {n.ratioMean} | {n.ratioCell} | {100 * n.relNoiseMean:.1f} | {r.static_excess_w13:.1f} ± {2 * r.static_excess_se_w13:.1f} | {r.real_excess_w13:.1f} | {r.static_FDR_w13:.2f} / {r.real_FDR_w13:.2f} |" + chr(10))
-print(open(os.path.join('analysis_outputs', 'steady', 'vitro_controls.md'), encoding='utf-8').read())
+        fh.write(f"| {NAME[ds]} | {r.granules} | {n.ratioSum if SUM else n.ratioMean} | {n.ratioCell} | {100 * (n.relNoiseSum if SUM else n.relNoiseMean):.1f} | {r.static_excess_w13:.1f} ± {2 * r.static_excess_se_w13:.1f} | {r.real_excess_w13:.1f} | {r.static_FDR_w13:.2f} / {r.real_FDR_w13:.2f} |" + chr(10))
+print(open(os.path.join('analysis_outputs', 'steady', f'vitro_controls{SFX}.md'), encoding='utf-8').read())

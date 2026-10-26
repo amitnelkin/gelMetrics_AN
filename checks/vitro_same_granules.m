@@ -15,6 +15,11 @@ function vitro_same_granules()
 % Writes in_vitro_reextracted/same_granules_R2/<same_*>_data.mat, _background.mat
 % (traces in movie order), extraction_info_same.csv (movie ids) and
 % same_granules_map.csv (stored trace -> movie, points matched, length).
+% Section 53: also <same_*>_spotsum_data.mat (variable intensity: integrated granule
+% light above the cell mean, collect_intensity 4th output) and _spotsum_background.mat
+% (the same cell mean as _background.mat), as in_vivo_reextracted/after_R2_sums. Existing
+% _data.mat / _background.mat files are not rewritten: the re-run is checked to
+% reproduce them exactly.
 Z = 'C:\Users\roeeamit-lab\Desktop\AN\GelMetrics\zigzag_scratch';
 repo = fileparts(fileparts(mfilename('fullpath'))); addpath(repo);
 outDir = fullfile(repo, 'in_vitro_reextracted', 'same_granules_R2'); if ~exist(outDir, 'dir'), mkdir(outDir); end
@@ -63,9 +68,19 @@ for j = 1:size(J, 1)
         order = [order, [tr(q).stored]]; %#ok<AGROW>
         info(end+1,:) = {xs(f).name(1:3), 1, 1, 361, numel(q), numel(q), J{j,3}}; %#ok<AGROW>
     end
-    [intensity, background] = collect_intensity(sw, struct('offset', 200));
+    [intensity, background, ~, sums] = collect_intensity(sw, struct('offset', 200));
     assert(numel(intensity) - 1 == numel(order));
-    save(fullfile(outDir, [J{j,3} '_data.mat']), 'intensity'); save(fullfile(outDir, [J{j,3} '_background.mat']), 'background');
+    fD = fullfile(outDir, [J{j,3} '_data.mat']); fB = fullfile(outDir, [J{j,3} '_background.mat']);
+    if isfile(fD) && isfile(fB)
+        o1 = load(fD); o2 = load(fB);
+        same = isequal(o1.intensity, intensity) && isequal(o2.background, background);
+        fprintf('%s: spot mean and background identical to the saved files: %d\n', J{j,3}, same);
+        assert(same, 'the re-run does not reproduce %s', fD);
+    else
+        save(fD, 'intensity'); save(fB, 'background');
+    end
+    intensity = sums.spotSum; save(fullfile(outDir, [J{j,3} '_spotsum_data.mat']), 'intensity');
+    save(fullfile(outDir, [J{j,3} '_spotsum_background.mat']), 'background');
     writematrix(order(:), fullfile(outDir, [J{j,3} '_stored_index.csv']));
     fprintf('%s: %d stored traces, %d tracks rebuilt, %d read\n', J{j,1}, numel(S), numel(tr), numel(order));
 end

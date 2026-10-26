@@ -7,6 +7,9 @@ Usage (repo root):  py -3 checks/ms_figures.py [--vitro-new]
 --vitro-new (RESULTS.md sections 39, 43): the in vitro panels use the stored granules re-read
 with the corrected pipeline (vitro_same/, detection_grid_vitro_same*/; controls from
 noise_background_vitro/, steady/static_control_vitro_summary.csv) instead of the stored traces,
+[--vitro-spotsum: the same granules with the spot sum, the user's choice (section 53):
+vitro_spotsum/{summary,bursts,sp_grid}.csv, steady/static_control_vitro_sum_summary.csv;
+output figs_vitro_spotsum/]
 with movie-level CIs;
 only Figs. 6, 18 and 22 (manuscript Figs. 6, 14, 18) are drawn, into figs_vitro_new/.
 Writes analysis_outputs/ms_revision/figs/fig*.png (300 dpi) and .pdf.
@@ -76,8 +79,18 @@ GB = pd.read_csv(os.path.join(A, 'ms_grid_w13sp12', 'bursts.csv'))
 GB = GB[(GB.levelBefore > 0) & (GB.amp < 0)].copy()
 GB['f'] = 100 * GB.amp.abs() / GB.levelBefore
 import sys
-VNEW = '--vitro-new' in sys.argv
-if VNEW:
+VSUM = '--vitro-spotsum' in sys.argv
+VNEW = '--vitro-new' in sys.argv or VSUM
+if VSUM:
+    OUT = os.path.join(A, 'ms_revision', 'figs_vitro_spotsum'); os.makedirs(OUT, exist_ok=True)
+    vs = pd.read_csv(os.path.join(A, 'vitro_spotsum', 'summary.csv')).set_index('dataset').loc[VITRO]
+    for c in ['meanBurst', 'turnover', 'net']:
+        for suf in ['', '_lo', '_hi']:
+            CT.loc[VITRO, c + suf] = vs[c + suf].values
+    CT.loc[VITRO, 'sizeReal'] = vs.sizeGranules.values; CT.loc[VITRO, 'sizeCopy'] = vs.sizeCopies.values
+    gv = pd.read_csv(os.path.join(A, 'vitro_spotsum', 'bursts.csv')); gv['f'] = 100 * gv.f
+    GB = pd.concat([GB[~GB.dataset.isin(VITRO)], gv])
+elif VNEW:
     OUT = os.path.join(A, 'ms_revision', 'figs_vitro_new'); os.makedirs(OUT, exist_ok=True)
     vn = pd.read_csv(os.path.join(A, 'vitro_same', 'summary.csv')).set_index('dataset').loc[VITRO]
     for new, old in [('meanBurst', 'mean_burst'), ('turnover', 'turn0'), ('net', 'net0')]:
@@ -363,7 +376,10 @@ def fig17():
 # ---------------------------------------------------------------- Appendix: Fig. 18 (noise floor and its source)
 def fig18():
     nf = pd.read_csv(os.path.join(A, 'robustness', 'noise_floor_allSP.csv'))
-    if VNEW:
+    if VSUM:
+        b = pd.read_csv(os.path.join(A, 'vitro_spotsum', 'sp_grid.csv')); b['measure'] = 'mean'; b['FDR'] = b.falseNeg / b.realNeg
+        nf = pd.concat([nf[~nf.dataset.isin(VITRO)], b])
+    elif VNEW:
         b = pd.read_csv(os.path.join(A, 'detection_grid_vitro_same_sp', 'bursts.csv'))
         b = b[b.dataset.isin(VITRO)].groupby(['dataset', 'SP', 'kind']).size().unstack(fill_value=0).reset_index()
         b = pd.DataFrame(dict(dataset=b.dataset, measure='mean', SP=b.SP, realNeg=b.real, falseNeg=b.surr, FDR=b.surr / b.real))
@@ -371,7 +387,7 @@ def fig18():
     nb = pd.read_csv(os.path.join(A, 'noise_background', 'summary.csv')).set_index('dataset')
     st = pd.read_csv(os.path.join(A, 'steady', 'static_control_summary.csv'))
     if VNEW:
-        st = pd.concat([st, pd.read_csv(os.path.join(A, 'steady', 'static_control_vitro_summary.csv'))])
+        st = pd.concat([st, pd.read_csv(os.path.join(A, 'steady', 'static_control_vitro_sum_summary.csv' if VSUM else 'static_control_vitro_summary.csv'))])
     fig, ax = plt.subplots(1, 3, figsize=(6.5, 2.3)) if not VNEW else plt.subplots(1, 3, figsize=(7.2, 2.5), gridspec_kw={'width_ratios': [1, 1.5, 1.05]})
     a = ax[0]
     for i, ds in enumerate(VIVO + VITRO):
@@ -495,7 +511,11 @@ def fig21():
 # ---------------------------------------------------------------- Appendix: Fig. 22 (first vs second half)
 def fig22():
     h = pd.read_csv(os.path.join(A, 'halves', 'summary.csv'))
-    if VNEW:
+    if VSUM:
+        vs = pd.read_csv(os.path.join(A, 'vitro_spotsum', 'summary.csv')).set_index('dataset').loc[VITRO]
+        add = [dict(dataset=d, measure=m, first=vs.loc[d, k + '1'], second=vs.loc[d, k + '2'], p=vs.loc[d, 'pHalves' + P]) for d in VITRO for m, k, P in (('turn', 'turnover', 'Turnover'), ('net', 'net', 'Net'))]
+        h = pd.concat([h[~h.dataset.isin(VITRO)], pd.DataFrame(add)])
+    elif VNEW:
         vn = pd.read_csv(os.path.join(A, 'vitro_same', 'summary.csv')).set_index('dataset').loc[VITRO]
         add = [dict(dataset=d, measure=m, first=vn.loc[d, m + '1'], second=vn.loc[d, m + '2'], p=vn.loc[d, f'halves_{m}_p']) for d in VITRO for m in ('turn', 'net')]
         h = pd.concat([h[~h.dataset.isin(VITRO)], pd.DataFrame(add)])

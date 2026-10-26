@@ -46,7 +46,7 @@ for k = 1:n
     nb = gm_plot_bursthist(ax, R{k}, 60, mod(k - 1, nc) == 0);
     title(ax, sprintf('%s  (n = %d)', R{k}.name, nb), 'Interpreter', 'none', 'FontWeight', 'normal', 'FontSize', 7.5);
     gm_style(ax, char('a' + k - 1));
-    if k == 1, legend(ax, {'granules', 'burst-free copies'}, 'Location', 'east', 'Box', 'off', 'FontSize', 6.5); end
+    if k == 1, legend(ax, {'granules', 'burst-free copies'}, 'Location', 'southeast', 'Box', 'off', 'FontSize', 6.5); end   % below the corner text, clear of the bars
 end
 
 % Figure 2: summary of all conditions (95% CI over movies, then granules)

@@ -1,10 +1,10 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-51). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-53). Read the relevant section there before redoing anything.
 
-**QUEUED TASK for the lab PC chat (after the figures): `CLAUDE_labpc_vitro_spotsum.md`, i.e. extract the in vitro spot sums and compare the in vitro results with spot mean vs spot sum.**
+**OPEN TASK for the laptop chat: `CLAUDE_laptop_spotsum.md`. The user decided (2026-10-26, section 53) to use the spot sum in vitro as in vivo (spot mean only for brightness and a.u. amplitudes); the in vitro titration results change (no net loss, no ratio differences; granule area grows). Make a new change list for the manuscript; never overwrite the user's Word files.**
 
-**OPEN TASK for the lab PC chat: `CLAUDE_labpc_figures.md`, i.e. run `PaperFigures_revised.m` and `ExperimentalAnalysis.m` in MATLAB with graphics, fix the drawing code, and compare the figures with the manuscript (the laptop cannot draw).**
+**Done on the lab PC (2026-10-26): MATLAB figure check (section 52; `figures/Fig5-9`), in vitro spot sums and comparison (section 53).**
 
 **In vitro into the manuscript: done as change list v2, `revision_docs/vitro_change_list_v2.md` (local; section 44), from the section 43 primary data. The user applies it by hand. Still open: the reason the three in vitro movies were dropped (for Methods VIII.E), and item A7 (FUS brightness per movie vs per granule). `CLAUDE_laptop_vitro.md` is the finished brief.**
 
@@ -136,7 +136,7 @@ Everything downstream of extraction:
    - Turnover beyond noise does not differ.
    - For 80% power, about 2-5× more movies are needed (about 50 per condition; section 20).
 7. **30x:** no FUS effect in any measure. **Qβ vs PP7:** robustly more dynamic (turnover beyond noise 9-10 %/h vs ≈ 0; p 0.002-0.02).
-8. **In vitro (primary data, section 43; stored granules, corrected pipeline, movie-level):** net loss beyond bleaching grows with protein:RNA (−21 / −39 / −70 %/h; 100:1 vs 1:1 p = 0.015). Burst size beyond noise and median burst follow the same order (p ≈ 0.1); turnover is not significant. Only 100:1 changes between halves (late). The controls hold in vitro (section 39). Caveat: focus drift can't be excluded.
+8. **In vitro (primary data, sections 43, 53; stored granules, corrected pipeline, spot sum as in vivo, movie-level):** no net loss (+1 / +14 / +16 %/h) and no difference between protein:RNA ratios in any noise-controlled measure; turnover beyond noise 18 / 15 / 29 %/h; granule area grows +21 / +49 / +85 %/h (spreading or focus drift), which made the earlier spot-mean "net loss" (−21 / −39 / −70 %/h, p = 0.015). Only 100:1 turnover changes between halves (late). Controls hold.
 9. **Alternative extractions (tests, not adopted):**
    - R4 steady thresholds: 2-3× less noise but a slow artefact (the control itself shows 11-14 %/h).
    - R5 fixed mask: 4× less noise and a clean control, but its slow signal in PP7 tracks the granule moving relative to the mask (correlation 0.76-0.90). Under R5 the 4x FUS effect vanishes.

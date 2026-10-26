@@ -84,7 +84,7 @@ if makePlots
     for j = 1:3
         ax = nexttile(t); show = [1 2 4]; li = find(lams == show(j));
         histogram(ax, amps{li, 1}, 0:10:1000, 'Normalization', 'pdf', 'FaceColor', RED, 'EdgeColor', 'none', 'FaceAlpha', 1);
-        xlim(ax, [0 1000]); ylim(ax, [0 0.012]); xlabel(ax, 'Amplitude (a.u.)');
+        xlim(ax, [0 1000]); ylim(ax, [0 0.012]); set(ax, 'XTick', 0:250:1000, 'YTick', 0:0.005:0.01); ytickformat(ax, '%.3f'); xlabel(ax, 'Amplitude (a.u.)');
         if j == 1, ylabel(ax, 'Frequency'); end
         text(ax, 0.95, 0.85, sprintf('\\lambda_{sim}=%d', lams(li)), 'Units', 'normalized', 'HorizontalAlignment', 'right', 'FontWeight', 'bold', 'FontSize', 9);
         gm_style(ax, char('a' + j - 1));
@@ -147,7 +147,7 @@ if makePlots
 end
 
 %% Figure 8 - Qbeta granules in vivo
-R8 = {report('5Qb'), report('10Qb')}; lab8 = {'Q\beta + QCP-5x/PCP-4x', 'Q\beta + QCP-10x'};
+R8 = {report('5Qb'), report('10Qb')}; lab8 = {['Q' char(946) ' + QCP-5x/PCP-4x'], ['Q' char(946) ' + QCP-10x']};
 for k = 1:2, fprintf('Fig 8 %s: median %.1f vs %.1f %%, turnover beyond noise %.1f [%.1f, %.1f] %%/h\n', lab8{k}, R8{k}.sizeGranules, R8{k}.sizeCopies, R8{k}.turnover, R8{k}.turnover_lo, R8{k}.turnover_hi); end
 T = GelMetricsCompare(R8{1}, R7{1}); T = GelMetricsCompare(R8{2}, R7{2});   % Qbeta vs PP7 (text of Sec. V.B)
 if makePlots
@@ -179,8 +179,8 @@ end
 fprintf('Fig 9(c) brightness p = %.4f (4x), %.2f (30x); 9(d) beyond noise 4x: p = %.3f one-sided, %.3f two-sided; 30x: p = %.2f\n', ...
     pv(T4, 'brightnessPooled', 'p'), pv(T30, 'brightnessPooled', 'p'), pv(T4, 'sizeBeyond', 'p_AgtB'), pv(T4, 'sizeBeyond', 'p'), pv(T30, 'sizeBeyond', 'p'));
 if makePlots
-    f = figure('Units', 'inches', 'Position', [1 1 6.5 4.4], 'Color', 'w');
-    t = tiledlayout(f, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+    f = figure('Units', 'inches', 'Position', [1 1 6.5 4.6], 'Color', 'w');
+    t = tiledlayout(f, 2, 2, 'TileSpacing', 'compact', 'Padding', 'loose');
     for k = 1:2
         ax = nexttile(t); n = gm_plot_bursthist(ax, R9{k}, 60, k == 1);
         title(ax, sprintf('%s  (n = %d)', lab9{k}, n), 'FontWeight', 'normal', 'FontSize', 7.5); gm_style(ax, char('a' + k - 1));
@@ -193,10 +193,10 @@ if makePlots
     for k = 1:4, bar(ax, x(k), y(k), 0.7, 'FaceColor', cl(k, :), 'EdgeColor', 'none', 'FaceAlpha', 0.85); end
     errorbar(ax, x, y, y - lo, hi - y, 'k', 'LineStyle', 'none', 'LineWidth', 0.8, 'CapSize', 3);
     set(ax, 'XTick', x, 'XTickLabel', {'PP7', 'PP7-FUS', 'PP7', 'PP7-FUS'}); ylabel(ax, 'Granule brightness (a.u./1000)');
-    yt = max(hi) * 1.08; ylim(ax, [0 max(hi) * 1.2]);
-    text(ax, 1.5, yt, sprintf('p = %.3f', pv(T4, 'brightnessPooled', 'p')), 'HorizontalAlignment', 'center', 'FontWeight', 'bold', 'FontSize', 7);
-    text(ax, 4.1, yt, sprintf('p = %.2f', pv(T30, 'brightnessPooled', 'p')), 'HorizontalAlignment', 'center', 'FontSize', 7);
-    xlabel(ax, 'QCP-5x/PCP-4x                    PCP-30x'); gm_style(ax, 'c');
+    yt = max(hi) * 1.06; ylim(ax, [0 max(hi) * 1.3]);   % group names and p values above the bars (an x label is clipped)
+    text(ax, 1.5, yt, {'QCP-5x/PCP-4x', sprintf('p = %.3f', pv(T4, 'brightnessPooled', 'p'))}, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold', 'FontSize', 7);
+    text(ax, 4.1, yt, {'PCP-30x', sprintf('p = %.2f', pv(T30, 'brightnessPooled', 'p'))}, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontSize', 7);
+    gm_style(ax, 'c');
     % (d) burst size gap
     ax = nexttile(t); hold(ax, 'on'); cl = [0.55 0.55 0.55; 0.85 0.85 0.85; CFUS]; hb = gobjects(1, 3);
     for i = 1:2
@@ -206,13 +206,13 @@ if makePlots
             errorbar(ax, xx, gap(i, k), gap(i, k) - gapLo(i, k), gapHi(i, k) - gap(i, k), 'k', 'LineWidth', 0.8, 'CapSize', 3);
         end
     end
-    text(ax, 0, 13.5, sprintf('p = %.3f (one-sided)\np = %.3f (two-sided)', pv(T4, 'sizeBeyond', 'p_AgtB'), pv(T4, 'sizeBeyond', 'p')), ...
+    text(ax, 0, 11.8, sprintf('p = %.3f (one-sided)\np = %.3f (two-sided)', pv(T4, 'sizeBeyond', 'p_AgtB'), pv(T4, 'sizeBeyond', 'p')), ...
         'HorizontalAlignment', 'center', 'FontWeight', 'bold', 'FontSize', 6.5);
-    text(ax, 1.1, 13.5, sprintf('p = %.2f', pv(T30, 'sizeBeyond', 'p')), 'HorizontalAlignment', 'center', 'FontSize', 6.5);
+    text(ax, 1.1, 11.8, sprintf('p = %.2f', pv(T30, 'sizeBeyond', 'p')), 'HorizontalAlignment', 'center', 'FontSize', 6.5);
     yline(ax, 0, 'k', 'LineWidth', 0.5); ylim(ax, [-4 17]);
-    set(ax, 'XTick', [0 1.1], 'XTickLabel', {'QCP-5x/PCP-4x', 'PCP-30x'});
+    set(ax, 'XTick', [0 1.1], 'XTickLabel', {'QCP-5x/PCP-4x', 'PCP-30x'}); xlim(ax, [-0.55 1.65]);
     ylabel(ax, sprintf('PP7-FUS - PP7, median burst\nsize (%% points)'));
-    legend(ax, hb, {'total', 'explained by noise', 'beyond noise'}, 'Location', 'north', 'Orientation', 'horizontal', 'Box', 'off', 'FontSize', 6);
+    lg = legend(ax, hb, {'total', 'explained by noise', 'beyond noise'}, 'Location', 'north', 'Orientation', 'horizontal', 'Box', 'off', 'FontSize', 6); lg.ItemTokenSize = [10 6];
     gm_style(ax, 'd');
     saveFig(f, outDir, 'Fig9');
 end

@@ -2102,3 +2102,69 @@ At the user's request, the same way as section 49 (dated backups `* - backup - 2
 - The bootstrap CIs differ in the last digit, because their random draws differ.
 - `checkcode`: no errors in any of the new or changed files.
 - **The drawing code itself was not run.** It must be checked once in a MATLAB with graphics (lab PC or the user's).
+
+## 52. MATLAB figure script checked on the lab PC (PaperFigures_revised.m)
+
+- **The run:** `PaperFigures_revised.m` ran headless on the lab PC (R2025b) and wrote `figures/Fig5-9.png/.pdf`.
+- **The numbers:** every printed number matches section 51. One example: Fig. 9(c) brightness p = 0.001, and 9(d) one-sided p = 0.031 / two-sided p = 0.063.
+- **The one error:**
+  - `legend(..., 'ItemTokenSize', ...)`, which is not a constructor option;
+  - now `lg = legend(...); lg.ItemTokenSize = ...`.
+- **Fixes after looking at each PNG against `analysis_outputs/ms_revision/figs/`:**
+  - **`gm_style.m`:** the panel labels were clipped or overlapped the top tick label. They now sit at (−0.2, 1.04), and a blank title reserves room for them. Titles are 7.5 pt and normal weight, and the font-size multipliers are 1 (titles were oversized).
+  - **Fig. 5(a-c):** ticks 0 / 0.005 / 0.010 and 0-1000 in steps of 250, as in the MS.
+  - **Fig. 8:** titles use the β character (the TeX `\beta` stretched the spaces).
+  - **Fig. 9:**
+    - looser padding;
+    - (c): the group names and p values sit above the bars (the x label was clipped);
+    - (d): x limits set (the bars were off-centre), p text lowered, and a compact legend that no longer overlaps.
+- **Data and panels:** the same as the MS figures; the CIs differ in the last digit (random draws).
+- **Fig. 6:** since section 53 it uses the in vitro spot sum, the new default of `gm_paper_dataset`.
+- **`ExperimentalAnalysis.m`:** run with 4PP7 vs 4PP7-FUS and 20 copies; its two figures are checked in the report.
+
+## 53. In vitro: spot sum instead of spot mean (the user's decision, 2026-10-26)
+
+**Data.**
+- `checks/vitro_same_granules.m` now also saves `same_*_spotsum_data.mat` / `_spotsum_background.mat`: the `collect_intensity` 4th output, same granules, tracks and R2 settings.
+- The re-run reproduced the existing `same_*_data.mat` / `_background.mat` exactly, and they were not rewritten.
+- `gm_paper_dataset('vitro_*')` now includes `D.spotSum` by default; `gm_paper_dataset(name, 'spotmean')` gives the earlier version.
+
+**Comparison** (`checks/vitro_spotsum_compare.m` → `analysis_outputs/vitro_spotsum/{reports,tests}.csv`; GelMetricsReport, paper seeds, nCopies 1; nCopies 20 gives the same picture). Values are 1:1 / 10:1 / 100:1.
+
+| | spot mean (earlier) | spot sum (now primary) |
+|---|---|---|
+| frame noise (% of granule) | 3.0 / 2.9 / 2.5 | 13.7 / 16.0 / 10.5 |
+| burst size, granules / copies (%) | 7.1/6.7, 11.5/9.6, 15.9/8.7 | 11.9/10.5, 13.3/10.7, 15.8/11.6 |
+| beyond noise (pts) | 0.4 / 1.8 / 7.2 | 1.4 / 2.5 / 4.2 |
+| turnover beyond noise (%/h) | 11.6 / 47.8 / 43.1 | 18.0 / 14.7 / 29.3 |
+| net change (%/h) | −21.2 / −39.2 / −70.3 | +0.6 / +13.9 / +16.2 |
+| 100:1 vs 1:1, net (movie p) | 0.018 | 0.32 |
+| 100:1 vs 1:1, beyond noise | 0.096 | 0.41 (nCopies 20: 0.26) |
+| 100:1 vs 1:1, turnover | 0.19 | 0.49 |
+
+**Why the two disagree** (`checks/vitro_area_trend.py` → `vitro_spotsum/area_trend.csv`):
+- The number of granule pixels (spot sum ÷ (spot mean − cell)) grows by 21 / 49 / 85 %/h.
+- Granules spread out, or go out of focus; the images can't tell which. The light per pixel falls while the total light stays or rises.
+- The median area is 14-42 px and never fills the 15 × 15 crop.
+
+**Controls with the spot sum:**
+- measured ÷ camera noise: 4.6 / 3.7 / 4.3 (PP7 in vivo 3.6-4.1);
+- unchanging granule: 1.7 ± 8.8, −1.3 ± 7.2, 2.7 ± 5.8 %/h;
+- the copies remain a valid noise floor (`steady/vitro_controls_sum.md`).
+
+**Decision (the user):**
+- Use the spot sum in vitro, as in vivo, for burst sizes, turnover, frame noise and net change.
+- Keep the spot mean for brightness and for the burst amplitudes in a.u.
+
+**Consequence:** the in vitro titration effects reported so far go away; no measure differs between ratios.
+- What remains:
+  - granule area grows with protein:RNA;
+  - 100:1 turnover is concentrated in the second half hour (−16 → 83 %/h, p = 0.011);
+  - the median burst amplitude in a.u. rises 49 / 77 / 124 (p = 0.097).
+- The spot-mean "net loss" is the growing area, not lost material.
+
+**MS figures with the spot sum:** `py checks/ms_figures.py --vitro-spotsum` → `analysis_outputs/ms_revision/figs_vitro_spotsum/` (fig6 = MS Fig. 6, fig18 = Fig. 14, fig22 = Fig. 18).
+- The data come from `checks/vitro_spotsum_export.m` → `vitro_spotsum/{summary,bursts,sp_grid}.csv`.
+- The controls come from `py checks/vitro_controls.py --sum`.
+- In Fig. 14(b) the in vitro bars stay on the spot-mean scale, like the in vivo bars; the spot-sum ratios are in `vitro_controls_sum.md`.
+- **Handoff:** `CLAUDE_laptop_spotsum.md`.
