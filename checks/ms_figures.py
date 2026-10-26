@@ -431,7 +431,7 @@ def fig19():
     g = g[g.dataset.isin(VIVO)]
     med = g.groupby(['SP', 'window']).FDR.median().unstack()
     hs = pd.read_csv(os.path.join(A, 'detection_grid_highSP', 'summary.csv'))
-    fig, ax = plt.subplots(1, 2, figsize=(6.5, 2.4), gridspec_kw={'width_ratios': [1, 1.25]})
+    fig, ax = plt.subplots(1, 3, figsize=(6.5, 2.4), gridspec_kw={'width_ratios': [1, 1.15, 0.9]})
     a = ax[0]
     im = a.imshow(med.values, origin='lower', cmap='viridis', vmin=0.6, vmax=1.0, aspect='auto')
     a.set_xticks(range(med.shape[1])); a.set_xticklabels(med.columns); a.set_yticks(range(med.shape[0])); a.set_yticklabels(med.index)
@@ -452,8 +452,22 @@ def fig19():
         a.plot(d.SP, d[cc[0]], ':', color=COL[ds], lw=0.9)
     a.set_yscale('log'); a.set_xticks([10, 12, 14, 16, 18, 20, 22, 25]); a.set_xlabel('Stringency parameter j'); a.set_ylabel('Negative bursts detected')
     a.text(0.97, 0.95, 'solid: granules\ndotted: burst-free copies', transform=a.transAxes, ha='right', va='top', fontsize=6)
-    a.legend(fontsize=5.5, loc='lower left', ncol=2); label(a, 'b')
-    fig.tight_layout()
+    a.legend(fontsize=5, loc='lower left', ncol=1, handlelength=1.5, labelspacing=0.2); label(a, 'b')
+    # (c) detection limit (was Fig. 5(f) before section 57): share of true bursts found vs j, at MS-like and PP7-like noise
+    a = ax[2]
+    from matplotlib.lines import Line2D
+    sim = pd.read_csv(os.path.join(A, 'detection_grid_highSP', 'sim_summary.csv'))
+    for nm, cl, mk in [('MS-like', BLUE, 'o'), ('PP7-like', OI[1], 's')]:
+        d = sim[sim.setting.str.startswith(nm)].sort_values('SP')
+        a.plot(d.SP, 100 * d.recall, '-' + mk, color=cl, mfc='none', ms=3, lw=0.8)
+        a.plot(d.SP, 100 * d.false_over_detected.clip(upper=1), ':', color=cl, lw=1)
+    a.legend(handles=[Line2D([], [], color=BLUE, lw=1.5, label='original noise'),
+                      Line2D([], [], color=OI[1], lw=1.5, label='PP7 noise'),
+                      Line2D([], [], color='k', lw=0.8, marker='o', mfc='none', ms=3, label='bursts found'),
+                      Line2D([], [], color='k', lw=1, ls=':', label='false share')], loc='upper right', fontsize=5, handlelength=1.8)
+    a.set_xlabel('Stringency parameter j'); a.set_ylabel('Simulated bursts (%)'); a.set_ylim(0, 105); a.set_yticks([0, 25, 50, 75, 100])
+    a.set_xticks([10, 15, 20, 25]); label(a, 'c')
+    fig.tight_layout(w_pad=0.6)
     save(fig, 'fig19')
 
 

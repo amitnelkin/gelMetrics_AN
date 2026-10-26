@@ -2321,3 +2321,34 @@ The figure must be made in MATLAB, by running `SimulationRunWithAnalysis.m`.
 - **(g-i) tick labels:** level and 6.5 pt, so they don't run into each other.
 
 **Output:** `figures/Fig5.png/.pdf`, the same panels and values as the preview. `saveFigures` is back to false.
+
+## 59. New Fig. 5 put into the manuscript, letter and control file (laptop, 2026-10-26)
+
+**Done** as tracked changes in the user's files (backups `* - backup - 261026 before fig5.docx`; hash-checked that the originals were unchanged before writing; clean copy rebuilt, 25 pages; all four files open in Word).
+
+**Manuscript:**
+- **Fig. 5:** the lab PC image (`figures/Fig5.png`, section 58) and a new caption (panels a-i, SNR 5 and 0.5, 20 sets of 200 granules, true values without noise).
+- **Sec. IV, first paragraph:** from "To examine whether we can correctly identify..." rewritten with the section 57 numbers:
+  - λ from WS: 0.1-1 at SNR 5; 4.7 / 3.5 / 2.4 at SNR 0.5;
+  - k0 moves the other way, and the WS product fails at SNR 5;
+  - the mean burst size varies by less than 10% between sets, and is noise-biased (14-24% low at SNR 5, 6-46% high at SNR 0.5);
+  - burst size beyond noise and turnover rise with λsim; turnover is right at SNR 5 and low for small bursts at SNR 0.5; net change matches.
+  - This replaced the user's half-edited sentences in that paragraph; their content (merging, bias by extreme bursts) was kept.
+- **Sec. IV, second paragraph:**
+  - the SNR sentence now points to Fig. 5(a) (the old "1, 2, 4 at SNR 5, 1.5, 0.5" was from the Appendix G simulations);
+  - noise level 0.2-2.2% per time point;
+  - the detection limit now cites Appendix F, Fig. 15(c).
+- **Other references:**
+  - Fig. 3 caption: "later presented in Fig. 5(c)" removed;
+  - Appendix G: λ·k0 cited as Fig. 5(c).
+- **Old Fig. 5(f) moved to Fig. 15(c), the user's choice:**
+  - `checks/ms_figures.py` fig19 has a third panel (data `detection_grid_highSP/sim_summary.csv`); the panel (b) legend is now one column, clear of the lines;
+  - Fig. 15 caption gets (c);
+  - Appendix F text gets one sentence (30% of true bursts found at j = 12; raising j removes true and false together), and "At the same noise level, wider windows...".
+
+**Letter (point 4b and the noise-floor point):** Fig. 5(d) → 5(a); the SNR numbers are now the Fig. 5(a) ones; Fig. 5(e) → 5(c), plus one sentence saying that the new Fig. 5 shows the WS failure and every reported quantity against the truth; Fig. 5(f) → Appendix F, Fig. 15(c).
+
+**Control file:**
+- Sec. IV row and Fig. 5 row rewritten;
+- Appendix F row: Fig. 15(c) noted;
+- new check-list item: check that Sec. IV reads well around the user's own edits.
