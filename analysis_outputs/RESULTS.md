@@ -2078,3 +2078,27 @@ At the user's request, the same way as section 49 (dated backups `* - backup - 2
   - the old in vitro "no movie identifiers" item was removed;
   - 4 new check-list items plus the seed-variation item (seed list 4) were added after the FRAP item.
 - **`MS_revised_clean.docx`:** regenerated from the updated tracked file with every change accepted (24 pages).
+
+## 51. Manuscript Figs. 5-9 from MATLAB, for new users (2026-10-26)
+
+**The user's question:** `ExperimentalAnalysis.m` produced nothing like the manuscript figures, so how can a user recreate Figs. 5-9? The manuscript figures had been drawn in Python (`checks/ms_figures.py`) from CSVs of about a dozen check scripts.
+
+**New:**
+- `PaperFigures_revised.m`: one `%% Figure N` section per figure (5-9), each starting from the repository data. The user's own `PaperFigures.m` is untouched and untracked.
+- Helpers: `gm_plot_bursthist.m`, `gm_plot_bars.m`, `gm_style.m` (MS style).
+- MATLAB ports of the two Python fits: `analysis/gm_eq19_fit.m` (Eq. 1.9, WS and likelihood) and `analysis/gm_shape_fit.m` (λ·k0 shape fit).
+- `gm_paper_dataset.m` returns `paperSeed`. `GelMetricsReport` keeps its bootstrap draws (`R.boot`). `GelMetricsCompare` also tests `sizeCopies` and `brightnessPooled`.
+- `ExperimentalAnalysis.m` was rewritten. For any number of conditions it draws burst size distributions (Figs. 6-9 style) and summary bars (Figs. 6, 10 style), and tests each condition against the first.
+
+**Checks (headless; drawing is not possible on the laptop):**
+- With the paper seeds (18-23 in vivo, 18-20 in vitro) the noise copies are bit-identical to `detection_grid.m`: copies, beyond noise and turnover match `control_table.csv` and `vitro_same/summary.csv` exactly.
+- `gm_eq19_fit` reproduces all 30 WS and likelihood λ of `ms_sim_test/fits.csv`.
+- `gm_shape_fit` reproduces the 6 λ·k0 shape fits of `lambda_k0_shape_notrim/fits.csv`.
+- Re-simulating with seed 911 reproduces the stored amplitudes to 1e-11.
+- Full run with `makePlots = false`: 468 s. Every printed number matches the manuscript. Examples:
+  - Fig. 6: 7.1/6.7, 11.5/9.6, 15.9/8.7%; net −21.2/−39.2/−70.3.
+  - Fig. 9(d): total 6.1, noise 2.6, beyond 3.5, one-sided p = 0.031 (two-sided 0.063 vs 0.061 in the paper).
+  - Fig. 9(c): brightness p = 0.001 vs 0.002 in the paper (the permutation draws differ).
+- The bootstrap CIs differ in the last digit, because their random draws differ.
+- `checkcode`: no errors in any of the new or changed files.
+- **The drawing code itself was not run.** It must be checked once in a MATLAB with graphics (lab PC or the user's).

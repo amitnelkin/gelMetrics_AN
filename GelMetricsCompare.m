@@ -11,7 +11,7 @@ if nargin < 3, nPerm = 10000; end
 if nargin < 4, seed = 1; end
 rng(seed);
 assert(RA.opts.nCopies == RB.opts.nCopies, 'Use the same nCopies for both conditions.');
-meas = {'sizeGranules', 'sizeBeyond', 'turnover', 'net', 'medianBurst', 'meanBurst', 'brightness'};
+meas = {'sizeGranules', 'sizeCopies', 'sizeBeyond', 'turnover', 'net', 'medianBurst', 'meanBurst', 'brightness', 'brightnessPooled'};
 itA = RA.items; itB = RB.items;
 [~, ~, ga] = unique([itA.movie]); [~, ~, gb] = unique([itB.movie]);
 units = [arrayfun(@(k) itA(ga == k), 1:max(ga), 'UniformOutput', false), ...
@@ -36,6 +36,8 @@ function v = measure(it, m)
 cat0 = @(fld) vertcat(it.(fld));
 switch m
     case 'sizeGranules', v = 100 * med(cat0('r0'));
+    case 'sizeCopies', v = 100 * med(cat0('c0'));
+    case 'brightnessPooled', v = median([it.level]);
     case 'sizeBeyond', v = 100 * (med(cat0('r0')) - med(cat0('c0')));
     case 'turnover', v = 100 * (sum(cat0('r0')) - sum(cat0('c0')) / it(1).K) / sum([it.h0]);
     case 'net', x = [it.n0]; v = mean(x(~isnan(x)));

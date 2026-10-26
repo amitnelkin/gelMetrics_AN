@@ -140,7 +140,7 @@ dT = bs(:, strcmp(keys, 'turnover2')) - bs(:, strcmp(keys, 'turnover1'));
 dN = bs(:, strcmp(keys, 'net2')) - bs(:, strcmp(keys, 'net1'));
 R.pHalvesTurnover = min(1, 2 * min(mean(dT <= 0), mean(dT >= 0)));
 R.pHalvesNet = min(1, 2 * min(mean(dN <= 0), mean(dN >= 0)));
-R.items = it; R.opts = opts;
+R.items = it; R.opts = opts; R.boot = bs; R.bootKeys = keys;   % bootstrap draws (for CIs of differences)
 if opts.verbose, printReport(R); end
 end
 

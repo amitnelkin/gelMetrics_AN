@@ -33,7 +33,8 @@ Every measure has a 95% confidence interval (movies resampled, then granules wit
 **λ and k0.** The original method fitted λ (units per burst) and k0 (intensity of one unit) with a weighted score (`modifiedPoissonFit.m`). Only their product, the mean burst size, can be estimated reliably, so the fit is no longer part of the analysis. It is kept in `legacy/` for reference.
 
 ### Running the analysis
-- **Experimental data:** `ExperimentalAnalysis.m`. By default it analyzes two datasets of the paper and compares them; edit the dataset names, or point it to your own folders (Option 2 in the script).
+- **Figures of the paper:** `PaperFigures_revised.m`, one section per figure (Figs. 5-9). Each section starts from the repository data, runs the same functions as below, and saves the figure in `figures/`. It reproduces the manuscript numbers (the noise copies use the paper's seeds); Figure 5 takes about 10 min.
+- **Experimental data:** `ExperimentalAnalysis.m`. Analyzes any number of conditions (datasets of the paper or your own folders), tests each against the first one, and draws the burst size distributions (as Figs. 6-9) and a summary of mean burst size, turnover and net change (as Figs. 6 and 10).
 - **Simulated data:** `SimulationRunWithAnalysis.m`. Bursty and constant (burst-free) simulated granules with known parameters, through the same code.
 - **Datasets of the paper:** `gm_paper_dataset('<name>')` with names `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
   - The data are the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed).
@@ -54,6 +55,9 @@ Every measure has a 95% confidence interval (movies resampled, then granules wit
 |---|---|
 | `GelMetricsReport.m` | all measures and confidence intervals for one condition |
 | `GelMetricsCompare.m` | movie-level test between two conditions |
+| `PaperFigures_revised.m` | the manuscript figures 5-9 |
+| `gm_plot_bursthist.m`, `gm_plot_bars.m`, `gm_style.m` | the figure panels (manuscript style) |
+| `analysis/gm_eq19_fit.m`, `analysis/gm_shape_fit.m` | the λ and λ·k0 fits of Fig. 5 (Eq. 1.9 and the original model curve) |
 | `analysis.m`, `getPosition.m`, `runLengthEncode.m` | burst detection (smoothing, runs of monotone change) |
 | `collect_intensity.m`, `Collect_intensity_data.m`, `generate_movArray.m`, `read_tables.m` | extraction of the granule and background intensities from the movies |
 | `generateSim.m` | simulated granules |

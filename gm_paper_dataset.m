@@ -6,6 +6,8 @@ function D = gm_paper_dataset(name)
 %   In vitro: 'vitro_1_1', 'vitro_10_1', 'vitro_100_1' (protein:RNA)
 %            (in_vitro_reextracted/same_granules_R2/: the original granules re-read
 %            with the corrected extraction, movie of every trace)
+% D.paperSeed: the random seed of the burst-free copies used for the paper's numbers
+% (GelMetricsReport with opts.seed = D.paperSeed and opts.nCopies = 1 reproduces them).
 % The original stored traces (in_vivo_experiments/, in_vitro_experiments/) are
 % kept for reference only; they contain the errors described in the paper.
 repo = fileparts(mfilename('fullpath'));
@@ -27,6 +29,9 @@ else
 end
 if isempty(info), error('gm_paper_dataset:unknown', 'Unknown dataset "%s".', name); end
 D.movie = repelem((1:height(info))', info.nKept);
+seeds = struct('x4PP7', 18, 'x4PP7_FUS', 19, 'x30PP7', 20, 'x30PP7_FUS', 21, 'x5Qb', 22, 'x10Qb', 23, ...
+               'vitro_1_1', 18, 'vitro_10_1', 19, 'vitro_100_1', 20);
+D.paperSeed = seeds.(matlab.lang.makeValidName(name));
 assert(numel(D.movie) == numel(D.spotMean), 'movie list and traces do not match for %s', name);
 end
 

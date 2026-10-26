@@ -1,11 +1,15 @@
 % EXPERIMENTALANALYSIS  GelMetrics analysis of experimental data (revised method).
 % For every condition: burst size, burst size beyond noise, turnover beyond noise
 % and net change beyond photobleaching, each with a 95% confidence interval over
-% movies (fields of view); and a movie-level test between two conditions.
-% Noise floor: every granule trace is compared with burst-free copies of itself
-% (same photobleaching trend and noise level, no bursts), analyzed identically.
-% The original lambda/k0 fit (modifiedPoissonFit.m) is in legacy/: lambda and k0
-% cannot be estimated separately; their product is the mean burst size reported here.
+% movies (fields of view), and a movie-level test of every condition against the
+% first one. Draws the same kind of figures as the manuscript:
+%   Figure 1 - burst size distributions of the granules and of their burst-free
+%              copies (as MS Figs. 6(a-c), 7, 8, 9(a, b))
+%   Figure 2 - mean burst size, turnover and net change of all conditions
+%              (as MS Figs. 6(d-f) and 10(b-d))
+% To redraw the manuscript figures exactly, run PaperFigures_revised.m.
+% The original lambda/k0 fit is in legacy/: lambda and k0 cannot be estimated
+% separately; their product is the mean burst size reported here.
 close all; clearvars; clc;
 
 % Analysis settings (the values used in the paper)
@@ -13,33 +17,53 @@ opts.window = 13;          % moving-average window (time points)
 opts.SP = 12;              % stringency parameter: minimal run of monotone change (time points)
 opts.frameInterval = 10;   % seconds between frames - set to your acquisition interval
 opts.minFrames = 180;      % analyze traces of at least 30 min
-opts.nCopies = 20;         % burst-free copies per granule (more copies = less random variation)
+opts.nCopies = 20;         % burst-free copies per granule (the paper used 1; 20 is stable)
 
-% Option 1: the datasets of the paper
+% Conditions to analyze: the first one is the reference for the tests.
+% Option 1: datasets of the paper
 %   in vivo:  '4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'
 %   in vitro: 'vitro_1_1', 'vitro_10_1', 'vitro_100_1'  (protein:RNA)
-A = gm_paper_dataset('4PP7');
-B = gm_paper_dataset('4PP7-FUS');
-
+conditions = {gm_paper_dataset('4PP7'), gm_paper_dataset('4PP7-FUS')};
 % Option 2: your own data, one folder per condition, with the files written by
 % Collect_intensity_data.m (data.mat, background.mat, spotsum.mat, movies.mat)
-% A = gm_load_extraction('C:\data\condition1', 'condition 1');
-% B = gm_load_extraction('C:\data\condition2', 'condition 2');
+% conditions = {gm_load_extraction('C:\data\condition1', 'condition 1'), ...
+%               gm_load_extraction('C:\data\condition2', 'condition 2')};
 
-RA = GelMetricsReport(A, opts);
-RB = GelMetricsReport(B, opts);
-T = GelMetricsCompare(RB, RA);
+saveFigures = false;       % true: save Figure 1 and 2 as PNG and PDF in figures/
 
-% Burst size distributions of the granules and of their burst-free copies
-figure('Color', 'w');
-Rs = {RA, RB};
-for k = 1:2
-    subplot(1, 2, k);
-    r = 100 * vertcat(Rs{k}.items.r0); c = 100 * vertcat(Rs{k}.items.c0);
-    edges = 0:2.5:60;
-    histogram(min(r, 59.9), edges, 'Normalization', 'probability', 'FaceColor', [1 0.4 0.4], 'EdgeColor', 'none'); hold on;
-    histogram(min(c, 59.9), edges, 'Normalization', 'probability', 'DisplayStyle', 'stairs', 'EdgeColor', 'k', 'LineWidth', 1);
-    xlabel('Burst size (% of granule)'); ylabel('Frequency');
-    title(sprintf('%s: median %.1f%% vs %.1f%%', Rs{k}.name, Rs{k}.sizeGranules, Rs{k}.sizeCopies), 'Interpreter', 'none');
-    legend('granules', 'burst-free copies'); box on;
+% Analysis
+R = cellfun(@(D) GelMetricsReport(D, opts), conditions, 'UniformOutput', false);
+for i = 2:numel(R)
+    GelMetricsCompare(R{i}, R{1});
+end
+
+% Figure 1: burst size distributions
+n = numel(R); nc = min(n, 3);
+f1 = figure('Units', 'inches', 'Position', [1 1 2.2 * nc 2.3 * ceil(n / nc)], 'Color', 'w');
+t = tiledlayout(f1, ceil(n / nc), nc, 'TileSpacing', 'compact', 'Padding', 'compact');
+for k = 1:n
+    ax = nexttile(t);
+    nb = gm_plot_bursthist(ax, R{k}, 60, mod(k - 1, nc) == 0);
+    title(ax, sprintf('%s  (n = %d)', R{k}.name, nb), 'Interpreter', 'none', 'FontWeight', 'normal', 'FontSize', 7.5);
+    gm_style(ax, char('a' + k - 1));
+    if k == 1, legend(ax, {'granules', 'burst-free copies'}, 'Location', 'east', 'Box', 'off', 'FontSize', 6.5); end
+end
+
+% Figure 2: summary of all conditions (95% CI over movies, then granules)
+f2 = figure('Units', 'inches', 'Position', [1 1 6.5 2.3], 'Color', 'w');
+t = tiledlayout(f2, 1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
+fields = {'meanBurst', 'turnover', 'net'};
+labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', sprintf('Net change beyond\nbleaching (%%/h)')};
+colors = lines(n);
+names = cellfun(@(r) strrep(r.name, '_', ' '), R, 'UniformOutput', false);
+for k = 1:3
+    ax = nexttile(t);
+    gm_plot_bars(ax, R, fields{k}, labels{k}, colors, 1:n, names);
+    gm_style(ax, char('a' + k - 1));
+end
+
+if saveFigures
+    outDir = fullfile(fileparts(mfilename('fullpath')), 'figures'); if ~exist(outDir, 'dir'), mkdir(outDir); end
+    exportgraphics(f1, fullfile(outDir, 'burst_sizes.png'), 'Resolution', 300);
+    exportgraphics(f2, fullfile(outDir, 'summary.png'), 'Resolution', 300);
 end
