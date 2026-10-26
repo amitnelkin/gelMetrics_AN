@@ -8,7 +8,7 @@ This file lets a new chat continue the revision work. The full narrative with ev
 
 **Done on the lab PC (2026-10-26): MATLAB figure check (section 52; `figures/Fig5-9`), in vitro spot sums and comparison (section 53).**
 
-**In vitro into the manuscript: done as change list v2, `revision_docs/vitro_change_list_v2.md` (local; section 44), from the section 43 primary data. The user applies it by hand. Still open: the reason the three in vitro movies were dropped (for Methods VIII.E), and item A7 (FUS brightness per movie vs per granule). `CLAUDE_laptop_vitro.md` is the finished brief.**
+**In vitro into the manuscript: done (change list v2, section 44; then the spot sum, section 55). Closed 2026-10-26 by the user: the three dropped in vitro movies had a technical problem with the images and are not mentioned in the MS (the stored granules are the paper's own movies); item A7 (FUS brightness) is already in the MS with both numbers (median over granules 3036 vs 5644, over movies 1865 vs 5694); Fig. 9(c) keeps the per-granule medians. `CLAUDE_laptop_vitro.md` is the finished brief.**
 
 ## Context
 - Repo: https://github.com/amitnelkin/gelMetrics_AN, branch **`revision`** (never commit to `main`). Code for the manuscript *GelMetrics: an algorithm for analyzing the dynamics of gel-like phase-separated condensates* (Nelkin et al., ref. VM10081E), under revision. `MS.pdf` is in the repo root (not committed; ask the user if missing).
