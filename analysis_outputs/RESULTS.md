@@ -2304,3 +2304,20 @@ The figure must be made in MATLAB, by running `SimulationRunWithAnalysis.m`.
 - **Turnover beyond noise is right at SNR 5 and at λ 4.** At SNR 0.5 it under-reads small bursts: 3.9 vs 6.8 at λ 1, and 8.6 vs 12.8 at λ 2. Small bursts are lost in the noise.
 - **Net change matches the truth in all six conditions**, including the two whose true value is not 0 (a random walk of a few bursts).
 - **Burst size beyond noise and turnover rise with λ at both SNRs.** The ordering of the conditions is right.
+
+## 58. New Fig. 5 drawn on the lab PC (SimulationRunWithAnalysis.m)
+
+**The run:**
+- `SimulationRunWithAnalysis.m` with `saveFigures = true`, from the repository root (R2025b), about 20 min per run.
+- The printed numbers are identical to the laptop's `analysis_outputs/ms_revision/fig5_sim_output.txt` (section 57). Only the elapsed-time line differs.
+- Three runs gave identical numbers.
+
+**Layout fixes, compared with `fig5_sim_preview.png`:** plain style, no computation changed.
+- **The letter λ:** typed as a plain character (`char(955)`, middle dot `char(183)`), not TeX codes, which stretched the spaces in every label.
+- **Legends:**
+  - (a): top middle, clear of the dots;
+  - (g): short legend symbols, so the true-value dot sits next to its label.
+- **(d-f) titles:** shorter ("λ sim 1, SNR 0.5, n = 397"), so they don't run into the panel labels.
+- **(g-i) tick labels:** level and 6.5 pt, so they don't run into each other.
+
+**Output:** `figures/Fig5.png/.pdf`, the same panels and values as the preview. `saveFigures` is back to false.

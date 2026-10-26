@@ -36,7 +36,7 @@ expConst = 0.0026;         % photobleaching rate (1/min), median of the measured
 nFits = 20;                % simulated experiments per condition
 nCopies = 20;              % burst-free copies per granule (first experiment of each condition)
 histSNR = 0.5;             % SNR shown in panels (d-f)
-saveFigures = false;       % true: save the figure as figures/Fig5.png and .pdf
+saveFigures = false;      % true: save the figure as figures/Fig5.png and .pdf
 
 nLam = numel(lambdaList); nSNR = numel(snrList);
 lamWS = zeros(nLam, nSNR, nFits);      % lambda from the WS fit
@@ -95,6 +95,7 @@ BLUE = [0 0.447 0.741]; ORANGE = [0.835 0.369 0];
 snrColors = [BLUE; ORANGE; 0.47 0.67 0.19; 0.49 0.18 0.56];   % one color per SNR
 f = figure('Units', 'inches', 'Position', [1 1 6.5 6.2], 'Color', 'w');
 t = tiledlayout(f, 3, 3, 'TileSpacing', 'compact', 'Padding', 'loose');
+lam = char(955); dot = char(183);   % the letter lambda and a middle dot, typed directly (TeX codes stretch the spaces in the labels)
 
 % (a) lambda from the WS fit, one dot per experiment
 ax = nexttile(t); hold(ax, 'on');
@@ -108,10 +109,10 @@ end
 top = max(max(lambdaList) + 1, max(lamWS(:)) + 0.5);
 plot(ax, [0 top], [0 top], 'k--', 'LineWidth', 0.8);
 xlim(ax, [0 top]); ylim(ax, [0 top]);
-xlabel(ax, '\lambda_{sim}'); ylabel(ax, '\lambda from the WS fit');
+xlabel(ax, [lam ' sim']); ylabel(ax, [lam ' from the WS fit']);
 legendText = cell(1, nSNR);
 for si = 1:nSNR, legendText{si} = sprintf('SNR %g', snrList(si)); end
-legend(ax, h, legendText, 'Location', 'northwest', 'Box', 'off', 'FontSize', 6);
+legend(ax, h, legendText, 'Location', 'north', 'Box', 'off', 'FontSize', 6);   % top middle, clear of the dots
 styleAxes(ax, 'a');
 
 % (b) k0 vs lambda from the same fits; dashed lines: lambda*k0 = the true value
@@ -125,11 +126,11 @@ for li = 1:nLam
     end
 end
 xlim(ax, [0 top]); ylim(ax, [0 1.1 * max(k0WS(:))]);
-xlabel(ax, '\lambda from the WS fit'); ylabel(ax, 'k_0 from the WS fit (a.u.)');
+xlabel(ax, [lam ' from the WS fit']); ylabel(ax, 'k0 from the WS fit (a.u.)');
 markerText = cell(1, nLam); hm = gobjects(1, nLam);
 for li = 1:nLam
     hm(li) = plot(ax, NaN, NaN, markers(li), 'Color', 'k', 'MarkerSize', 3);
-    markerText{li} = sprintf('\\lambda_{sim} = %g', lambdaList(li));
+    markerText{li} = sprintf('%s sim = %g', lam, lambdaList(li));
 end
 legend(ax, hm, markerText, 'Location', 'northeast', 'Box', 'off', 'FontSize', 6);
 styleAxes(ax, 'b');
@@ -150,8 +151,8 @@ topP = 1.6 * max(trueProduct);
 plot(ax, [0 topP], [0 topP], 'k--', 'LineWidth', 0.8);
 xlim(ax, [0 topP]); ylim(ax, [0 topP]);
 h1 = plot(ax, NaN, NaN, 'ko', 'MarkerSize', 3); h2 = plot(ax, NaN, NaN, 'ks', 'MarkerFaceColor', 'k', 'MarkerSize', 3);
-legend(ax, [h1 h2], {'\lambda\cdotk_0 from the WS fit', 'mean burst size'}, 'Location', 'northwest', 'Box', 'off', 'FontSize', 6);
-xlabel(ax, 'true \lambda\cdotk_0 (a.u.)'); ylabel(ax, 'estimated \lambda\cdotk_0 (a.u.)');
+legend(ax, [h1 h2], {[lam dot 'k0 from the WS fit'], 'mean burst size'}, 'Location', 'northwest', 'Box', 'off', 'FontSize', 6);
+xlabel(ax, ['true ' lam dot 'k0 (a.u.)']); ylabel(ax, ['estimated ' lam dot 'k0 (a.u.)']);
 styleAxes(ax, 'c');
 
 % (d-f) burst sizes of the granules and of their copies, at SNR histSNR
@@ -159,7 +160,7 @@ si = find(snrList == histSNR, 1);
 for li = 1:min(nLam, 3)
     ax = nexttile(t);
     plotBurstHist(ax, M{li, si});
-    title(ax, sprintf('\\lambda_{sim} = %g, SNR %g  (n = %d)', lambdaList(li), histSNR, numel(vertcat(M{li, si}.fracReal{:}))));
+    title(ax, sprintf('%s sim %g, SNR %g, n = %d', lam, lambdaList(li), histSNR, numel(vertcat(M{li, si}.fracReal{:}))));
     if li == 1
         ylabel(ax, 'Frequency');
         lg = legend(ax, {'granules', 'burst-free copies'}, 'Location', 'east', 'Box', 'off', 'FontSize', 6);
@@ -171,7 +172,7 @@ for li = nLam + 1:3, nexttile(t); axis off; end      % fewer than three lambdas:
 
 % (g-i) all measures of every condition, as ExperimentalAnalysis.m; black dots: true values
 measures = {'meanBurst', 'turnover', 'net'};
-labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', sprintf('Net change beyond\nbleaching (%%/h)')};
+labels = {['Mean burst size, ' lam dot 'k0 (a.u.)'], 'Turnover beyond noise (%/h)', sprintf('Net change beyond\nbleaching (%%/h)')};
 trueField = {'meanBurst', 'turnover', 'net'};
 for j = 1:3
     ax = nexttile(t); hold(ax, 'on');
@@ -188,14 +189,17 @@ for j = 1:3
     end
     yline(ax, 0, 'k', 'LineWidth', 0.5);
     tickText = cell(1, nLam);
-    for li = 1:nLam, tickText{li} = sprintf('\\lambda_{sim} = %g', lambdaList(li)); end
-    set(ax, 'XTick', xTicks, 'XTickLabel', tickText); xlim(ax, [0.2, nLam * (nSNR + 1) - 0.2]);
+    for li = 1:nLam, tickText{li} = sprintf('%s sim = %g', lam, lambdaList(li)); end
+    set(ax, 'XTick', xTicks, 'XTickLabel', tickText, 'XTickLabelRotation', 0);
+    xlim(ax, [0.2, nLam * (nSNR + 1) - 0.2]);
     ylabel(ax, labels{j});
     if j == 1
-        legend(ax, [hb plot(ax, NaN, NaN, 'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 3)], [legendText {'true value'}], ...
+        lg = legend(ax, [hb plot(ax, NaN, NaN, 'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 3)], [legendText {'true value'}], ...
             'Location', 'northwest', 'Box', 'off', 'FontSize', 6);
+        lg.ItemTokenSize = [10 6];   % short legend symbols, so the true-value dot sits next to its label
     end
     styleAxes(ax, char('f' + j));
+    ax.XAxis.FontSize = 6.5;   % smaller tick labels (after the style, which sets 8), so they do not run into each other
 end
 
 if saveFigures

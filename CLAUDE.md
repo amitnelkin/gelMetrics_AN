@@ -1,12 +1,10 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-57). Read the relevant section there before redoing anything.
-
-**OPEN TASK for the lab PC chat: `CLAUDE_labpc_fig5.md`: run `SimulationRunWithAnalysis.m` with saveFigures = true, check the new Fig. 5 drawing (section 57). After that the MS Fig. 5 image, caption and section III text need updating (give the user the changes; their Word files).**
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-58). Read the relevant section there before redoing anything.
 
 **Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 
-**Done on the lab PC (2026-10-26): drawings of the plain-style scripts checked (section 56); MATLAB figure check (section 52; `figures/Fig5-9`), in vitro spot sums and comparison (section 53).**
+**Done on the lab PC (2026-10-26): new Fig. 5 drawn (section 58); drawings of the plain-style scripts checked (section 56); MATLAB figure check (section 52; `figures/Fig5-9`), in vitro spot sums and comparison (section 53).**
 
 **In vitro into the manuscript: done (change list v2, section 44; then the spot sum, section 55). Closed 2026-10-26 by the user: the three dropped in vitro movies had a technical problem with the images and are not mentioned in the MS (the stored granules are the paper's own movies); item A7 (FUS brightness) is already in the MS with both numbers (median over granules 3036 vs 5644, over movies 1865 vs 5694); Fig. 9(c) keeps the per-granule medians. `CLAUDE_laptop_vitro.md` is the finished brief.**
 
