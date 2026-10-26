@@ -2189,3 +2189,34 @@ At the user's request, the same way as section 49 (dated backups `* - backup - 2
 - `ExperimentalAnalysis.m` (20 copies) and `SimulationRunWithAnalysis.m` give the section 45 numbers.
 - `checkcode`: no errors.
 - **The drawing code is not run yet:** task `CLAUDE_labpc_figures2.md` for the lab PC.
+
+## 55. In vitro spot sum put into the manuscript, letter and control file (laptop, 2026-10-26)
+
+**Task:** `CLAUDE_laptop_spotsum.md` (section 53 results into the documents). The user's choices: spot-mean history in an appendix and the letter; Flory-Huggins now refers to the logarithmic growth of the granule area; Fig. 14(b) switches to the spot sum; edits go straight into the user's files as tracked changes, after backups.
+
+**New test: granule area growth** (`py checks/vitro_area_test.py` -> `analysis_outputs/vitro_spotsum/area_test.csv`). Area = spot sum / (spot mean - dilute phase); per granule the Theil-Sen slope of ln(area); movies are the replicates.
+
+| protein:RNA | area growth, %/h [95% CI] |
+|---|---|
+| 1:1 | 21 [-4, 56] |
+| 10:1 | 49 [13, 150] |
+| 100:1 | 85 [62, 114] |
+
+- 100:1 vs 1:1: p = 0.013; 10:1 vs 1:1 p = 0.50; 100:1 vs 10:1 p = 0.43 (movie shuffling).
+- Trend with log10(protein:RNA): +32 %/h per 10x, p = 0.031.
+- Reading: extra protein makes larger, not denser, granules. Spreading on the glass or a slow focus drift gives the same signature and can't be excluded (said in the text).
+
+**Figure change:** `checks/ms_figures.py --vitro-spotsum`, Fig. 14(b) (file fig18): the in vitro granule bars now use the spot-sum noise ratio (`ratioSum`), as the user chose. fig6, fig18, fig22 regenerated in `analysis_outputs/ms_revision/figs_vitro_spotsum/`.
+
+**Documents changed** (local `revision_docs/`, not in git; backups `* - backup - 261026 before spot sum.docx`; hash-checked that the originals were unchanged before writing):
+- `MS_revised_tracked.docx` (tracked, author Amit Nelkin):
+  - Abstract: in vitro granules exchange material beyond noise at all ratios.
+  - Table I in vitro rows replaced with the spot-sum values (section 53); "(spot mean for in vitro)" removed from the caption.
+  - V.A retitled "In vitro granules exchange material at all protein contents"; text: burst size 12-16%, turnover beyond noise 18 / 15 / 29 %/h, net change +1 / +14 / +16 %/h, no ratio differences (p 0.32-0.49), median burst trend p = 0.097, area growth and the Flory-Huggins sentence with the caveat.
+  - Fig. 6 and Fig. 14 captions ("integrated granule intensity"), burst counts 91 / 55 / 60; Figs. 6, 14, 18 images replaced.
+  - Discussion in vitro paragraph; Methods sentence (spot sum in vivo and in vitro); Appendix E (50-95% of bursts reproduced by copies in vitro, noise 3.5-6.5x, in vitro static control -1 to 3 vs 15-29 %/h); Appendix H (100:1 turnover -16 -> 83 %/h, p = 0.011) plus the spot-mean history paragraph (-21 / -39 / -70 %/h, p = 0.018, explained by the growing area).
+- `Response_to_reviewers.docx`: opening, noise range, a spot-sum explanation, focus-drift line, replicates and noise-floor points.
+- `Revision_control.docx`: abstract, Table I and V.A rows, Figs. 6/14/18 status, a new check-list item.
+- `MS_revised_clean.docx`: regenerated, all changes accepted, 25 pages.
+
+**Checks:** every edit read back in the accepted-view text; paragraph diffs against the backups show only the intended changes; edited pages rendered and looked at; all four files open in Word from their real location.

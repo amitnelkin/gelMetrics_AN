@@ -402,10 +402,11 @@ def fig18():
     NB = VIVO
     if VNEW:
         nb = pd.concat([nb, pd.read_csv(os.path.join(A, 'noise_background_vitro', 'summary.csv')).set_index('dataset')]); NB = VIVO + VITRO
-    r = [float(str(nb.loc[ds, 'ratioMean']).split()[0]) for ds in NB]
+    gcol = 'ratioSum' if VSUM else 'ratioMean'   # --vitro-spotsum: spot-sum ratios for every dataset (the user's choice, section 55)
+    r = [float(str(nb.loc[ds, gcol]).split()[0]) for ds in NB]
     rc = [float(str(nb.loc[ds, 'ratioCell']).split()[0]) for ds in NB]
     x = np.arange(len(NB))
-    a.bar(x - 0.18, r, 0.36, color=[COL.get(d, HIST) for d in NB], alpha=0.85, label='granule (spot mean)')
+    a.bar(x - 0.18, r, 0.36, color=[COL.get(d, HIST) for d in NB], alpha=0.85, label='granule (spot sum)' if VSUM else 'granule (spot mean)')
     a.bar(x + 0.18, rc, 0.36, color='0.75', label='cell background' if not VNEW else 'cell / dilute-phase background')
     a.axhline(1, color='k', lw=0.5, ls='--')
     a.set_xticks(x); a.set_xticklabels([SHORT[d].replace(', ', '\n').replace('in vitro ', 'vitro\n') for d in NB], fontsize=5.5 if not VNEW else 5)

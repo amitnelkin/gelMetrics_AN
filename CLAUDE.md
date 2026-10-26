@@ -1,10 +1,10 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-54). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-55). Read the relevant section there before redoing anything.
 
 **OPEN TASK for the lab PC chat: `CLAUDE_labpc_figures2.md`, i.e. run the simplified `PaperFigures_revised.m`, `ExperimentalAnalysis.m` and `SimulationRunWithAnalysis.m` and check the drawings (section 54).**
 
-**OPEN TASK for the laptop chat: `CLAUDE_laptop_spotsum.md`. The user decided (2026-10-26, section 53) to use the spot sum in vitro as in vivo (spot mean only for brightness and a.u. amplitudes); the in vitro titration results change (no net loss, no ratio differences; granule area grows). Make a new change list for the manuscript; never overwrite the user's Word files.**
+**Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 
 **Done on the lab PC (2026-10-26): MATLAB figure check (section 52; `figures/Fig5-9`), in vitro spot sums and comparison (section 53).**
 
