@@ -2246,3 +2246,61 @@ No errors. Every printed number is the same as in section 52/53, for example:
   - `subplot` → `tiledlayout`/`nexttile`, so the panel labels are no longer clipped at the top;
   - short legend symbols, and the legend in the lower right, clear of the bars;
   - loose padding in the summary figure, so the bar labels are not cut.
+
+## 57. New Fig. 5: simulated granules analysed exactly like the experiments (laptop, 2026-10-26)
+
+**The user's request:** Fig. 5 should show the same output for simulated data as for experimental data (as in the original MS):
+1. the WS fit is not enough when it is repeated over many fits;
+2. λ·k0 is stable;
+3. every measure we report (burst size, turnover, net change), for λ = 1, 2, 4 at SNR 5 and 0.5, shown like the experimental analysis.
+
+The figure must be made in MATLAB, by running `SimulationRunWithAnalysis.m`.
+
+**How:**
+- `SimulationRunWithAnalysis.m` now makes the whole figure (`saveFigures = true` writes `figures/Fig5.png/.pdf`).
+- Every λ × SNR pair is one condition; noise = k0 / SNR (k0 = 60, so noise is 12 and 120 a.u.).
+- Per condition, 20 simulated "experiments" of 200 granules each (seed = 1000·λ index + 100·SNR index + experiment).
+- Each experiment goes through `burstMeasures.m` (the experimental code) and then the manuscript's WS fit of Eq. (1.9) (`eq19Fit`, moved here from `PaperFigures_revised.m`).
+- The first experiment uses 20 noise copies; the others use 1, because the fit and the mean burst size don't use the copies.
+- True values come from the same granules simulated without noise, measured the way `burstMeasures` measures them.
+- `PaperFigures_revised.m` no longer makes Fig. 5.
+- Run time: 13 min on the laptop, headless.
+- Python preview of the layout: `analysis_outputs/ms_revision/fig5_sim_preview.png`. Printed output: `fig5_sim_output.txt`.
+- The MATLAB drawing is left for the lab PC: `CLAUDE_labpc_fig5.md`.
+
+**WS fit, 20 experiments per condition** (median, range):
+
+| true λ, SNR | λ from WS | k0 from WS | λ·k0 from WS | mean burst size | true λ·k0 |
+|---|---|---|---|---|---|
+| 1, 5 | 0.1 (0.1-0.5) | 194 (95-215) | 13 (10-43) | 71 (68-75) | 60 |
+| 1, 0.5 | 4.7 (3.8-5.9) | 28 (21-34) | 128 (122-132) | 134 (131-140) | 60 |
+| 2, 5 | 0.5 (0.1-1.0) | 140 (99-253) | 76 (37-103) | 117 (108-124) | 120 |
+| 2, 0.5 | 3.5 (2.4-4.0) | 47 (40-71) | 165 (159-178) | 178 (169-182) | 120 |
+| 4, 5 | 0.2 (0.1-0.6) | 359 (253-509) | 89 (43-155) | 209 (204-221) | 240 |
+| 4, 0.5 | 2.4 (2.0-2.8) | 107 (91-131) | 256 (237-276) | 269 (258-287) | 240 |
+
+- **λ from the WS fit follows the noise, not the truth.**
+  - At SNR 5 it is 0.1-1 for every true λ.
+  - At SNR 0.5 it runs backwards: 4.7 / 3.5 / 2.4 for true 1 / 2 / 4.
+- **k0 moves with λ along λ·k0 ≈ constant**, panel (b).
+- **The WS product λ·k0 is not reliable either:** at SNR 5 it is 13-89 for true 60-240.
+- **The mean burst size (burstMeasures) is stable:** ranges are ±5% between experiments, and it rises with the truth in both noise levels.
+- **It is biased by noise:**
+  - about 0.75-0.85× at SNR 5 (small bursts are merged or missed);
+  - 1.1-1.4× at SNR 0.5 (noise adds to the bursts).
+- Note: zero-unit bursts are invisible, so the true mean of the visible bursts is 96 / 136 / 236 rather than 60 / 120 / 240.
+
+**All measures, first experiment** (200 granules, 20 copies; true value after the slash):
+
+| true λ, SNR | mean burst (a.u.) | burst size, granules / copies (%) | beyond noise (points) | turnover beyond noise (%/h) | net change (%/h) |
+|---|---|---|---|---|---|
+| 1, 5 | 73 [68, 79] / 96 | 1.2 / 0.2 (true 1.9) | 1.0 [0.8, 1.1] | 6.2 [4.9, 7.6] / 6.0 | -0.3 [-1.9, 1.2] / -0.3 |
+| 1, 0.5 | 139 [132, 146] / 95 | 2.9 / 2.3 (true 2.0) | 0.7 [0.4, 0.9] | 3.9 [2.8, 5.1] / 6.8 | -0.8 [-2.7, 0.8] / -0.7 |
+| 2, 5 | 116 [109, 124] / 136 | 2.1 / 0.2 (true 2.5) | 1.9 [1.5, 2.1] | 11.0 [8.9, 13.6] / 10.6 | -0.3 [-3.1, 2.1] / -0.3 |
+| 2, 0.5 | 175 [166, 184] / 135 | 3.5 / 2.2 (true 2.7) | 1.3 [1.0, 1.7] | 8.6 [6.7, 10.6] / 12.8 | -3.1 [-5.4, -1.0] / -2.6 |
+| 4, 5 | 204 [192, 216] / 236 | 3.8 / 0.4 (true 4.7) | 3.4 [3.0, 4.0] | 25.1 [19.2, 32.3] / 25.4 | -4.2 [-8.6, -0.4] / -4.4 |
+| 4, 0.5 | 269 [257, 282] / 254 | 5.1 / 2.1 (true 5.0) | 3.0 [2.5, 3.7] | 22.3 [17.9, 28.2] / 22.0 | -0.1 [-3.7, 3.2] / -0.2 |
+
+- **Turnover beyond noise is right at SNR 5 and at λ 4.** At SNR 0.5 it under-reads small bursts: 3.9 vs 6.8 at λ 1, and 8.6 vs 12.8 at λ 2. Small bursts are lost in the noise.
+- **Net change matches the truth in all six conditions**, including the two whose true value is not 0 (a random walk of a few bursts).
+- **Burst size beyond noise and turnover rise with λ at both SNRs.** The ordering of the conditions is right.

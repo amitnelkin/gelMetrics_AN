@@ -1,4 +1,4 @@
-%% PaperFigures_revised.m - Figures 5-9 of the revised manuscript
+%% PaperFigures_revised.m - Figures 6-9 of the revised manuscript (Fig. 5: SimulationRunWithAnalysis.m)
 % Run one section at a time (Ctrl+Enter) or the whole script, from the repository
 % folder. Each section starts from the repository data, runs the same code a user
 % runs on their own data (burstMeasures.m, compareConditions.m) and draws the figure
@@ -9,7 +9,7 @@
 % random draw of the copies (RESULTS.md section 45).
 % In vitro uses the spot sum, as in vivo (the user's decision, RESULTS.md section 53).
 %
-% Run time: Figure 5 about 8 min (simulations); Figures 6-9 about 1 min each.
+% Run time: about 1 min per figure. Figure 5 is made by SimulationRunWithAnalysis.m.
 
 %% Settings
 clearvars; close all; clc;
@@ -23,115 +23,9 @@ seeds = containers.Map({'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb',
 RED = [1 0.4 0.4]; BLUE = [0 0.447 0.741]; ORANGE = [0.835 0.369 0];
 CPP = [0 0.447 0.698]; CFUS = [0 0.620 0.451];
 
-%% Figure 5 - estimating the signal parameters on simulated data
-% (a-c) burst amplitudes of simulated bursty granules (lambda 1, 2, 4; k0 = 60; noise 40)
-% (d)   lambda estimated by the weighted score (WS) and by maximum likelihood, vs the truth
-% (e)   mean burst size lambda*k0 (shape fit), vs the truth
-% (f)   share of the true bursts found, and share of false detections, vs the stringency
-%       parameter, at the original simulation noise and at the PP7 noise level
-tVec = (0:360) * 10/60;
-lams = [0.5 1 2 3 4 5];
-
-% (a-d): simulations as in MS section III: 1000 granules, SP 15, five repeats per lambda
-amps = cell(6, 5); lamWS = zeros(6, 5); lamNLL = zeros(6, 5);
-for li = 1:6
-    for rep = 1:5
-        rng(900 + (li - 1) * 5 + rep);
-        [S, B] = generateSim(1000, 361, 3, 0.0026, 40, lams(li), 60);
-        oldWarnings = warning('off', 'all');
-        [~, ~, ~, ~, ~, ~, seg] = analysis(num2cell(S, 2), num2cell(B, 2), tVec, 13, 15, 0, 0);
-        warning(oldWarnings);
-        amps{li, rep} = abs(seg(seg(:, 2) < 0, 5));                % negative bursts
-        [lamWS(li, rep), lamNLL(li, rep)] = eq19Fit(amps{li, rep});
-    end
-    fprintf('Fig 5(d) lambda %g: WS %s | likelihood %s\n', lams(li), mat2str(round(lamWS(li, :), 2)), mat2str(round(lamNLL(li, :), 2)));
-end
-
-% (e): 200 granules, SP 12, shape fit on all bursts, 95% CI from resampling granules
-lamk0 = zeros(6, 3);                                             % estimate, CI low, CI high
-for li = 1:6
-    rng(700 + (li - 1) * 3 + 2);
-    [S, B] = generateSim(200, 361, 3, 0.0026, 40, lams(li), 60);
-    oldWarnings = warning('off', 'all');
-    [~, ~, ~, ~, ~, ~, seg] = analysis(num2cell(S, 2), num2cell(B, 2), tVec, 13, 12, 0, 0);
-    warning(oldWarnings);
-    neg = seg(seg(:, 2) < 0, :);
-    a = abs(neg(:, 5)); granule = neg(:, 1);
-    [lam, k0] = shapeFit(a);
-    rng(27); boot = zeros(200, 1);
-    withBursts = unique(granule); nG = numel(withBursts);       % granules that have bursts
-    for b = 1:200                                                % resample those granules
-        chosen = withBursts(randi(nG, nG, 1)); aBoot = [];
-        for g = 1:nG, aBoot = [aBoot; a(granule == chosen(g))]; end %#ok<AGROW>
-        [lb, kb] = shapeFit(aBoot); boot(b) = lb * kb;
-    end
-    lamk0(li, :) = [lam * k0, prctile(boot, 2.5), prctile(boot, 97.5)];
-    fprintf('Fig 5(e) true lambda*k0 %3d: estimated %.0f [%.0f, %.0f]\n', 60 * lams(li), lamk0(li, :));
-end
-
-% (f): bursty granules (lambda 2) and burst-free twins, 500 each, at two noise levels
-SPs = [10 12 14 16 18 20 22 25];
-noiseLevels = [40 1100]; unitSizes = [60 300];                  % original noise; PP7-like noise
-recall = zeros(2, numel(SPs)); falseShare = zeros(2, numel(SPs));
-for j = 1:2
-    seed = 3400 + j;
-    rng(seed); [S, B] = generateSim(500, 361, 3, 0.0026, noiseLevels(j), 2, unitSizes(j));
-    rng(seed); S0 = generateSim(500, 361, 3, 0.0026, 0, 2, unitSizes(j));          % the same granules without noise
-    rng(seed + 50); [F, BF] = generateSim(500, 361, 1, 0.0026, noiseLevels(j), 2, unitSizes(j));   % burst-free twins
-    % every true loss of material: granule and frame
-    u = S0 ./ exp(-0.0026 * linspace(0, 60, 361)); du = diff(u, 1, 2);
-    [lossGranule, lossFrame] = find(du < -1e-9); lossFrame = lossFrame + 1;
-    for q = 1:numel(SPs)
-        oldWarnings = warning('off', 'all');
-        [~, ~, ~, ~, ~, ~, seg] = analysis(num2cell(S, 2), num2cell(B, 2), tVec, 13, SPs(q), 0, 0);
-        [~, ~, ~, ~, ~, ~, segF] = analysis(num2cell(F, 2), num2cell(BF, 2), tVec, 13, SPs(q), 0, 0);
-        warning(oldWarnings);
-        neg = seg(seg(:, 2) < 0, :); nFalse = sum(segF(:, 2) < 0);
-        % a true loss is found if it lies within a detected negative burst (+- 6 frames)
-        found = false(numel(lossGranule), 1);
-        for b = 1:size(neg, 1)
-            found(lossGranule == neg(b, 1) & lossFrame >= neg(b, 3) - 6 & lossFrame <= neg(b, 4) + 6) = true;
-        end
-        recall(j, q) = 100 * mean(found);
-        falseShare(j, q) = 100 * min(1, nFalse / max(size(neg, 1), 1));
-    end
-    fprintf('Fig 5(f) noise %d: bursts found %s %%, false share %s %%\n', noiseLevels(j), mat2str(round(recall(j, :))), mat2str(round(falseShare(j, :))));
-end
-
-if makePlots
-    f = figure('Units', 'inches', 'Position', [1 1 6.5 3.9], 'Color', 'w');
-    t = tiledlayout(f, 2, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
-    show = [1 2 4];
-    for j = 1:3
-        ax = nexttile(t); li = find(lams == show(j));
-        histogram(ax, amps{li, 1}, 0:10:1000, 'Normalization', 'pdf', 'FaceColor', RED, 'EdgeColor', 'none', 'FaceAlpha', 1);
-        xlim(ax, [0 1000]); ylim(ax, [0 0.012]); set(ax, 'XTick', 0:250:1000, 'YTick', 0:0.005:0.01, 'XTickLabelRotation', 0); ytickformat(ax, '%.3f');   % keep the tick labels level
-        xlabel(ax, 'Amplitude (a.u.)');
-        if j == 1, ylabel(ax, 'Frequency'); end
-        text(ax, 0.95, 0.85, sprintf('\\lambda_{sim}=%d', show(j)), 'Units', 'normalized', 'HorizontalAlignment', 'right', 'FontWeight', 'bold', 'FontSize', 9);
-        styleAxes(ax, char('a' + j - 1));
-    end
-    ax = nexttile(t); hold(ax, 'on');
-    m = median(lamWS, 2); errorbar(ax, lams, m, m - min(lamWS, [], 2), max(lamWS, [], 2) - m, 'o', 'Color', BLUE, 'MarkerSize', 4, 'CapSize', 3);
-    m = median(lamNLL, 2); errorbar(ax, lams, m, m - min(lamNLL, [], 2), max(lamNLL, [], 2) - m, 's', 'Color', ORANGE, 'MarkerSize', 4, 'CapSize', 3);
-    plot(ax, [0 5.5], [0 5.5], 'r--', 'LineWidth', 1);
-    xlim(ax, [0 5.5]); ylim(ax, [0 5.5]); xlabel(ax, '\lambda_{sim}'); ylabel(ax, '\lambda_{est}');
-    legend(ax, {'WS score', 'likelihood', 'truth'}, 'Location', 'northwest', 'Box', 'off', 'FontSize', 6.5);
-    styleAxes(ax, 'd');
-    ax = nexttile(t); hold(ax, 'on');
-    errorbar(ax, 60 * lams, lamk0(:, 1), lamk0(:, 1) - lamk0(:, 2), lamk0(:, 3) - lamk0(:, 1), 'o', 'Color', BLUE, 'MarkerSize', 4, 'CapSize', 3);
-    plot(ax, [0 330], [0 330], 'r--', 'LineWidth', 1); xlim(ax, [0 330]); ylim(ax, [0 330]);
-    xlabel(ax, 'true \lambda\cdotk_0 (a.u.)'); ylabel(ax, 'estimated \lambda\cdotk_0 (a.u.)');
-    styleAxes(ax, 'e');
-    ax = nexttile(t); hold(ax, 'on');
-    h1 = plot(ax, SPs, recall(1, :), '-o', 'Color', BLUE, 'MarkerSize', 4); plot(ax, SPs, falseShare(1, :), ':', 'Color', BLUE, 'LineWidth', 1);
-    h2 = plot(ax, SPs, recall(2, :), '-s', 'Color', ORANGE, 'MarkerSize', 4); plot(ax, SPs, falseShare(2, :), ':', 'Color', ORANGE, 'LineWidth', 1);
-    h3 = plot(ax, NaN, NaN, 'k-o', 'MarkerSize', 3); h4 = plot(ax, NaN, NaN, 'k:', 'LineWidth', 1);
-    legend(ax, [h1 h2 h3 h4], {'original noise', 'PP7 noise', 'bursts found', 'false share'}, 'Location', 'northeast', 'Box', 'off', 'FontSize', 5.5);
-    xlabel(ax, 'Stringency parameter j'); ylabel(ax, '%'); ylim(ax, [0 105]);
-    styleAxes(ax, 'f');
-    saveFig(f, 'Fig5');
-end
+%% Figure 5 - simulated granules
+% Made by SimulationRunWithAnalysis.m (its default settings; set saveFigures = true to
+% write figures/Fig5.png and .pdf). It runs the same analysis as the experimental data.
 
 %% Figure 6 - in vitro granules
 names = {'vitro_1_1', 'vitro_10_1', 'vitro_100_1'}; ratio = {'1:1', '10:1', '100:1'};
@@ -352,82 +246,4 @@ function saveFig(f, name)
 % Saves a figure in figures/ as PNG (300 dpi) and PDF.
 exportgraphics(f, fullfile('figures', [name '.png']), 'Resolution', 300);
 exportgraphics(f, fullfile('figures', [name '.pdf']), 'ContentType', 'vector');
-end
-
-
-function [lamWS, lamNLL] = eq19Fit(a)
-% Fits the manuscript's Eq. (1.9) to burst amplitudes a (MS Fig. 5(d)):
-%   p(I) = (1/k0) lambda^(I/k0) exp(-lambda) / Gamma(I/k0 + 1)
-% on a grid of lambda (0.05-20, plus 1..5) and k0 (2-600), with two scores:
-%   WS  = the manuscript's weighted rank score: 0.5 rank(MSE) + 0.25 rank(QQ) + 0.25 rank(KS)
-%   NLL = maximum likelihood
-% Returns the lambda of the best WS and of the best likelihood.
-lamGrid = unique([exp(linspace(log(0.05), log(20), 80)), 1:5]);
-k0Grid = exp(linspace(log(2), log(600), 140));
-a = sort(a(:))'; n = numel(a);
-edges = linspace(a(1), a(end), 11); counts = histcounts(a, edges);         % 10-bin histogram, as the MS
-centers = (edges(1:end-1) + edges(2:end)) / 2;
-NLL = zeros(numel(lamGrid), numel(k0Grid)); KS = NLL; QQ = NLL; MSE = NLL;
-for i = 1:numel(lamGrid)
-    lam = lamGrid(i);
-    % the model (in units of k0), normalised, and its cumulative distribution
-    x = linspace(0, lam + 15 * sqrt(lam) + 30, 6000);
-    pdf = exp(x * log(lam) - lam - gammaln(x + 1)); pdf = pdf / trapz(x, pdf);
-    cdf = [0, cumsum((pdf(2:end) + pdf(1:end-1)) / 2 .* diff(x))];
-    [cdfUnique, iu] = unique(cdf);
-    for j = 1:numel(k0Grid)
-        k0 = k0Grid(j);
-        F = interp1(x, cdf, a / k0, 'linear', 1);                % model CDF at the data
-        f = interp1(x, pdf, a / k0, 'linear', 0) / k0;           % model density at the data
-        NLL(i, j) = -sum(log(f + 1e-300));
-        KS(i, j) = max(max(abs(F - (1:n) / n)), max(abs(F - (0:n-1) / n)));
-        quantiles = interp1(cdfUnique, x(iu), min(max(((1:n) - 0.5) / n, cdfUnique(1)), cdfUnique(end)));
-        QQ(i, j) = sqrt(mean((a - k0 * quantiles) .^ 2));
-        m = interp1(x, pdf, centers / k0, 'linear', 0) / k0;      % model at the histogram bins,
-        m = m / max(max(m), 1e-300) * max(counts);               % scaled to the histogram peak
-        MSE(i, j) = mean((m - counts) .^ 2);
-    end
-end
-WS = 0.5 * rankAll(MSE) + 0.25 * rankAll(QQ) + 0.25 * rankAll(KS);
-lamWS = lamGrid(bestRow(WS)); lamNLL = lamGrid(bestRow(NLL));
-end
-
-
-function R = rankAll(A)
-% rank of every grid cell among all cells, scaled to (0, 1]
-[~, order] = sort(A(:)); r = zeros(numel(A), 1); r(order) = 1:numel(A);
-R = reshape(r, size(A)) / numel(A);
-end
-
-
-function i = bestRow(A)
-% row (lambda) of the smallest value; ties go to the first lambda, then the first k0
-At = A'; [~, q] = min(At(:)); [~, i] = ind2sub(size(At), q);
-end
-
-
-function [lam, k0] = shapeFit(a)
-% Shape-only fit of lambda and k0 to burst amplitudes a (MS Fig. 5(e)), as the original
-% model curve: the Poisson probabilities at whole numbers of units (zero units excluded)
-% joined by straight lines, at A/k0, normalised over [0, max(A)]; maximum likelihood.
-a = a(:); top = max(a) * 1.001; units = 0:399;
-best = inf;
-for lam0 = [0.3 1 3 10]                                         % several starting points
-    for factor = [0.7 1.5]
-        start = [log(lam0), log(factor * mean(a) / max(lam0, 1))];
-        [p, value] = fminsearch(@(p) shapeNLL(p, a, top, units), start, ...
-            optimset('TolX', 1e-4, 'TolFun', 1e-4, 'MaxIter', 3000, 'MaxFunEvals', 6000, 'Display', 'off'));
-        if value < best, best = value; lam = exp(p(1)); k0 = exp(p(2)); end
-    end
-end
-end
-
-
-function v = shapeNLL(p, a, top, units)
-lam = exp(p(1)); k0 = exp(p(2));
-if lam < 0.05 || lam > 60 || k0 < top / 300 || k0 > 3 * top, v = 1e12; return; end   % bounds
-prob = exp(units * log(lam) - lam - gammaln(units + 1)); prob(1) = 0;
-grid = linspace(0, top / k0, 2000);
-area = trapz(grid, interp1(units, prob, grid, 'linear', 0)) * k0;
-v = -sum(log(interp1(units, prob, a / k0, 'linear', 0) + 1e-300) - log(area));
 end

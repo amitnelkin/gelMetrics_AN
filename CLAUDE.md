@@ -1,6 +1,8 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-56). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-57). Read the relevant section there before redoing anything.
+
+**OPEN TASK for the lab PC chat: `CLAUDE_labpc_fig5.md`: run `SimulationRunWithAnalysis.m` with saveFigures = true, check the new Fig. 5 drawing (section 57). After that the MS Fig. 5 image, caption and section III text need updating (give the user the changes; their Word files).**
 
 **Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 
@@ -176,7 +178,7 @@ Everything downstream of extraction:
 - Open items for the user are listed at the end of Revision_control.docx (Fig. 10(a) arrow label 'lambda', Eq. 1.1 as Word equation, etc.).
 
 ## Where things are (scripts → outputs)
-- **User-facing analysis (sections 45, 54; plain style, the user's request):** `ExperimentalAnalysis.m`, `PaperFigures_revised.m` (Figs. 5-9), `SimulationRunWithAnalysis.m` (scripts; loading, plotting and the Fig. 5 fits are local functions inside them) and the only function files `burstMeasures.m`, `summarizeGranules.m` (all formulas), `compareConditions.m`. Keep this plain style: no new helper files, no cellfun or anonymous functions. The earlier `GelMetricsReport`/`GelMetricsCompare`/`gm_*` are in `legacy/`. One noise copy per granule (as in the paper) varies by up to ~2 points between seeds; ExperimentalAnalysis uses 20, the figure script 1 (paper seeds 18-23, in vitro 18-20).
+- **User-facing analysis (sections 45, 54; plain style, the user's request):** `ExperimentalAnalysis.m`, `PaperFigures_revised.m` (Figs. 6-9), `SimulationRunWithAnalysis.m` (Fig. 5: WS fit repeated, lambda*k0, all measures on simulations; section 57) (scripts; loading, plotting and the Fig. 5 fits are local functions inside them) and the only function files `burstMeasures.m`, `summarizeGranules.m` (all formulas), `compareConditions.m`. Keep this plain style: no new helper files, no cellfun or anonymous functions. The earlier `GelMetricsReport`/`GelMetricsCompare`/`gm_*` are in `legacy/`. One noise copy per granule (as in the paper) varies by up to ~2 points between seeds; ExperimentalAnalysis uses 20, the figure script 1 (paper seeds 18-23, in vitro 18-20).
 - **Manuscript figures:** see the line above; `figures/` holds the PNGs.
 - **Pipeline:** `BatchParticleTracker.ijm`, `read_tables.m`, `collect_intensity.m` (+ wrapper `Collect_intensity_data.m`), `generate_movArray.m`, `analysis.m` (optional 7th output `segInfo` per burst), `getPosition.m`, `modifiedPoissonFit.m`, `generateSim.m` (optional k0), runners `ExperimentalAnalysis.m` / `SimulationRunWithAnalysis.m` (run via `checks/run_runners.m`).
 - **Helpers:** `checks/gm_loadDataset.m`, `analysis/gm_amplitudes_by_trace.m`, `analysis/gelmetricsMLE.m`, `analysis/gelmetricsJoint.m`.
