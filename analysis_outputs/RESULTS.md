@@ -2220,3 +2220,29 @@ At the user's request, the same way as section 49 (dated backups `* - backup - 2
 - `MS_revised_clean.docx`: regenerated, all changes accepted, 25 pages.
 
 **Checks:** every edit read back in the accepted-view text; paragraph diffs against the backups show only the intended changes; edited pages rendered and looked at; all four files open in Word from their real location.
+
+## 56. Drawings of the plain-style scripts checked on the lab PC (2026-10-26)
+
+**What ran** (R2025b, from the repository root):
+- **`PaperFigures_revised.m`:** whole script, about 10 min. It writes `figures/Fig5-9.png/.pdf`.
+- **`ExperimentalAnalysis.m`:** default 4PP7 vs 4PP7-FUS, 20 copies. The figures were exported for the check; `saveFigures` stays false.
+- **`SimulationRunWithAnalysis.m`:**
+  - bursty granules: mean burst 130 [122, 138] a.u. against a true λ·k0 of 120;
+  - constant granules: beyond noise −0.0 [−0.1, 0.1] points, turnover −0.0 [−0.2, 0.2] %/h.
+
+No errors. Every printed number is the same as in section 52/53, for example:
+- Fig. 6 with the in vitro spot sum: net change +0.6 / +13.9 / +16.2 %/h;
+- Fig. 9(c) p = 0.001, and 9(d) one-sided p = 0.031.
+
+**Drawings compared with the section 52 PNGs:**
+- the same panels and data;
+- Fig. 6 on the spot sum, as after section 53.
+
+**Layout fixes, in the plain style; no computation changed:**
+- **Fig. 5(a-c):** the amplitude tick labels were tilted; now `XTickLabelRotation 0`.
+- **Fig. 6(a):** the legend covered bars of the spot-sum histogram; it now has short legend symbols (`ItemTokenSize`).
+- **Figs. 7 and 8:** the panel label "(a)" was cut at the left edge; now loose padding.
+- **`ExperimentalAnalysis.m`:**
+  - `subplot` → `tiledlayout`/`nexttile`, so the panel labels are no longer clipped at the top;
+  - short legend symbols, and the legend in the lower right, clear of the bars;
+  - loose padding in the summary figure, so the bar labels are not cut.

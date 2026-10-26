@@ -50,22 +50,27 @@ end
 
 %% Figure 1: burst size distributions
 f1 = figure('Units', 'inches', 'Position', [1 1 2.2 * min(nCond, 3) 2.3 * ceil(nCond / 3)], 'Color', 'w');
+t1 = tiledlayout(f1, ceil(nCond / 3), min(nCond, 3), 'TileSpacing', 'compact', 'Padding', 'compact');   % a tiled layout keeps the panel labels inside the figure
 for c = 1:nCond
-    ax = subplot(ceil(nCond / 3), min(nCond, 3), c);
+    ax = nexttile(t1);
     plotBurstHist(ax, M{c});
     title(ax, sprintf('%s  (n = %d)', names{c}, numel(vertcat(M{c}.fracReal{:}))), 'Interpreter', 'none');
     if c == 1, ylabel(ax, 'Frequency'); end
     styleAxes(ax, char('a' + c - 1));
-    if c == 1, legend(ax, {'granules', 'burst-free copies'}, 'Location', 'southeast', 'Box', 'off', 'FontSize', 6.5); end
+    if c == 1
+        lg = legend(ax, {'granules', 'burst-free copies'}, 'Location', 'southeast', 'Box', 'off', 'FontSize', 6.5);
+        lg.ItemTokenSize = [10 6];   % short legend symbols, so the legend stays clear of the bars
+    end
 end
 
 %% Figure 2: summary of all conditions (95% CI over movies, then granules)
 f2 = figure('Units', 'inches', 'Position', [1 1 6.5 2.3], 'Color', 'w');
+t2 = tiledlayout(f2, 1, 3, 'TileSpacing', 'compact', 'Padding', 'loose');   % loose: the bar labels are not cut at the bottom
 measures = {'meanBurst', 'turnover', 'net'};
 labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', sprintf('Net change beyond\nbleaching (%%/h)')};
 colors = lines(nCond);
 for j = 1:3
-    ax = subplot(1, 3, j); hold(ax, 'on');
+    ax = nexttile(t2); hold(ax, 'on');
     y = zeros(1, nCond); lo = y; hi = y;
     for c = 1:nCond
         y(c) = M{c}.(measures{j}); lo(c) = M{c}.([measures{j} '_lo']); hi(c) = M{c}.([measures{j} '_hi']);

@@ -105,7 +105,7 @@ if makePlots
     for j = 1:3
         ax = nexttile(t); li = find(lams == show(j));
         histogram(ax, amps{li, 1}, 0:10:1000, 'Normalization', 'pdf', 'FaceColor', RED, 'EdgeColor', 'none', 'FaceAlpha', 1);
-        xlim(ax, [0 1000]); ylim(ax, [0 0.012]); set(ax, 'XTick', 0:250:1000, 'YTick', 0:0.005:0.01); ytickformat(ax, '%.3f');
+        xlim(ax, [0 1000]); ylim(ax, [0 0.012]); set(ax, 'XTick', 0:250:1000, 'YTick', 0:0.005:0.01, 'XTickLabelRotation', 0); ytickformat(ax, '%.3f');   % keep the tick labels level
         xlabel(ax, 'Amplitude (a.u.)');
         if j == 1, ylabel(ax, 'Frequency'); end
         text(ax, 0.95, 0.85, sprintf('\\lambda_{sim}=%d', show(j)), 'Units', 'normalized', 'HorizontalAlignment', 'right', 'FontWeight', 'bold', 'FontSize', 9);
@@ -151,7 +151,10 @@ if makePlots
         title(ax, sprintf('protein:RNA %s  (n = %d)', ratio{k}, numel(vertcat(M6{k}.fracReal{:}))));
         if k == 1, ylabel(ax, 'Frequency'); end
         styleAxes(ax, char('a' + k - 1));
-        if k == 1, legend(ax, {'granules', 'burst-free copies'}, 'Location', 'east', 'Box', 'off', 'FontSize', 6); end
+        if k == 1
+            lg = legend(ax, {'granules', 'burst-free copies'}, 'Location', 'east', 'Box', 'off', 'FontSize', 6);
+            lg.ItemTokenSize = [10 6];   % short legend symbols, so the legend stays clear of the bars
+        end
     end
     measures = {'meanBurst', 'turnover', 'net'};
     labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', sprintf('Net change beyond\nbleaching (%%/h)')};
@@ -182,7 +185,7 @@ for k = 1:2
 end
 if makePlots
     f = figure('Units', 'inches', 'Position', [1 1 6.5 2.3], 'Color', 'w');
-    t = tiledlayout(f, 1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+    t = tiledlayout(f, 1, 2, 'TileSpacing', 'compact', 'Padding', 'loose');   % loose: the panel label (a) is not cut at the left
     for k = 1:2
         ax = nexttile(t); plotBurstHist(ax, M7{k});
         title(ax, sprintf('%s  (n = %d)', labels{k}, numel(vertcat(M7{k}.fracReal{:}))));
@@ -206,7 +209,7 @@ compareConditions(M8{1}, M7{1}, 'Qbeta 5x', 'PP7 4x');          % Qbeta vs PP7 (
 compareConditions(M8{2}, M7{2}, 'Qbeta 10x', 'PP7 30x');
 if makePlots
     f = figure('Units', 'inches', 'Position', [1 1 6.5 2.3], 'Color', 'w');
-    t = tiledlayout(f, 1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+    t = tiledlayout(f, 1, 2, 'TileSpacing', 'compact', 'Padding', 'loose');   % loose: the panel label (a) is not cut at the left
     for k = 1:2
         ax = nexttile(t); plotBurstHist(ax, M8{k});
         title(ax, sprintf('%s  (n = %d)', labels{k}, numel(vertcat(M8{k}.fracReal{:}))));
