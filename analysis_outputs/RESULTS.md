@@ -2407,3 +2407,12 @@ Note: the user had uncommitted edits in `burstMeasures.m` during this test (with
 - The three methods agree within 0.12 points of burst size and 1.9 %/h of turnover, far inside the CIs.
 - The exponential gives the copies slightly less bleaching shape, so they are a hair less noisy and the "beyond noise" values are a hair larger; no conclusion changes.
 - The choice of trend is the user's (Methods wording); any of the three can be defended with this table.
+
+## 62. Bursts in intensity units starting at a level <= 0 (laptop, 2026-10-27)
+
+**Question (user):** `burstMeasures.m` drops segReal bursts whose starting level is <= 0 (they can't be divided by it), but segAU has no such filter. Does it matter?
+
+**Count** (`checks/segau_level_test.m` -> `analysis_outputs/trend_shape/segau_level.csv`; all nine datasets, traces >= 180 frames, window 13, SP 12): **0 of 1762 negative bursts** start at a level <= 0. The mean and median burst sizes are identical with or without the filter (e.g. in vitro 129 / 233 / 1075 a.u.).
+
+- Adding `segAU(:, 6) > 0` would change nothing on the paper's data; it only makes the two lists consistent in principle.
+- Note: the run used the working copy of `analysis.m`, which had uncommitted user edits at the time; the numbers equal the paper's.
