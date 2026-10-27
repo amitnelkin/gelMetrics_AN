@@ -2352,3 +2352,34 @@ The figure must be made in MATLAB, by running `SimulationRunWithAnalysis.m`.
 - Sec. IV row and Fig. 5 row rewritten;
 - Appendix F row: Fig. 15(c) noted;
 - new check-list item: check that Sec. IV reads well around the user's own edits.
+
+## 60. Trend of the burst-free copies: cubic vs trenddecomp (laptop, 2026-10-27)
+
+**Question (user):** the copies take their bleaching shape from a cubic fit per trace (median over traces). Would MATLAB's `trenddecomp` (default settings) be better? On one example trace the cubic followed a late step drop and curled down at the end, while `trenddecomp` stayed smooth.
+
+**Rule fixed beforehand:** if the shared shapes agree within ~1%, keep the cubic; otherwise check whether the reported numbers move.
+
+**1. Shared shapes** (`checks/trend_shape_test.m` -> `analysis_outputs/trend_shape/summary.csv`, `shapes.csv`):
+- Most datasets agree within 0.4-1%.
+- Larger differences, mostly in the first frames: 30PP7-FUS 3.1%, 5Qb 1.05%, in vitro 10:1 1.4%, in vitro 100:1 7.8%.
+- Single traces differ more (median 2-6%), but the median over traces cancels most of it.
+
+**2. Effect on the measures** (`checks/trend_shape_test2.m`, all nine datasets, 20 copies, seed 1, on copies of the committed `burstMeasures.m`: `checks/burstMeasures_ref.m` and `checks/burstMeasures_td.m`, which differ only in the trend line; -> `measures.csv`):
+
+| dataset | burst size beyond noise, cubic / trenddecomp (points) | turnover beyond noise, cubic / trenddecomp (%/h) |
+|---|---|---|
+| 4PP7 | -0.36 / -0.37 | 2.9 / 3.0 |
+| 4PP7-FUS | 2.02 / 2.07 | 4.8 / 5.1 |
+| 30PP7 | 1.18 / 1.21 | 4.4 / 4.7 |
+| 30PP7-FUS | 1.37 / 1.41 | 3.3 / 4.0 |
+| 5Qb | 1.95 / 2.03 | 9.1 / 9.3 |
+| 10Qb | 2.08 / 2.12 | 9.7 / 9.9 |
+| in vitro 1:1 | 2.04 / 2.12 | 18.0 / 18.0 |
+| in vitro 10:1 | 1.80 / 1.85 | 16.3 / 16.6 |
+| in vitro 100:1 | 5.49 / 5.50 | 30.7 / 29.5 |
+
+- The changes are at most 0.08 points of burst size and at most 1.2 %/h of turnover, a few % of the CI widths.
+- Net change doesn't use the copies, so it is unchanged.
+- **Decision: keep the cubic.** It changes nothing material and adds no setting to defend. The test can be quoted if a referee asks.
+
+Note: the user had uncommitted edits in `burstMeasures.m` during this test (with an indexing error at line 42, `G{end+1}` after `G{end+1} = ...`), so the test used copies of the committed version and the user's file was not touched.
