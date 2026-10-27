@@ -2416,3 +2416,38 @@ Note: the user had uncommitted edits in `burstMeasures.m` during this test (with
 
 - Adding `segAU(:, 6) > 0` would change nothing on the paper's data; it only makes the two lists consistent in principle.
 - Note: the run used the working copy of `analysis.m`, which had uncommitted user edits at the time; the numbers equal the paper's.
+
+## 63. Movies or granules as the replicates? (laptop, 2026-10-27)
+
+**Question (user):** granules differ a lot, so why not treat them as replicates? Test: `checks/replicate_test.m` (copy of the committed `burstMeasures.m`, 20 copies, seed 1; same data and copies, only the resampling unit differs) -> `analysis_outputs/replicates/{icc,ci,p}.csv`.
+
+**Between-movie share of the variation (ICC; 0 = the movie doesn't matter, 1 = granules of a movie are alike):**
+
+| dataset | brightness | frame noise | median burst size (%) | net change | turnover beyond noise |
+|---|---|---|---|---|---|
+| 4PP7 | 0.50 | 0.32 | 0.08 | 0.22 | 0.02 |
+| 4PP7-FUS | 0.78 | 0.38 | 0.21 | 0.00 | -0.03 |
+| 30PP7 | 0.91 | 0.63 | 0.05 | 0.13 | 0.02 |
+| 30PP7-FUS | 0.29 | 0.07 | 0.02 | -0.06 | -0.02 |
+| 5Qb | 0.41 | 0.03 | 0.00 | 0.10 | 0.06 |
+| 10Qb | 0.51 | 0.04 | 0.03 | 0.13 | 0.03 |
+| in vitro 1:1 | 0.39 | 0.38 | 0.58 | 0.64 | 0.32 |
+| in vitro 10:1 | 0.06 | 0.04 | 0.72 | 0.12 | 0.37 |
+| in vitro 100:1 | 0.62 | 0.86 | 0.75 | 0.28 | 0.76 |
+
+- In vivo, burst size and turnover barely depend on the movie (ICC 0-0.08; 4PP7-FUS burst size 0.21). Brightness and noise do (0.3-0.9).
+- In vitro, everything depends strongly on the movie (ICC up to 0.76): there granules are clearly not independent.
+
+**95% CIs with granules as replicates** are 0.2-0.9x as wide as with movies (mostly 0.5-0.75x).
+
+**p values, movie-level / granule-level** (two-sided; one-sided where stated in the paper):
+- 4PP7-FUS vs 4PP7: burst size beyond noise 0.18 / 0.085 (one-sided 0.090 / 0.042); net change 0.14 / 0.021; turnover 0.53 / 0.54; brightness 0.0004 / 0.0001.
+- 30PP7-FUS vs 30PP7: nothing significant either way, except brightness 0.74 / 0.020.
+- 5Qb vs 4PP7 and 10Qb vs 30PP7: significant either way (turnover 0.019 / 0.004 and 0.030 / 0.003).
+- In vitro 10:1 and 100:1 vs 1:1: median burst in a.u. 0.17 / 0.007 and 0.097 / 0.008; burst size beyond noise, turnover and net change are not significant either way (granule-level 0.06-0.89).
+
+**Reading:**
+- Granule-level analysis makes several trends "significant" (the FUS burst size, the FUS net change, the in vitro median burst).
+- Where the movie matters (in vitro), counting granules as independent is clearly wrong, because the ICC is high.
+- Choosing the unit after seeing which one gives smaller p values would be the selective reporting Referee 2 criticised.
+- **Recommendation:** keep movies as the replicates (decided in advance; conservative; the referee asked for it). Granule-level results can be given as a sensitivity check, stating that in vivo burst measures show little movie dependence.
