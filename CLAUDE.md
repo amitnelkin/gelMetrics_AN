@@ -1,6 +1,6 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-60). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-61). Read the relevant section there before redoing anything.
 
 **Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 

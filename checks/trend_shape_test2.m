@@ -6,11 +6,13 @@ names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'vitro_1_1', '
 T = table();
 for d = 1:numel(names)
     [S, B, G, mv] = loadData(names{d});
-    for method = 1:2
+    for method = 1:3
         if method == 1
             M = burstMeasures_ref(S, B, G, mv, 20, 1); m = "poly3";
-        else
+        elseif method == 2
             M = burstMeasures_td(S, B, G, mv, 20, 1); m = "trenddecomp";
+        else
+            M = burstMeasures_exp(S, B, G, mv, 20, 1); m = "exponential";
         end
         fprintf('%-12s %-11s size beyond %.2f [%.2f, %.2f]  turnover %.1f [%.1f, %.1f]  copies %.2f  noise share %.2f\n', names{d}, m, ...
             M.sizeBeyond, M.sizeBeyond_lo, M.sizeBeyond_hi, M.turnover, M.turnover_lo, M.turnover_hi, M.sizeCopies, M.noiseShare);

@@ -2383,3 +2383,27 @@ The figure must be made in MATLAB, by running `SimulationRunWithAnalysis.m`.
 - **Decision: keep the cubic.** It changes nothing material and adds no setting to defend. The test can be quoted if a referee asks.
 
 Note: the user had uncommitted edits in `burstMeasures.m` during this test (with an indexing error at line 42, `G{end+1}` after `G{end+1} = ...`), so the test used copies of the committed version and the user's file was not touched.
+
+## 61. Trend of the copies: single exponential as a third option (laptop, 2026-10-27)
+
+**Question (user):** test the classic bleaching model as well, a single exponential per trace (`exp` of a straight-line fit to the log). Same tests as section 60 (`checks/trend_shape_test.m`, `checks/trend_shape_test2.m`, `checks/burstMeasures_exp.m`, a copy of the committed `burstMeasures.m`; the user's uncommitted files were not touched).
+
+**Shared shape, exponential vs cubic:** 0.6-2.4% for most datasets; 30PP7-FUS 3.6%; in vitro 100:1 10.0%. Single traces: median 2-9%.
+
+**Measures** (20 copies, seed 1; cubic / trenddecomp / exponential):
+
+| dataset | burst size beyond noise (points) | turnover beyond noise (%/h) |
+|---|---|---|
+| 4PP7 | -0.36 / -0.37 / -0.36 | 2.9 / 3.0 / 3.2 |
+| 4PP7-FUS | 2.02 / 2.07 / 2.10 | 4.8 / 5.1 / 5.1 |
+| 30PP7 | 1.18 / 1.21 / 1.22 | 4.4 / 4.7 / 4.6 |
+| 30PP7-FUS | 1.37 / 1.41 / 1.46 | 3.3 / 4.0 / 4.0 |
+| 5Qb | 1.95 / 2.03 / 2.07 | 9.1 / 9.3 / 9.5 |
+| 10Qb | 2.08 / 2.12 / 2.15 | 9.7 / 9.9 / 10.1 |
+| in vitro 1:1 | 2.04 / 2.12 / 2.16 | 18.0 / 18.0 / 18.4 |
+| in vitro 10:1 | 1.80 / 1.85 / 1.90 | 16.3 / 16.6 / 16.8 |
+| in vitro 100:1 | 5.49 / 5.50 / 5.53 | 30.7 / 29.5 / 28.8 |
+
+- The three methods agree within 0.12 points of burst size and 1.9 %/h of turnover, far inside the CIs.
+- The exponential gives the copies slightly less bleaching shape, so they are a hair less noisy and the "beyond noise" values are a hair larger; no conclusion changes.
+- The choice of trend is the user's (Methods wording); any of the three can be defended with this table.

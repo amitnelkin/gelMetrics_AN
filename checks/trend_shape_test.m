@@ -22,24 +22,28 @@ for d = 1:numel(names)
         L(k) = numel(X{k});
     end
     Lmin = min(L);
-    shapesPoly = zeros(n, Lmin); shapesTD = zeros(n, Lmin); perTraceDiff = zeros(n, 1);
+    shapesPoly = zeros(n, Lmin); shapesTD = zeros(n, Lmin); shapesExp = zeros(n, Lmin); perTraceDiff = zeros(n, 1); perTraceDiffExp = zeros(n, 1);
     for k = 1:n
         x = (1:L(k))';
         trendPoly = polyval(polyfit(x, X{k}, 3), x);
         trendTD = trenddecomp(X{k});
+        trendExp = exp(polyval(polyfit(x, log(max(X{k}, 1)), 1), x));   % single exponential
         shapesPoly(k, :) = trendPoly(1:Lmin)' / mean(trendPoly(1:Lmin));
         shapesTD(k, :) = trendTD(1:Lmin)' / mean(trendTD(1:Lmin));
         perTraceDiff(k) = 100 * max(abs(shapesPoly(k, :) - shapesTD(k, :)));
+        shapesExp(k, :) = trendExp(1:Lmin)' / mean(trendExp(1:Lmin));
+        perTraceDiffExp(k) = 100 * max(abs(shapesPoly(k, :) - shapesExp(k, :)));
     end
-    shapePoly = median(shapesPoly, 1); shapeTD = median(shapesTD, 1);
+    shapePoly = median(shapesPoly, 1); shapeTD = median(shapesTD, 1); shapeExp = median(shapesExp, 1);
+    fprintf('%-12s exponential vs cubic: shared shapes differ by at most %.2f %% (per trace: median %.1f %%)\n', names{d}, 100 * max(abs(shapePoly - shapeExp)), median(perTraceDiffExp));
     diffShared = 100 * max(abs(shapePoly - shapeTD));
     fprintf('%-12s %3d traces: shared shapes differ by at most %.2f %% (per trace: median %.1f %%, 90th pct %.1f %%)\n', ...
         names{d}, n, diffShared, median(perTraceDiff), prctile(perTraceDiff, 90));
     summary = [summary; table(string(names{d}), n, diffShared, median(perTraceDiff), prctile(perTraceDiff, 90), ...
         100 * (shapePoly(end) - shapePoly(1)), 100 * (shapeTD(end) - shapeTD(1)), ...
         'VariableNames', {'dataset', 'traces', 'maxDiffShared_pct', 'medianDiffPerTrace_pct', 'p90DiffPerTrace_pct', 'dropPoly_pct', 'dropTD_pct'})]; %#ok<AGROW>
-    allShapes = [allShapes; table(repmat(string(names{d}), Lmin, 1), (1:Lmin)', shapePoly', shapeTD', ...
-        'VariableNames', {'dataset', 'frame', 'poly3', 'trenddecomp'})]; %#ok<AGROW>
+    allShapes = [allShapes; table(repmat(string(names{d}), Lmin, 1), (1:Lmin)', shapePoly', shapeTD', shapeExp', ...
+        'VariableNames', {'dataset', 'frame', 'poly3', 'trenddecomp', 'exponential'})]; %#ok<AGROW>
 end
 writetable(summary, fullfile(outDir, 'summary.csv'));
 writetable(allShapes, fullfile(outDir, 'shapes.csv'));
