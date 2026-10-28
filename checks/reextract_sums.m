@@ -11,7 +11,7 @@ addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(checksDir);
 outDir = fullfile(repoDir, 'in_vivo_reextracted', 'after_R2_sums');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 for ds = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}
-    [I, B, ~, S] = collect_intensity(fullfile(workRoot, ds{1}, 'work'), struct('offset', 200));
+    [I, B, ~, S] = collect_intensity_tests(fullfile(workRoot, ds{1}, 'work'), struct('offset', 200));
     ref = load(fullfile(repoDir, 'in_vivo_reextracted', 'after_R2_offset', [ds{1} '_data.mat']));
     same = isequal(numel(I), numel(ref.intensity)) && all(cellfun(@(a, b) isequal(a, b), I(2:end), ref.intensity(2:end)));
     fprintf('%s: %d traces, mean traces identical to R2: %d\n', ds{1}, numel(I) - 1, same);

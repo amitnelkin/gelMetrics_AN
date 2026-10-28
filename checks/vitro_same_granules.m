@@ -68,7 +68,7 @@ for j = 1:size(J, 1)
         order = [order, [tr(q).stored]]; %#ok<AGROW>
         info(end+1,:) = {xs(f).name(1:3), 1, 1, 361, numel(q), numel(q), J{j,3}}; %#ok<AGROW>
     end
-    [intensity, background, ~, sums] = collect_intensity(sw, struct('offset', 200));
+    [intensity, background, ~, sums] = collect_intensity(sw, 200);
     assert(numel(intensity) - 1 == numel(order));
     fD = fullfile(outDir, [J{j,3} '_data.mat']); fB = fullfile(outDir, [J{j,3} '_background.mat']);
     if isfile(fD) && isfile(fB)

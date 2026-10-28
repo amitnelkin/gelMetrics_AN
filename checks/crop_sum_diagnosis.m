@@ -47,7 +47,7 @@ writetable(cell2table(rad, 'VariableNames', {'dataset','radius','medianIntensity
 % 2-4. variant sums, fractions, near-cell response
 tVec = (0:360) * 10/60; fr = {}; nc = {};
 for d = 1:numel(names)
-    [I, B, ~, S] = collect_intensity(fullfile(workRoot, names{d}, 'work'), struct('offset', 200, 'sumDiag', true));
+    [I, B, ~, S] = collect_intensity_tests(fullfile(workRoot, names{d}, 'work'), struct('offset', 200, 'sumDiag', true));
     keep = [false, cellfun(@numel, I(2:end)) >= 180];
     Bk = B(keep)';
     V = {'spotsum', S.spotSum; 'box7', S.cropSumW{1}; 'box10', S.cropSumW{2}; 'box14', S.cropSumW{3}; ...

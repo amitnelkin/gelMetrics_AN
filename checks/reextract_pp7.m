@@ -41,7 +41,7 @@ for s = 1:size(stages,1)
     for d = 1:numel(datasets)
         work = fullfile(workRoot, datasets{d}, 'work');
         fprintf('%s  %s\n', stages{s,1}, datasets{d});
-        [intensity, background, info] = collect_intensity(work, stages{s,2});
+        [intensity, background, info] = collect_intensity(work, stages{s,2}.offset);
         save(fullfile(outDir, [datasets{d} '_data.mat']), 'intensity');
         save(fullfile(outDir, [datasets{d} '_background.mat']), 'background');
         I = struct2table(info, 'AsArray', true);

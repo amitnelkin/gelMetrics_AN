@@ -5,8 +5,9 @@
 % the fluorescence data (intensity of the granule, and
 % intensity of its surrounding environment) from each granule is collected
 % and saved for further analysis.
-% The work is done by collect_intensity.m (fluorescence channel only,
-% Mosaic frame/coordinate mapping, TIFF <-> _xy.mat paired by name).
+% The work is done by collect_intensity.m: the original loop, with the fixes
+% listed at its top (fluorescence channel only, Mosaic frame/coordinate mapping,
+% skipped frames, camera offset, TIFF <-> _xy.mat paired by name).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clearvars;
 close all;

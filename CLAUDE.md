@@ -1,6 +1,6 @@
 # CLAUDE.md — GelMetrics revision (handoff, 2026-10-25)
 
-This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-63). Read the relevant section there before redoing anything.
+This file lets a new chat continue the revision work. The full narrative with every number is `analysis_outputs/RESULTS.md` (sections 1-64). Read the relevant section there before redoing anything.
 
 **Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 
@@ -107,7 +107,7 @@ Everything downstream of extraction:
   - R3 (5 px aperture): reverted at the user's request; kept on disk only.
   - **R4** (`opts.thrWin = 31`): steady thresholds, test only (section 23).
   - **R5** (`opts.fixedMask`): one fixed mask per granule, test only (section 33).
-- `collect_intensity(path, struct('offset',200, 'thrWin',0, 'fixedMask',false, ...))`. Defaults reproduce R2.
+- `collect_intensity(path, offset)` (default 200 = R2): the original loop plus seven marked fixes (section 64). The test options (thrWin, fixedMask, sumDiag) are in `checks/collect_intensity_tests.m(path, struct(...))`.
 - `extraction_info*.csv` (in `after_R2_offset`): movie names and kept-track counts, used to assign movie ids to traces.
 
 ## Main findings so far (details: RESULTS.md section given)

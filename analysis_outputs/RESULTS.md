@@ -2451,3 +2451,23 @@ Note: the user had uncommitted edits in `burstMeasures.m` during this test (with
 - Where the movie matters (in vitro), counting granules as independent is clearly wrong, because the ICC is high.
 - Choosing the unit after seeing which one gives smaller p values would be the selective reporting Referee 2 criticised.
 - **Recommendation:** keep movies as the replicates (decided in advance; conservative; the referee asked for it). Granule-level results can be given as a sensitivity check, stating that in vivo burst measures show little movie dependence.
+
+## 64. collect_intensity.m simplified back towards the original script (laptop, 2026-10-28)
+
+**The user's request:** the new extraction code should look like the original `Collect_intensity_data.m`, with only the necessary changes.
+
+**Now:**
+- `collect_intensity.m` is the original loop (same crop, `multithresh(4)`, spot = top two classes, cell = middle two, tracks of >= 24 points) with seven fixes, each marked `[fix n]` in the code:
+  1. fluorescence channel only;
+  2. page = Mosaic frame + 1, first point kept;
+  3. x + 1, y + 1;
+  4. each value at its own frame, skipped frames filled;
+  5. camera offset subtracted;
+  6. TIFF paired with `<name>_xy.mat` by name;
+  7. crop limits by rows / columns.
+- It also returns the spot sum and spot area. The second argument is now simply the offset (default 200).
+- The test options (steady thresholds R4, fixed mask R5, crop/ring sums, `cropSum`) moved unchanged to `checks/collect_intensity_tests.m`. The scripts that use them (`crop_sum_diagnosis`, `reextract_fixed`, `reextract_steady`, `reextract_sums`) now call it. `reextract_pp7` and `vitro_same_granules` call the simplified function with the offset.
+
+**Check** (`checks/collect_intensity_equiv_test.m`): on synthetic movies (non-square, a track starting at frame 0, skipped frames, granules at the edge, one short track), the old and new functions give bit-identical intensity, background, spot sum, spot area and movie info at offset 200 and 0. The real movies are only on the lab PC, so the check on real data is not done; the code path is the same, so no difference is expected.
+
+The user's uncommitted files (`analysis.m`, `burstMeasures.m`, `summarizeGranules.m`, `SimulationRunWithAnalysis.m`) were not touched.
