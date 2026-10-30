@@ -6,6 +6,14 @@ function [timeBetweenPos,timeBetweenNeg,ampPos,ampNeg,ampVar,eventsPerSignal,seg
     analysis(signals,background,timeVecTotal,movingAverageWindowSpan,...
     stringencyParameter,plotMin,plotMax)
 
+% segInfo:
+% 1	granule (trace) number
+% 2	direction (+1 / −1)
+% 3	first frame of burst
+% 4	last frame of burst
+% 5	amplitude (burst size)
+% 6 level at the start
+% 7 level at the end
 
 % Initialize variables for data aggregation
 timeBetweenPos = -Inf;
@@ -55,7 +63,7 @@ for i = 1:size(signals,1)
     [f,gof,output] = fit(timeVec',currentBackground','poly3');
     currentBackground = feval(f,timeVec);
     % Deal with outliers (mostly results of experimental noise)
-    currentSignal = filloutliers(currentSignal,'nearest','movmedian',3*movingAverageWindowSpan); % local outliers only (global mean could clip real plateaus)
+    currentSignal = filloutliers(currentSignal,'nearest','mean');
     % Apply moving average filter on the signal
     currentSignal = smoothdata(currentSignal, 'movmean', movingAverageWindowSpan);
     % Remove background and denoise from photobleaching component
