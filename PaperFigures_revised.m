@@ -14,6 +14,7 @@
 %% Settings
 clearvars; close all; clc;
 addpath('legacy');                % the original lambda/k0 code (only for reference)
+addpath('checks');                % compareConditions_ref.m: the function version of compareConditions.m
 if ~exist('figures', 'dir'), mkdir('figures'); end
 makePlots = true;                 % false: compute and print the numbers only
 nCopies = 1;                      % 1 = as in the paper; 20 = stable noise reference
@@ -32,7 +33,7 @@ names = {'vitro_1_1', 'vitro_10_1', 'vitro_100_1'}; ratio = {'1:1', '10:1', '100
 M6 = cell(1, 3);
 for k = 1:3
     d = loadPaperDataset(names{k});
-    M6{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}));
+    M6{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}), 13, 12, 361);   % window 13, SP 12, 361 frames
     fprintf('Fig 6 %s: median %.1f vs %.1f %%, mean burst %.0f [%.0f, %.0f], turnover %.1f [%.1f, %.1f], net %.1f [%.1f, %.1f]\n', ratio{k}, ...
         M6{k}.sizeGranules, M6{k}.sizeCopies, M6{k}.meanBurst, M6{k}.meanBurst_lo, M6{k}.meanBurst_hi, ...
         M6{k}.turnover, M6{k}.turnover_lo, M6{k}.turnover_hi, M6{k}.net, M6{k}.net_lo, M6{k}.net_hi);
@@ -73,7 +74,7 @@ names = {'4PP7', '30PP7'}; labels = {'PP7 + QCP-5x/PCP-4x', 'PP7 + PCP-30x'};
 M7 = cell(1, 2);
 for k = 1:2
     d = loadPaperDataset(names{k});
-    M7{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}));
+    M7{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}), 13, 12, 361);   % window 13, SP 12, 361 frames
     fprintf('Fig 7 %s: median %.1f vs %.1f %%, turnover beyond noise %.1f [%.1f, %.1f] %%/h\n', labels{k}, ...
         M7{k}.sizeGranules, M7{k}.sizeCopies, M7{k}.turnover, M7{k}.turnover_lo, M7{k}.turnover_hi);
 end
@@ -95,12 +96,12 @@ names = {'5Qb', '10Qb'}; labels = {['Q' char(946) ' + QCP-5x/PCP-4x'], ['Q' char
 M8 = cell(1, 2);
 for k = 1:2
     d = loadPaperDataset(names{k});
-    M8{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}));
+    M8{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}), 13, 12, 361);   % window 13, SP 12, 361 frames
     fprintf('Fig 8 %s: median %.1f vs %.1f %%, turnover beyond noise %.1f [%.1f, %.1f] %%/h\n', labels{k}, ...
         M8{k}.sizeGranules, M8{k}.sizeCopies, M8{k}.turnover, M8{k}.turnover_lo, M8{k}.turnover_hi);
 end
-compareConditions(M8{1}, M7{1}, 'Qbeta 5x', 'PP7 4x');          % Qbeta vs PP7 (text of Sec. V.B)
-compareConditions(M8{2}, M7{2}, 'Qbeta 10x', 'PP7 30x');
+compareConditions_ref(M8{1}, M7{1}, 'Qbeta 5x', 'PP7 4x');          % Qbeta vs PP7 (text of Sec. V.B)
+compareConditions_ref(M8{2}, M7{2}, 'Qbeta 10x', 'PP7 30x');
 if makePlots
     f = figure('Units', 'inches', 'Position', [1 1 6.5 2.3], 'Color', 'w');
     t = tiledlayout(f, 1, 2, 'TileSpacing', 'compact', 'Padding', 'loose');   % loose: the panel label (a) is not cut at the left
@@ -119,10 +120,10 @@ names = {'4PP7-FUS', '30PP7-FUS'}; labels = {'PP7-FUS + QCP-5x/PCP-4x', 'PP7-FUS
 M9 = cell(1, 2);
 for k = 1:2
     d = loadPaperDataset(names{k});
-    M9{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}));
+    M9{k} = burstMeasures(d.spotMean, d.background, d.spotSum, d.movie, nCopies, seeds(names{k}), 13, 12, 361);   % window 13, SP 12, 361 frames
 end
-T4 = compareConditions(M9{1}, M7{1}, 'PP7-FUS 4x', 'PP7 4x');
-T30 = compareConditions(M9{2}, M7{2}, 'PP7-FUS 30x', 'PP7 30x');
+T4 = compareConditions_ref(M9{1}, M7{1}, 'PP7-FUS 4x', 'PP7 4x');
+T30 = compareConditions_ref(M9{2}, M7{2}, 'PP7-FUS 30x', 'PP7 30x');
 pBright4 = T4.p(strcmp(T4.measure, 'brightnessPooled')); pBright30 = T30.p(strcmp(T30.measure, 'brightnessPooled'));
 pBeyond4 = T4.p(strcmp(T4.measure, 'sizeBeyond')); pBeyond4one = T4.p_AgtB(strcmp(T4.measure, 'sizeBeyond'));
 pBeyond30 = T30.p(strcmp(T30.measure, 'sizeBeyond'));

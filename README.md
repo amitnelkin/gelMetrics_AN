@@ -34,10 +34,12 @@ Every measure has a 95% confidence interval (movies resampled, then granules wit
 
 ### Running the analysis
 - **Figures of the paper:** `PaperFigures_revised.m`, one section per figure (Figs. 5-9). Each section starts from the repository data, runs the same code as `ExperimentalAnalysis.m`, and saves the figure in `figures/`. It reproduces the manuscript numbers (the noise copies use the paper's seeds); Figure 5 takes about 8 min. Run it from the repository folder.
-- **Experimental data:** `ExperimentalAnalysis.m`. Analyzes any number of conditions (datasets of the paper or your own folders), tests each against the first one, and draws the burst size distributions (as Figs. 6-9) and a summary of mean burst size, turnover and net change (as Figs. 6 and 10).
+- **Experimental data:** `ExperimentalAnalysis.m`. Reports any number of conditions (datasets of the paper or your own folders), each on its own: the original burst plots, every measure with its 95% CI, the burst size distributions (as Figs. 6-9) and a summary of mean burst size, turnover and net change (as Figs. 6 and 10).
+- **Comparing conditions:** `compareConditions.m`. List pairs of conditions; for each pair it prints every measure of both and the p value from shuffling whole movies between them.
+- **Appendix figures (algorithm debugging):** `AppendixFigures.m`, one section per appendix figure (Figs. 11-18). Run the first section, then any figure section.
 - **Simulated data:** `SimulationRunWithAnalysis.m`. Bursty and constant (burst-free) simulated granules with known parameters, through the same code.
-- **Datasets of the paper:** at the top of `ExperimentalAnalysis.m`, by name: `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
-  - The data are the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed).
+- **Datasets of the paper:** at the top of `ExperimentalAnalysis.m` and `compareConditions.m`, by name: `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
+  - They are in `paper_data/<name>/`, in the same four files that `Collect_intensity_data.m` writes for new data. They are copies of the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed), made by `checks/make_paper_data.m`.
   - `in_vivo_experiments/` and `in_vitro_experiments/` hold the original traces, for reference only.
 
 ### New data pipeline
@@ -46,20 +48,22 @@ Every measure has a 95% confidence interval (movies resampled, then granules wit
    > For a detailed walkthrough of this step, see https://github.com/naorgk/slncRNA_Analysis/blob/main/Full%20pipeline%20walkthrough.pdf
 3. Run `read_tables.m` in the folder of the CSV files; it writes one `<movie>_xy.mat` per movie.
 4. Run `Collect_intensity_data.m` and select the folder containing the `.tif` movies and the `_xy.mat` files (one folder per condition).
-   - Movies and track files are paired by name. Only the fluorescence channel is read, and the camera offset (200 a.u. for our EMCCD; set `opts.offset` in `collect_intensity.m` for your camera) is subtracted.
+   - Movies and track files are paired by name. Only the fluorescence channel is read, and the camera offset (200 a.u. for our EMCCD; set `offset` at the top of `Collect_intensity_data.m` for your camera) is subtracted.
    - It writes `data.mat` (spot intensity), `background.mat` (surrounding intensity), `spotsum.mat` (integrated granule intensity) and `movies.mat` (the movie of every trace).
-5. In `ExperimentalAnalysis.m`, use Option 2: list your folders (`loadFolder('<folder>')`, one per condition) and run it.
+5. Put the folders of all conditions in one folder. In `ExperimentalAnalysis.m` (and `compareConditions.m`), set `dataFolder` to that folder and list the condition folders' names in `conditions` (or `pairs`).
 
 ### Main files
 | file | role |
 |---|---|
-| `ExperimentalAnalysis.m` | analysis of any conditions: numbers, tests and figures (loading and plotting are written inside the script) |
+| `ExperimentalAnalysis.m` | analysis of any conditions, each on its own: numbers and figures (loading and plotting are written inside the script) |
 | `burstMeasures.m` | one condition: burst-free copies, burst detection, every measure and its 95% CI |
 | `summarizeGranules.m` | the formulas of all the measures (used by the two files around it) |
-| `compareConditions.m` | movie-level test between two conditions |
-| `PaperFigures_revised.m` | the manuscript figures 5-9 (the λ fits of Fig. 5 are at the end of the file) |
+| `compareConditions.m` | movie-level tests between pairs of conditions (a script) |
+| `AppendixFigures.m` | the appendix figures 11-18 (algorithm debugging), one section per figure |
+| `PoissonFit2WS.m` | the WS fit of Eq. (1.9) (used for Fig. 5 and the appendix) |
+| `PaperFigures_revised.m` | the manuscript figures 6-9 (Fig. 5: `SimulationRunWithAnalysis.m`) |
 | `analysis.m`, `getPosition.m`, `runLengthEncode.m` | burst detection (smoothing, runs of monotone change) |
-| `collect_intensity.m`, `Collect_intensity_data.m`, `generate_movArray.m`, `read_tables.m` | extraction of the granule and background intensities from the movies |
+| `Collect_intensity_data.m`, `generate_movArray.m`, `read_tables.m` (`collect_intensity.m`: the same as a function, used by `checks/`) | extraction of the granule and background intensities from the movies |
 | `generateSim.m` | simulated granules |
 | `legacy/` | the original λ/k0 fit and runners, and an earlier, more compact version of the analysis (`GelMetricsReport.m` etc.), for reference |
 | `checks/`, `analysis/`, `analysis_outputs/` | the revision analyses behind every number of the paper (see `analysis_outputs/RESULTS.md`) |

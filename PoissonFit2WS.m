@@ -1,10 +1,13 @@
 
-function [lamWS, k0WS] = PoissonFit2WS(data, lambda, K0Vector, numBins)
+function [lamWS, k0WS, WS, scores] = PoissonFit2WS(data, lambda, K0Vector, numBins)
 %   p(I) = (1/k0) lambda^(I/k0) exp(-lambda) / Gamma(I/k0 + 1)
 %   on a grid of lambda and k0, scored by the weighted score (WS)
 %   WS = 0.5 rank(MSE) + 0.25 rank(QQ) + 0.25 rank(KS)
 %   MSE on a `numBins`-bin histogram, QQ and KS on the amplitudes. 
 %   Returns the best lambda and k0.
+%   Optional: WS, the weighted score of every (lambda, k0) pair (rows lambda, columns k0),
+%   and scores, the single scores on the same grid (MSE, QQ, KS, and CvM, the Cramer-von Mises
+%   score, used only in AppendixFigures.m).
 
 data = sort(data(:))'; 
 n = numel(data);
@@ -16,6 +19,7 @@ centers = (binEdges(1:end-1) + binEdges(2:end)) / 2;
 KS = zeros(numel(lambda), numel(K0Vector)); 
 QQ = zeros(numel(lambda), numel(K0Vector));
 MSE = zeros(numel(lambda), numel(K0Vector));
+CvM = zeros(numel(lambda), numel(K0Vector));
 
 for i = 1:numel(lambda)
     lam = lambda(i);
@@ -36,6 +40,7 @@ for i = 1:numel(lambda)
         m = interp1(x, pdf, centers / k0, 'linear', 0);                      % Model at the histogram bins,
         m = m / max(max(m), 1e-300) * max(binCounts);                        % Scaled to the histogram peak
         MSE(i, j) = mean((m - binCounts) .^ 2);                              % MSE
+        CvM(i, j) = 1 / (12 * n) + sum((F - ((1:n) - 0.5) / n) .^ 2);       % Cramer-von Mises score
     end
 end
 
@@ -49,4 +54,5 @@ WS = (0.25 * rankQQ) + (0.25 * rankKS) + (0.5 * rankMSE); % Weighted scores
 [lam_id, k0_id] = ind2sub(size(WS), best); % Ties go to the smallest k0 and then smallest lambda
 lamWS = lambda(lam_id);
 k0WS = K0Vector(k0_id);
+scores = struct('MSE', MSE, 'QQ', QQ, 'KS', KS, 'CvM', CvM);
 end

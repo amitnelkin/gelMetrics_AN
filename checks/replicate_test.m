@@ -46,8 +46,8 @@ pairs = {'4PP7-FUS', '4PP7'; '30PP7-FUS', '30PP7'; '5Qb', '4PP7'; '10Qb', '30PP7
 P = table();
 for q = 1:size(pairs, 1)
     a = find(strcmp(names, pairs{q, 1})); b = find(strcmp(names, pairs{q, 2}));
-    Tm = compareConditions(Mmov{a}, Mmov{b}, pairs{q, 1}, pairs{q, 2}, 10000, 1);
-    Tg = compareConditions(Mgra{a}, Mgra{b}, pairs{q, 1}, pairs{q, 2}, 10000, 1);
+    Tm = compareConditions_ref(Mmov{a}, Mmov{b}, pairs{q, 1}, pairs{q, 2}, 10000, 1);
+    Tg = compareConditions_ref(Mgra{a}, Mgra{b}, pairs{q, 1}, pairs{q, 2}, 10000, 1);
     for j = 1:height(Tm)
         P = [P; table(string(pairs{q, 1}) + " vs " + string(pairs{q, 2}), string(Tm{j, 1}), Tm.p(j), Tg.p(j), Tm.p_AgtB(j), Tg.p_AgtB(j), ...
             'VariableNames', {'comparison', 'measure', 'p_movies', 'p_granules', 'p1_movies', 'p1_granules'})]; %#ok<AGROW>

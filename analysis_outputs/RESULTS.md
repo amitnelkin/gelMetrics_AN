@@ -2473,3 +2473,24 @@ Note: the user had uncommitted edits in `burstMeasures.m` during this test (with
 The user's uncommitted files (`analysis.m`, `burstMeasures.m`, `summarizeGranules.m`, `SimulationRunWithAnalysis.m`) were not touched.
 
 **Addendum (same day): `Collect_intensity_dataV2.m`.** At the user's request, a standalone script with the same seven fixes, laid out like the original (`uigetdir`, the same loop, the original 0/1 masks). It saves `data.mat`, `background.mat`, `spotsum.mat` and `movies.mat` in the movie folder. It still calls `generate_movArray.m`, which carries fix 1, as the original did. On the synthetic movies it gives output identical to `collect_intensity.m` (intensity, background, spot sum, movie ids). The wrapper `Collect_intensity_data.m` is kept until the user decides.
+
+## 65. ExperimentalAnalysis.m, compareConditions.m and AppendixFigures.m rewritten (laptop, 2026-10-30)
+At the user's request, in the plain style of the original scripts:
+- **`ExperimentalAnalysis.m`** keeps the original layout: parameters at the top, data loaded with `struct2cell(load(...))`, the empty first cell removed, `analysis.m` and the original three plots (quiescent amplitudes, segment amplitudes, time between bursts), now one figure per condition. It runs any list of conditions, each on its own, and adds the noise-controlled measures (`burstMeasures.m`, 20 copies, 95% CI over movies) and two summary figures. No comparisons. Fixes: `timeVecTotal` has 361 points (it had 360, one fewer than the longest traces); the data are the corrected extractions, not the original traces; SP 12 (the paper value). The lambda/k0 WS fit is no longer in this script (only lambda*k0 is identifiable, MS Fig. 5).
+- **`paper_data/<condition>/`**: the nine datasets of the paper in the four files `Collect_intensity_data.m` writes (`data.mat`, `background.mat`, `spotsum.mat`, `movies.mat`), copied unchanged by `checks/make_paper_data.m`, so the paper data and new data load the same way.
+- **`compareConditions.m`** is now a script: pairs of conditions, every measure of both, two-sided and one-sided movie-shuffle p. The old function is kept as `checks/compareConditions_ref.m` for `checks/replicate_test.m` and `PaperFigures_revised.m`. `PaperFigures_revised.m` was updated to the 9-input `burstMeasures.m` (window 13, SP 12, 361 frames).
+- **`AppendixFigures.m`**: Figs. 11-18, one section per figure, grouped by appendix (C-H); two helpers (`burstFreeCopies`, `countLargeChanges`). Fig. 14(b,c) are read from the committed CSVs (they need the raw movies). `PoissonFit2WS.m` got two optional outputs (the WS grid and the single scores incl. Cramer-von Mises); the best lambda and k0 are unchanged.
+- Run headless with the plotting stripped (28 min in total; figures not drawn on the laptop). Results agree with the earlier analyses:
+
+| figure | result |
+|---|---|
+| 11 | best WS lambda per in vivo dataset 5, 5, 1, 4, 5, 5 (k0 falls as lambda rises) |
+| 14(a) | copies/granules 0.7-1.0 for PP7, 0.2-0.65 for Qbeta |
+| 15(a) | median copies/granules 0.70-1.01 over the window x SP grid |
+| 15(c) | bursts found at SP 10 -> 25: 93 -> 5% (original noise), 38 -> 0% (PP7 noise) |
+| 16 | mean returned lambda for true 0.5 -> 5: WS 2.1 -> 3.5; MSE, QQ, KS, CvM similar |
+| 17 | excess >= 30% changes, PP7-FUS vs PP7 (4x): relative 0.69 vs 0.06 (p = 0.0015); same amount of light 0.53 vs 0.73 (p = 0.67) |
+| 18 | as section 36 (e.g. 10Qb net p = 0.005, in vitro 100:1 turnover p = 0.025) |
+
+- Not as in the MS: Fig. 16 uses five scores, not six. The likelihood under the zero-truncated model of `PoissonFit2WS.m` is not defined for bursts below k0/2 and returned lambda 4-5 always, so it was dropped. Figs. 11 and 16 use the user's truncated `PoissonFit2WS.m`, while the MS figures used the original untruncated fit, so the exact values differ.
+- With the user's current `analysis.m` (outlier rule back to `'mean'`), 4x PP7-FUS vs PP7 burst size beyond noise is 2.3 points, p = 0.17 (20 copies, seed 1), as in section 63 (2.0 points, p = 0.18).
