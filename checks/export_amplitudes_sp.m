@@ -11,7 +11,7 @@ repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'fig16_sp');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
-src = {'R2_reextracted', 'in_vivo_reextracted/after_R2_offset'; 'stored_MS', 'in_vivo_experiments'};
+src = {'R2_reextracted', 'in_vivo_reextracted/after_R2_offset'; 'stored_MS', 'in_vivo_experiments-old'};
 names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS'};
 tVec = (0:360) * 10/60; win = 13;
 C = cell(0, 6);

@@ -13,7 +13,7 @@ addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_background');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 jobs = {'4PP7-FUS', 'in_vivo_reextracted/after_R2_sums', '4PP7-FUS_spotsum', true; ...
-        'protein_RNA_10_1', 'in_vitro_experiments', 'protein_RNA_10_1', false};
+        'protein_RNA_10_1', 'in_vitro_experiments-old', 'protein_RNA_10_1', false};
 w = 13; SP = 12; tVec = (0:360) * 10/60;
 rows = cell(0, 6); bur = cell(0, 8);
 for j = 1:size(jobs, 1)

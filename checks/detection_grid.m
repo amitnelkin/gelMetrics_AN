@@ -15,10 +15,10 @@ if nargin < 2, outName = 'detection_grid'; end
 if nargin < 3, SPs = [3 4 5 6 8 10 12]; end
 if nargin < 4, wins = [5 7 9 13 17 21]; end
 if nargin < 5, doVitro = true; end
-% Optional (section 38): vitroFolder (default 'in_vitro_experiments'), vitroJobs = {label,
+% Optional (section 38): vitroFolder (default 'in_vitro_experiments-old'), vitroJobs = {label,
 % file stem; ...} (default the three stored datasets), doVivo (default true). For a
 % re-extracted folder its extraction_info*.csv gives the movie of each trace.
-if nargin < 6, vitroFolder = 'in_vitro_experiments'; end
+if nargin < 6, vitroFolder = 'in_vitro_experiments-old'; end
 if nargin < 7, vitroJobs = {'protein_RNA_1_1','protein_RNA_1_1'; 'protein_RNA_10_1','protein_RNA_10_1'; 'protein_RNA_100_1','protein_RNA_100_1'}; end
 if nargin < 8, doVivo = true; end
 repoDir = fileparts(fileparts(mfilename('fullpath')));

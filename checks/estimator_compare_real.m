@@ -17,9 +17,9 @@ addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir
 outDir = fullfile(repoDir, 'analysis_outputs', 'estimators');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset';
-D = {'protein_RNA_1_1','in_vitro_experiments',12,15; 'protein_RNA_10_1','in_vitro_experiments',12,10;
-     'protein_RNA_100_1','in_vitro_experiments',12,10; '4PP7',R2,10,15; '4PP7-FUS',R2,10,15;
-     '30PP7',R2,12,10; '30PP7-FUS',R2,12,10; '5Qb','in_vivo_experiments',14,15; '10Qb','in_vivo_experiments',14,15};
+D = {'protein_RNA_1_1','in_vitro_experiments-old',12,15; 'protein_RNA_10_1','in_vitro_experiments-old',12,10;
+     'protein_RNA_100_1','in_vitro_experiments-old',12,10; '4PP7',R2,10,15; '4PP7-FUS',R2,10,15;
+     '30PP7',R2,12,10; '30PP7-FUS',R2,12,10; '5Qb','in_vivo_experiments-old',14,15; '10Qb','in_vivo_experiments-old',14,15};
 W = [.5 .25 .25; 1/3 1/3 1/3; 1 0 0; 0 1 0; 0 0 1; .25 .5 .25; .25 .25 .5];
 Wn = {'WS_paper','WS_equal','WS_MSE','WS_QQ','WS_KS','WS_QQheavy','WS_KSheavy'};
 priors = {[1 1], [1 0.5]}; Pn = {'MAP_s1','MAP_s05'};

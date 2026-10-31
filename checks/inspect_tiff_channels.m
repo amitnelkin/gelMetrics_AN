@@ -32,7 +32,7 @@ end
 
 % Stored trace lengths
 fprintf('\nStored trace lengths (repo .mat files):\n');
-fs = [dir(fullfile(repoDir, 'in_vitro_experiments', '*_data.mat')); dir(fullfile(repoDir, 'in_vivo_experiments', '*_data.mat'))];
+fs = [dir(fullfile(repoDir, 'in_vitro_experiments-old', '*_data.mat')); dir(fullfile(repoDir, 'in_vivo_experiments-old', '*_data.mat'))];
 for k = 1:numel(fs)
     S = struct2cell(load(fullfile(fs(k).folder, fs(k).name))); S = S{1}; S = S(2:end);
     L = cellfun(@numel, S);

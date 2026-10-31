@@ -10,9 +10,9 @@ ws = warning('off', 'all');
 fprintf('Scorer: %s (set env GM_SCORER=orig|patched; see gm_score.m)\n', gm_scorer());
 
 datasets = { ...   % name, folder, SP and GOF listed in ExperimentalAnalysis.m
-    '4PP7',            'in_vivo_experiments',  10, 15;
-    '30PP7-FUS',       'in_vivo_experiments',  12, 10;
-    'protein_RNA_1_1', 'in_vitro_experiments', 12, 15};
+    '4PP7',            'in_vivo_experiments-old',  10, 15;
+    '30PP7-FUS',       'in_vivo_experiments-old',  12, 10;
+    'protein_RNA_1_1', 'in_vitro_experiments-old', 12, 15};
 % Add more rows as needed, e.g. '30PP7', '4PP7-FUS', '5Qb', '10Qb',
 % 'protein_RNA_10_1', 'protein_RNA_100_1'.
 

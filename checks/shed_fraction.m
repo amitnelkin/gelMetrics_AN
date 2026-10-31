@@ -26,7 +26,7 @@ for d = vivo
     jobs(end+1,:) = {d{1}, 'spotsum', SU, [d{1} '_spotsum'], true}; %#ok<SAGROW>
     jobs(end+1,:) = {d{1}, 'cropsum', SU, [d{1} '_cropsum'], true}; %#ok<SAGROW>
 end
-for d = vitro, jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments', d{1}, false}; end %#ok<SAGROW>
+for d = vitro, jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments-old', d{1}, false}; end %#ok<SAGROW>
 tVec = (0:360) * 10/60; rows = cell(0, 9); drop = {};
 for j = 1:size(jobs,1)
     [S, B] = gm_loadDataset(repoDir, jobs{j,3}, jobs{j,4});

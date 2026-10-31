@@ -1,10 +1,10 @@
-function M = burstMeasures(spotMean, background, spotSum, movie, nCopies, seed, window, sp, trackLength)
+function M = burstMeasures(spotMean, background, spotSum, replicate, nCopies, seed, window, sp, trackLength)
 %   Noise-controlled burst measures of one condition
 %
 %   spotMean    Mean intensity of the granule pixels with camera offset removed (signals)
 %   background  Mean intensity of the surrounding pixels cell or dilute phase (backgrounds)
 %   spotSum     Integrated granule intensity above the background; when the input is [], defaults to (spotMean - background)
-%   movie       Movie (FoV) of every trace; when the input is [], every granule is its own replicate
+%   replicate   Replicate of every trace (e.g. its movie); when the input is [], every granule is its own replicate
 %   nCopies     Burst-free copies per granule
 %   seed        Random seed of the copies
 %   window      Moving average window span for signal denoising
@@ -25,10 +25,10 @@ S = []; % spot mean: the average brightness of one granule pixel.
 B = []; % background: the average brightness of one pixel of the cell (or dilute phase) around the granule.
 X = []; % S + B (to be handed seamlessly through analysis.m)
 G = []; % spot sum: all the granule's light above the background, added over its pixels.
-M = struct("movie", []);
+M = struct("replicate", []);
 
-if isempty(movie)
-    movie = 1:numel(spotMean);
+if isempty(replicate)
+    replicate = 1:numel(spotMean);
 end
 
 for k = 1:numel(spotMean)
@@ -49,7 +49,7 @@ for k = 1:numel(spotMean)
     % photobleaching effect. So we add the background here, and analysis.m takes it away again.
     X{end+1} = G{end} + B{end};
 
-    M.movie(end+1, 1) = movie(k);
+    M.replicate(end+1, 1) = replicate(k);
 end
 
 S = S(:); 
@@ -158,18 +158,18 @@ for j = 1:numel(names)
     M.(names{j}) = V.(names{j});
 end
 
-movieList = unique(M.movie); 
-nMovies = numel(movieList);
-M.nMovies = nMovies; 
+replicateList = unique(M.replicate); 
+nReplicates = numel(replicateList);
+M.nReplicates = nReplicates; 
 M.nBursts = numel(vertcat(M.ampAU{:}));
 
 for b = 1:nBoot
-    % resample movies, then granules within each chosen movie
+    % resample replicates, then granules within each chosen replicate
     picks = [];
-    chosenMovies = randi(nMovies, nMovies, 1);
-    for m = 1:nMovies
-        granulesOfMovie = find(M.movie == movieList(chosenMovies(m)));
-        chosen = granulesOfMovie(randi(numel(granulesOfMovie), numel(granulesOfMovie), 1));
+    chosenReplicates = randi(nReplicates, nReplicates, 1);
+    for m = 1:nReplicates
+        granulesOfReplicate = find(M.replicate == replicateList(chosenReplicates(m)));
+        chosen = granulesOfReplicate(randi(numel(granulesOfReplicate), numel(granulesOfReplicate), 1));
         picks = [picks; chosen]; %#ok<AGROW>
     end
     Vb = summarizeGranules(M, picks);

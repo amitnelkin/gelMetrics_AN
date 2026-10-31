@@ -45,7 +45,7 @@ for d = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}
     jobs(end+1,:) = {d{1}, 'spotsum', SU, [d{1} '_spotsum'], true}; %#ok<AGROW>
 end
 for d = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}
-    jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments', d{1}, false}; %#ok<AGROW>
+    jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments-old', d{1}, false}; %#ok<AGROW>
 end
 tVec = (0:360) * 10/60; bu = cell(0, 8); tr = cell(0, 6); sg = cell(0, 5);
 for j = 1:size(jobs,1)

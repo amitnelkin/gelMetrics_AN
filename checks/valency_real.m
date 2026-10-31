@@ -17,7 +17,7 @@ repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'valency');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
-R2 = 'in_vivo_reextracted/after_R2_offset'; IV = 'in_vitro_experiments';
+R2 = 'in_vivo_reextracted/after_R2_offset'; IV = 'in_vitro_experiments-old';
 G = {'Qb',      {'5Qb','10Qb'},                  R2, 14, [1 2];
      'PP7',     {'4PP7','30PP7'},                R2, 12, [1 7.5];
      'PP7-FUS', {'4PP7-FUS','30PP7-FUS'},        R2, 12, [1 7.5];

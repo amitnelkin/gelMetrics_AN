@@ -358,7 +358,7 @@ def fig17():
     def cells(p):
         m = sio.loadmat(p); k = [x for x in m if not x.startswith('__')][0]
         return [np.ravel(c).astype(float) for c in m[k].ravel()[1:]]
-    old = cells('in_vivo_experiments/4PP7_data.mat')
+    old = cells('in_vivo_experiments-old/4PP7_data.mat')
     new = cells('in_vivo_reextracted/after_R2_offset/4PP7_data.mat')
     t_old = old[48]                                      # stored trace 49 (movie 007, two-channel)
     t_new = max(new, key=len)

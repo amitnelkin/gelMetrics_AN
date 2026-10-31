@@ -1,7 +1,7 @@
 function reextract_pp7(workRoot, stages, datasets, outRoot)
 % REEXTRACT_PP7  Re-extracts the PP7 datasets from the .nd2 movies with the
 % fixed extraction (zigzag cause: analysis_outputs/zigzag_diagnosis; general
-% data validity, R2 5). Never touches in_vivo_experiments/: writes
+% data validity, R2 5). Never touches in_vivo_experiments-old/: writes
 % in_vivo_reextracted/<stage>/<dataset>_data.mat and _background.mat.
 %
 % workRoot/<dataset>/work must hold <movie>.tif (plain bfconvert output) and

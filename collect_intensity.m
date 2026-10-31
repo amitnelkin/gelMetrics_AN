@@ -1,33 +1,28 @@
 function [intensity, background, info, sums] = collect_intensity(file_path, offset)
-% COLLECT_INTENSITY  The body of the original Collect_intensity_data.m, as a function.
-% For every movie <name>.tif in file_path it loads <name>_xy.mat (the tracks from
-% read_tables.m) and collects, for every track of at least 24 points, the intensity
-% of the granule (spot) and of its surrounding cell, frame by frame.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This script loads all .tiff files containing microscopy movies, and .mat
+% files containing (x,y,frame) data about detected fluorescent granules.
+% The data from each movie is loaded, converted to an array of images, and
+% the fluorescence data (intensity of the granule, and
+% intensity of its surrounding environment) from each granule is collected
+% and saved for further analysis.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % offset  camera dark level subtracted from the spot and cell means (default 200,
-%         Andor iXon EMCCD). The pixel classes are found on the raw pixels, so only
-%         the levels change. 0 = no subtraction.
+%         Andor iXon EMCCD).
 %
 % Outputs:
-%   intensity   spot mean per frame (one cell per track; the first cell is empty, as before)
+%   intensity   spot mean per frame
 %   background  mean of the surrounding cell pixels per frame
 %   info        per movie: name, channel read, number of channels, frames, tracks, tracks kept
 %   sums        sums.spotSum: the integrated granule intensity per frame, i.e. the sum over
-%               the spot pixels of (pixel - mean of the cell pixels); the offset cancels.
-%               sums.spotArea: number of spot pixels per frame.
-%
-% Changes from the original script (RESULTS.md section 64), marked [fix n] below:
-%   1. only the fluorescence channel of 2-channel movies is read (generate_movArray.m)
-%   2. Mosaic frames start at 0: page = frame + 1, and the first point is kept
-%   3. Mosaic x/y start at 0: column = x + 1, row = y + 1
-%   4. every value is stored at its own frame; frames the tracker skipped are filled in
-%   5. the camera offset is subtracted from the spot and cell means
-%   6. each movie is paired with its track file by name, not by folder order
-%   7. crop limits use the number of rows and columns (length() gives the larger one)
-% The revision test options (steady thresholds, fixed mask, crop sums) are in
-% checks/collect_intensity_tests.m.
+%               the spot pixels of (pixel - mean of the cell pixels)
+%               sums.spotArea: number of spot pixels per frame
 
-if nargin < 2, offset = 200; end
+
+if nargin < 2
+    offset = 200; % SPECIFIC TO OUR CAMERA
+end
 file_path = [char(file_path), filesep];
 tiff_files = dir([file_path,'*.tif']);
 

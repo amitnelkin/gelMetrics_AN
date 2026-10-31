@@ -16,7 +16,7 @@ repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'noise_models');
 C = readtable(fullfile(outDir, 'calibration.csv'));
-R2 = 'in_vivo_reextracted/after_R2_offset'; IV = 'in_vitro_experiments';
+R2 = 'in_vivo_reextracted/after_R2_offset'; IV = 'in_vitro_experiments-old';
 tVec = (0:360) * 10/60; rows = {};
 if strcmp(part, 'A')
     D = {'protein_RNA_1_1',IV,12,15; 'protein_RNA_10_1',IV,12,10; 'protein_RNA_100_1',IV,12,10;

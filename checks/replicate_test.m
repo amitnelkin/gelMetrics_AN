@@ -16,7 +16,7 @@ for d = 1:numel(names)
     [S, B, G, mv] = loadData(names{d});
     Mmov{d} = burstMeasures_ref(S, B, G, mv, 20, 1);      % movies as replicates
     Mgra{d} = burstMeasures_ref(S, B, G, [], 20, 1);      % every granule its own replicate
-    Mgra{d}.movieReal = Mmov{d}.movie;                    % (kept for reference)
+    Mgra{d}.movieReal = Mmov{d}.replicate;                    % (kept for reference)
     M = Mmov{d}; n = M.nGranules;
     % per-granule values
     medBurst = nan(n, 1); turn = zeros(n, 1);
@@ -27,8 +27,8 @@ for d = 1:numel(names)
     values = {M.level, 100 * M.noise, M.granuleNet, medBurst, turn};
     labels = {'brightness', 'frame noise', 'net change', 'median burst size', 'turnover beyond noise'};
     for j = 1:numel(values)
-        icc = iccOneWay(values{j}, M.movie);
-        ICC = [ICC; table(string(names{d}), string(labels{j}), icc, M.nMovies, n, ...
+        icc = iccOneWay(values{j}, M.replicate);
+        ICC = [ICC; table(string(names{d}), string(labels{j}), icc, M.nReplicates, n, ...
             'VariableNames', {'dataset', 'measure', 'ICC', 'movies', 'granules'})]; %#ok<AGROW>
     end
     for j = 1:numel(ciMeasures)

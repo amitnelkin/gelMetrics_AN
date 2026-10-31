@@ -11,15 +11,15 @@ addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir
 outDir = fullfile(repoDir, 'analysis_outputs', 'mle_real');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 R2 = 'in_vivo_reextracted/after_R2_offset';
-D = {'protein_RNA_1_1',   'in_vitro_experiments', 12, 15;
-     'protein_RNA_10_1',  'in_vitro_experiments', 12, 10;
-     'protein_RNA_100_1', 'in_vitro_experiments', 12, 10;
+D = {'protein_RNA_1_1',   'in_vitro_experiments-old', 12, 15;
+     'protein_RNA_10_1',  'in_vitro_experiments-old', 12, 10;
+     'protein_RNA_100_1', 'in_vitro_experiments-old', 12, 10;
      '4PP7',              R2,                     10, 15;
      '4PP7-FUS',          R2,                     10, 15;
      '30PP7',             R2,                     12, 10;
      '30PP7-FUS',         R2,                     12, 10;
-     '5Qb',               'in_vivo_experiments',  14, 15;
-     '10Qb',              'in_vivo_experiments',  14, 15};
+     '5Qb',               'in_vivo_experiments-old',  14, 15;
+     '10Qb',              'in_vivo_experiments-old',  14, 15};
 tVec = (0:360) * 10/60; win = 13; nBoot = 200;
 rows = {}; surfaces = struct(); boots = struct();
 for d = 1:size(D,1)

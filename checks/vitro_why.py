@@ -10,7 +10,7 @@ def L(p):
     m=sio.loadmat(p,squeeze_me=True); k=[k for k in m if not k.startswith('__')][0]; return [np.ravel(x).astype(float) for x in m[k][1:]]
 pairs={'protein_RNA_1_1':'vitro_1000ngul_0p1mgml','protein_RNA_10_1':'vitro_1000ng_10ug','protein_RNA_100_1':'vitro_1000ngul_1mgml'}
 for s,f in pairs.items():
-    S=L(f'in_vitro_experiments/{s}_data.mat'); N=L(Z+f+'/data.mat')
+    S=L(f'in_vitro_experiments-old/{s}_data.mat'); N=L(Z+f+'/data.mat')
     # movie of each new trace
     mv=[]
     for i,x in enumerate(sorted(glob.glob(Z+f+'/*_xy.mat'))):
@@ -43,7 +43,7 @@ def slope(y):
 pairs={'protein_RNA_1_1':'vitro_1000ngul_0p1mgml','protein_RNA_10_1':'vitro_1000ng_10ug','protein_RNA_100_1':'vitro_1000ngul_1mgml'}
 print('version | traces >=180 | median length (all) | brightness raw | net change %/h (granule mean)')
 for s,f in pairs.items():
-    V={'stored':(L(f'in_vitro_experiments/{s}_data.mat'),L(f'in_vitro_experiments/{s}_background.mat'),200),
+    V={'stored':(L(f'in_vitro_experiments-old/{s}_data.mat'),L(f'in_vitro_experiments-old/{s}_background.mat'),200),
        'new tracking, original code':(L(Z+f+'/data.mat'),L(Z+f+'/background.mat'),200),
        'new tracking, fixed reader (R1)':(L(f'in_vitro_reextracted/after_R1_redchannel/{f}_data.mat'),L(f'in_vitro_reextracted/after_R1_redchannel/{f}_background.mat'),200)}
     print('==',s)

@@ -16,12 +16,12 @@ amps = vertcat(M.ampAU{picks});             % Granule bursts in intensity units 
 % --- brightness: median spot mean of each granule ---
 levels = M.level(picks);                                     % Median brightness per granule
 V.brightnessPooled = median(levels);                         % Median over all granules
-movies = M.movie(picks); 
-movieList = unique(movies);
-for m = 1:numel(movieList)
-    movieMedians(m) = median(levels(movies == movieList(m)));
+replicates = M.replicate(picks); 
+replicateList = unique(replicates);
+for m = 1:numel(replicateList)
+    replicateMedians(m) = median(levels(replicates == replicateList(m)));
 end
-V.brightness = median(movieMedians);                         % Median over movies
+V.brightness = median(replicateMedians);                     % Median over replicates
 
 % --- frame-to-frame noise, % of the granule ---
 V.frameNoise = 100 * median(M.noise(picks));

@@ -11,8 +11,8 @@ ws = warning('off', 'all');
 fprintf('Scorer: %s (set env GM_SCORER=orig|patched; see gm_score.m)\n', gm_scorer());
 
 datasets = { ...   % name, folder, SP, GOF
-    '30PP7-FUS', 'in_vivo_experiments', 12, 10;
-    '30PP7',     'in_vivo_experiments', 12, 10};
+    '30PP7-FUS', 'in_vivo_experiments-old', 12, 10;
+    '30PP7',     'in_vivo_experiments-old', 12, 10};
 nBoot = 40;   % increase to 200+ for the paper
 lamGrid = 1:5; K0Vector = 1:500; win = 13; tVec = linspace(0, 60, 360);
 

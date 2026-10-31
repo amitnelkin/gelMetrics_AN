@@ -42,8 +42,8 @@ for j = 1:size(J, 1)
         end
     end
     assert(k == numel(D));
-    S = struct2cell(load(fullfile(repo, 'in_vitro_experiments', [J{j,1} '_data.mat']))); S = S{1}(2:end);
-    B = struct2cell(load(fullfile(repo, 'in_vitro_experiments', [J{j,1} '_background.mat']))); B = B{1}(2:end);
+    S = struct2cell(load(fullfile(repo, 'in_vitro_experiments-old', [J{j,1} '_data.mat']))); S = S{1}(2:end);
+    B = struct2cell(load(fullfile(repo, 'in_vitro_experiments-old', [J{j,1} '_background.mat']))); B = B{1}(2:end);
     tr = struct('movie', {}, 'frame', {}, 'x', {}, 'y', {}, 'stored', {});
     for i = 1:numel(S)
         [ok, loc] = ismember([double(S{i}(:)), double(B{i}(:))], P(:, 1:2), 'rows');

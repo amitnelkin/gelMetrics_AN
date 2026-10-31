@@ -8,18 +8,21 @@ stringencyParameter = 12;                 % Parameter for burst events detection
 timeVecTotal = linspace(0, 60, 361);      % Time steps vector: 361 frames, 60 min at 10 s per frame
 nCopies = 20;                             % Burst-free copies per granule (the noise floor)
 seed = 1;                                 % Random seed of the copies
+moviesAsReplicates = false;               % false: every granule is its own replicate (true means the movies are replicates - which is more adequate for in vitro data)
+
+% Okabe-Ito pallette
+% ORANGE = '#E69F00', GREEN = '#009E73', BLUE = '#0072B2', YELLOW = '#F0E442', RED = '#D55E00', PURPLE = '#CC79A7'
+OKI = ["#E69F00","#009E73","#0072B2","#F0E442","#D55E00","#CC79A7"];
 
 % Load signal and background data
-% Every condition is a folder with the four files written by Collect_intensity_data.m:
-% data.mat, background.mat, spotsum.mat and movies.mat.
+% Every folder contains the four .mat files: data.mat, background.mat, spotsum.mat and movies.mat.
 % in vivo:  '4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'
-% in vitro: 'protein_RNA_1_1', 'vitro_10_1', 'vitro_100_1'
-% For your own data, set dataFolder to the folder that holds one folder per condition.
-% This script only reports each condition; to test conditions against each other use compareConditions.m
+% in vitro: 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'
+
 dataFolder = './in_vivo_experiments/';
 % dataFolder = './in_vitro_experiments/';
-conditions = {'4PP7', '4PP7-FUS', '30PP7'};
-
+conditions = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'};
+% conditions = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};
 
 % Signal plotting controls
 % To plot a few sample signals you can change these variables
@@ -90,10 +93,10 @@ for c = 1:nCond
 
     % Plot histogram of all amplitudes
     nexttile;
-    histogram(ampVar(abs(ampVar)<3000),'FaceColor','b','BinWidth',100);
+    histogram(ampVar(abs(ampVar)<3000),'FaceColor','#0072B2','BinWidth',100);
     hold on;
-    histogram(ampPos(ampPos<3000),'FaceColor','g','BinWidth',100);
-    histogram(ampNeg(abs(ampNeg)<3000),'FaceColor','r','BinWidth',100);
+    histogram(ampPos(ampPos<3000),'FaceColor','#009E73','BinWidth',100);
+    histogram(ampNeg(abs(ampNeg)<3000),'FaceColor','#E69F00','BinWidth',100);
     ylabel('Counts'); xlim([-3000,3000])
     title('Segment amplitudes','FontSize',12);
     xlabel('Amplitudes [A.U]','FontSize',12);
@@ -110,13 +113,19 @@ for c = 1:nCond
     title('Time between burst events');
     sgtitle(conditions{c}, 'Interpreter', 'none');
 
-    % Noise-controlled measures: the bursts of the granules against the bursts of their
-    % burst-free copies, with 95% confidence intervals over movies (see burstMeasures.m).
-    % The mean burst size is lambda*k0; lambda and k0 cannot be estimated separately (MS Fig. 5).
-    M{c} = burstMeasures(signals, backgrounds, spotSums, movies.movieId, nCopies, seed, ...
+    % Noise-controlled measures: 
+    % the bursts of the granules against the bursts of their burst-free copies, with 95% confidence intervals over replicates
+    % The mean burst size is lambda*k0
+    if moviesAsReplicates
+        replicateOfTrace = movies.movieId;
+    else
+        replicateOfTrace = [];
+    end
+    M{c} = burstMeasures(signals, backgrounds, spotSums, replicateOfTrace, nCopies, seed, ...
         movingAverageWindowSpan, stringencyParameter, numel(timeVecTotal));
-    fprintf('  %d granules (at least 30 min), %d movies, %d negative bursts\n', M{c}.nGranules, M{c}.nMovies, M{c}.nBursts);
-    fprintf('  brightness (median over movies)      %.0f\n', M{c}.brightness);
+    
+    fprintf('  %d granules (at least 30 min), %d replicates, %d negative bursts\n', M{c}.nGranules, M{c}.nReplicates, M{c}.nBursts);
+    fprintf('  brightness (median over replicates)  %.0f\n', M{c}.brightness);
     fprintf('  frame noise (%% of granule)           %.1f\n', M{c}.frameNoise);
     fprintf('  mean burst size, lambda*k0 (a.u.)    %.0f [%.0f, %.0f]\n', M{c}.meanBurst, M{c}.meanBurst_lo, M{c}.meanBurst_hi);
     fprintf('  burst size, granules / copies (%%)    %.1f / %.1f\n', M{c}.sizeGranules, M{c}.sizeCopies);
@@ -150,19 +159,18 @@ for c = 1:nCond
     set(gca, 'Box', 'on', 'TickDir', 'in', 'FontSize', 8);
 end
 
-% Summary of all conditions (95% CI over movies, then granules)
+% Summary of all conditions (95% CI over replicates)
 figure('Name', 'Summary', 'Units', 'inches', 'Position', [1 1 7 2.6], 'Color', 'w');
 tiledlayout(1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 measures = {'meanBurst', 'turnover', 'net'};
 labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', 'Net change beyond bleaching (%/h)'};
-colors = lines(nCond);
 for j = 1:3
     nexttile; hold on;
     for c = 1:nCond
         y = M{c}.(measures{j});
         lo = M{c}.([measures{j} '_lo']);
         hi = M{c}.([measures{j} '_hi']);
-        bar(c, y, 0.6, 'FaceColor', colors(c, :), 'EdgeColor', 'none');
+        bar(c, y, 0.6, 'FaceColor', OKI(c), 'EdgeColor', 'none');
         errorbar(c, y, y - lo, hi - y, 'k', 'LineStyle', 'none', 'LineWidth', 0.8, 'CapSize', 3);
     end
     yline(0, 'k', 'LineWidth', 0.5);

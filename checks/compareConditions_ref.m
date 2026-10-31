@@ -15,8 +15,8 @@ nM = numel(measures);
 
 % put both conditions into one list of granules, keeping each movie's granules together
 M = joinConditions(MA, MB);
-moviesA = unique(MA.movie); moviesB = unique(MB.movie);
-nA = numel(moviesA); nTotal = nA + numel(moviesB);
+replicatesA = unique(MA.replicate); replicatesB = unique(MB.replicate);
+nA = numel(replicatesA); nTotal = nA + numel(replicatesB);
 
 % observed values
 VA = summarizeGranules(MA, 1:MA.nGranules);
@@ -31,8 +31,8 @@ observed = valueA - valueB;
 countTwo = zeros(nM, 1); countOne = zeros(nM, 1);
 for p = 1:nPerm
     order = randperm(nTotal);
-    picksA = find(ismember(M.movie, order(1:nA)));          % granules of the movies now called "A"
-    picksB = find(ismember(M.movie, order(nA+1:end)));
+    picksA = find(ismember(M.replicate, order(1:nA)));          % granules of the movies now called "A"
+    picksB = find(ismember(M.replicate, order(nA+1:end)));
     V1 = summarizeGranules(M, picksA); V2 = summarizeGranules(M, picksB);
     for j = 1:nM
         d = V1.(measures{j}) - V2.(measures{j});
@@ -51,9 +51,9 @@ end
 
 function M = joinConditions(MA, MB)
 % one combined list of granules; movies renumbered 1..nA (condition A) and nA+1.. (condition B)
-[~, ~, movieA] = unique(MA.movie); [~, ~, movieB] = unique(MB.movie);
-nA = max(movieA);
-M.movie = [movieA(:); movieB(:) + nA];
+[~, ~, replicateA] = unique(MA.replicate); [~, ~, replicateB] = unique(MB.replicate);
+nA = max(replicateA);
+M.replicate = [replicateA(:); replicateB(:) + nA];
 M.nGranules = MA.nGranules + MB.nGranules;
 M.nCopies = MA.nCopies;
 if MA.nCopies ~= MB.nCopies, error('Use the same number of copies for both conditions.'); end

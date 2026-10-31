@@ -1,7 +1,7 @@
 """VITRO_COMPARE  Are the titration movies (Raw_Results/Titration experiment) the
 source of the stored in vitro data? (RESULTS.md section 38.)
 Re-extracted traces: in_vitro_reextracted/after_R1_redchannel/<folder>_data.mat
-(fluorescence channel, no offset, as the stored data). Stored: in_vitro_experiments/.
+(fluorescence channel, no offset, as the stored data). Stored: in_vitro_experiments-old/.
 Per stored dataset x new folder:
   trace counts (all kept, >= 180 frames), median length, median spot level, median
   cell level;
@@ -48,7 +48,7 @@ def match(s, cand):
 
 
 rows, mrows = [], []
-St = {d: (load(f'in_vitro_experiments/{d}_data.mat'), load(f'in_vitro_experiments/{d}_background.mat')) for d in STORED}
+St = {d: (load(f'in_vitro_experiments-old/{d}_data.mat'), load(f'in_vitro_experiments-old/{d}_background.mat')) for d in STORED}
 Nw = {d: (load(f'{R1}/{d}_data.mat'), load(f'{R1}/{d}_background.mat')) for d in NEW}
 for d, (S, B) in St.items():
     rows.append(dict(source='stored', **desc(S, B, d)))

@@ -39,8 +39,8 @@ Every measure has a 95% confidence interval (movies resampled, then granules wit
 - **Appendix figures (algorithm debugging):** `AppendixFigures.m`, one section per appendix figure (Figs. 11-18). Run the first section, then any figure section.
 - **Simulated data:** `SimulationRunWithAnalysis.m`. Bursty and constant (burst-free) simulated granules with known parameters, through the same code.
 - **Datasets of the paper:** at the top of `ExperimentalAnalysis.m` and `compareConditions.m`, by name: `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
-  - They are in `paper_data/<name>/`, in the same four files that `Collect_intensity_data.m` writes for new data. They are copies of the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed), made by `checks/make_paper_data.m`.
-  - `in_vivo_experiments/` and `in_vitro_experiments/` hold the original traces, for reference only.
+  - They are in `in_vivo_experiments/<name>/` and `in_vitro_experiments/protein_RNA_<ratio>/`, in the same four files that `Collect_intensity_data.m` writes for new data. They are copies of the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed), made by `checks/make_paper_data.m`.
+  - `in_vivo_experiments-old/` and `in_vitro_experiments-old/` hold the original traces (before the corrections), for reference only.
 
 ### New data pipeline
 1. Acquire time-lapse movies; 8-12 movies (fields of view) per condition, each about 360 time points, is usually sufficient. Movies are the replicates.

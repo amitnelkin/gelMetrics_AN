@@ -75,7 +75,7 @@ for ds in VIVO + VITRO:
         U = {m: list(g.spotMean.values) for m, g in b.groupby('movie')}
         r['brightness_lo'], r['brightness_hi'] = nested(U, np.median)
     else:
-        S = load(f'in_vitro_experiments/{ds}_data.mat')
+        S = load(f'in_vitro_experiments-old/{ds}_data.mat')
         S = [np.ravel(s).astype(float) - 200 for s in S if np.size(s) >= 180]
         lv = np.array([np.median(s) for s in S]); r['brightness'] = np.median(lv); r['noise'] = 100 * np.median([rs(s) for s in S])
         r['brightness_lo'], r['brightness_hi'] = nested({0: list(lv)}, np.median)

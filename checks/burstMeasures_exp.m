@@ -56,7 +56,7 @@ for k = 1:n
     % photobleaching. So we add the background here, and analysis.m takes it away again.
     X{k} = G{k} + B{k};
 end
-M.movie = movie(keep); M.movie = M.movie(:);
+M.replicate = movie(keep); M.replicate = M.replicate(:);
 M.nGranules = n; M.nCopies = nCopies;
 
 % ---- 2. burst-free copies ----
@@ -136,16 +136,16 @@ end
 V = summarizeGranules(M, 1:n);
 names = fieldnames(V);
 for j = 1:numel(names), M.(names{j}) = V.(names{j}); end
-movieList = unique(M.movie); nMovies = numel(movieList);
-M.nMovies = nMovies; M.nBursts = numel(vertcat(M.ampAU{:}));
+replicateList = unique(M.replicate); nReplicates = numel(replicateList);
+M.nReplicates = nReplicates; M.nBursts = numel(vertcat(M.ampAU{:}));
 for j = 1:numel(names), M.boot.(names{j}) = zeros(nBoot, 1); end
 for b = 1:nBoot
     % resample movies, then granules within each chosen movie
     picks = [];
-    chosenMovies = randi(nMovies, nMovies, 1);
-    for m = 1:nMovies
-        granulesOfMovie = find(M.movie == movieList(chosenMovies(m)));
-        chosen = granulesOfMovie(randi(numel(granulesOfMovie), numel(granulesOfMovie), 1));
+    chosenReplicates = randi(nReplicates, nReplicates, 1);
+    for m = 1:nReplicates
+        granulesOfReplicate = find(M.replicate == replicateList(chosenReplicates(m)));
+        chosen = granulesOfReplicate(randi(numel(granulesOfReplicate), numel(granulesOfReplicate), 1));
         picks = [picks; chosen]; %#ok<AGROW>
     end
     Vb = summarizeGranules(M, picks);

@@ -1,6 +1,6 @@
 % QB_COMPARE  Are the Naor .nd2 movies (5Qb\250ms, 10Qb) the source of the
 % stored Qbeta data, and does Qbeta behave the same after re-extraction?
-% Compares the stored MS data (in_vivo_experiments) with the re-extraction
+% Compares the stored MS data (in_vivo_experiments-old) with the re-extraction
 % (in_vivo_reextracted/after_R2_offset: red channel only, multithresh spot,
 % offset 200; same pipeline as PP7). Reviewer points: general data validity,
 % the Qbeta (lambda 4) vs PP7 (lambda 1) claim.
@@ -15,7 +15,7 @@ repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'qb_compare');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
-V = {'stored_MS', 'in_vivo_experiments'; 'R2_reextracted', 'in_vivo_reextracted/after_R2_offset'};
+V = {'stored_MS', 'in_vivo_experiments-old'; 'R2_reextracted', 'in_vivo_reextracted/after_R2_offset'};
 names = {'5Qb', '10Qb'}; tVec = (0:360) * 10/60; win = 13; trunc = 15;
 tr = {}; bu = {}; fi = {}; am = cell(0, 6);
 for v = 1:size(V,1)

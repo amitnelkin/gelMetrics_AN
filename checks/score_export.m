@@ -23,7 +23,7 @@ if strcmp(what, 'data')
         jobs(end+1,:) = {d{1}, 'spotsum', SU, [d{1} '_spotsum'], true}; %#ok<AGROW>
     end
     for d = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}
-        jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments', d{1}, false}; %#ok<AGROW>
+        jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments-old', d{1}, false}; %#ok<AGROW>
     end
     SPs = 10:15;
 else

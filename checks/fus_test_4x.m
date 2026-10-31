@@ -19,7 +19,7 @@ addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir
 outDir = fullfile(repoDir, 'analysis_outputs', 'fus_test_4x');
 if ~exist(outDir, 'dir'), mkdir(outDir); end
 versions = {'R2_reextracted', 'in_vivo_reextracted/after_R2_offset';
-            'stored_MS',      'in_vivo_experiments'};
+            'stored_MS',      'in_vivo_experiments-old'};
 tVec = (0:360) * 10/60; win = 13; SP = 10; nPermMean = 2000; nPermLR = 500;
 rows = {}; ampRows = {};
 for v = 1:size(versions,1)

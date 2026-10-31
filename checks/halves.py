@@ -50,7 +50,7 @@ def net_halves(ds):
         S = load(f'in_vivo_reextracted/after_R2_sums/{ds}_spotsum_data.mat'); B = load(f'in_vivo_reextracted/after_R2_sums/{ds}_spotsum_background.mat')
         sig = [np.ravel(s).astype(float) / np.ravel(b).astype(float) for s, b in zip(S, B) if np.size(s) >= 180]
     else:
-        S = load(f'in_vitro_experiments/{ds}_data.mat'); B = load(f'in_vitro_experiments/{ds}_background.mat')
+        S = load(f'in_vitro_experiments-old/{ds}_data.mat'); B = load(f'in_vitro_experiments-old/{ds}_background.mat')
         sig = [(np.ravel(s).astype(float) - np.ravel(b).astype(float)) / (np.ravel(b).astype(float) - 200) for s, b in zip(S, B) if np.size(s) >= 180]
     return [(slope(x[:CUT]), slope(x[CUT:]) if len(x) - CUT >= 60 else np.nan) for x in sig]
 

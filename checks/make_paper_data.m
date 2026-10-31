@@ -1,4 +1,5 @@
-% MAKE_PAPER_DATA  Copies the primary datasets of the paper into paper_data/<condition>/,
+% MAKE_PAPER_DATA  Copies the primary datasets of the paper into in_vivo_experiments/<condition>/ and
+% in_vitro_experiments/protein_RNA_<ratio>/ (the original traces are in *_experiments-old/),
 % in the same four files that Collect_intensity_data.m writes for a new experiment:
 %   data.mat (intensity), background.mat (background), spotsum.mat (spotSum),
 %   movies.mat (movieId, movieNames)
@@ -15,16 +16,16 @@ infoVitro = readInfo('in_vitro_reextracted/same_granules_R2/extraction_info_same
 for d = 1:numel(vivo)
     src = 'in_vivo_reextracted/after_R2_offset/';
     writeCondition(vivo{d}, [src vivo{d} '_data.mat'], [src vivo{d} '_background.mat'], ...
-        ['in_vivo_reextracted/after_R2_sums/' vivo{d} '_spotsum_data.mat'], infoVivo(infoVivo.dataset == vivo{d}, :));
+        ['in_vivo_reextracted/after_R2_sums/' vivo{d} '_spotsum_data.mat'], infoVivo(infoVivo.dataset == vivo{d}, :), 'in_vivo_experiments');
 end
 for d = 1:numel(vitro)
     src = ['in_vitro_reextracted/same_granules_R2/same_' vitro{d}];
-    writeCondition(['vitro_' vitro{d}], [src '_data.mat'], [src '_background.mat'], [src '_spotsum_data.mat'], ...
-        infoVitro(infoVitro.dataset == ['same_' vitro{d}], :));
+    writeCondition(['protein_RNA_' vitro{d}], [src '_data.mat'], [src '_background.mat'], [src '_spotsum_data.mat'], ...
+        infoVitro(infoVitro.dataset == ['same_' vitro{d}], :), 'in_vitro_experiments');
 end
 
-function writeCondition(name, dataFile, backgroundFile, sumFile, info)
-out = fullfile('paper_data', name);
+function writeCondition(name, dataFile, backgroundFile, sumFile, info, outRoot)
+out = fullfile(outRoot, name);
 if ~exist(out, 'dir'), mkdir(out); end
 s = struct2cell(load(dataFile)); intensity = s{1};
 s = struct2cell(load(backgroundFile)); background = s{1};

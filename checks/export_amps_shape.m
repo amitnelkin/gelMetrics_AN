@@ -4,7 +4,7 @@ function export_amps_shape()
 % frames, for the shape-only lambda/k0 fit (checks/lambda_k0_shape.py,
 % RESULTS.md section 26):
 %   in vivo  R2 re-extraction (in_vivo_reextracted/after_R2_offset), with movie id;
-%   in vitro stored data (in_vitro_experiments);
+%   in vitro stored data (in_vitro_experiments-old);
 %   simulations generateSim type 3, k0 = 60, lambda 0.5 1 2 3 4 5 x noise 12 / 40
 %   / 120 (SNR k0/noise 5, 1.5, 0.5), 200 tracks x 361 frames, expConst 0.0026,
 %   seeded; the same code path (gm_amplitudes_by_trace -> analysis.m).
@@ -17,7 +17,7 @@ R2 = 'in_vivo_reextracted/after_R2_offset';
 info = [readtable(fullfile(repoDir, R2, 'extraction_info.csv')); readtable(fullfile(repoDir, R2, 'extraction_info_5Qb_10Qb.csv'))];
 tVec = (0:360) * 10/60; C = cell(0, 7);
 jobs = {'in vivo', R2, {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}; ...
-        'in vitro', 'in_vitro_experiments', {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}};
+        'in vitro', 'in_vitro_experiments-old', {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}};
 for j = 1:size(jobs, 1)
     for d = jobs{j,3}
         [S, B] = gm_loadDataset(repoDir, jobs{j,2}, d{1});

@@ -1,6 +1,6 @@
 """VITRO_MOVIES  In vitro movies left out of the analysis (RESULTS.md section 43).
 The original authors dropped these movies on purpose (the user, 2026-10-25; reason to
-be added), and the stored in_vitro_experiments traces contain none of their granules
+be added), and the stored in_vitro_experiments-old traces contain none of their granules
 (section 42). Movie ids = file order (001, 002, ...) as in the extraction_info CSVs."""
 DROP = {'protein_RNA_10_1': [5], 'protein_RNA_100_1': [5, 7]}
 FOLDER = {'protein_RNA_1_1': 'vitro_1000ngul_0p1mgml', 'protein_RNA_10_1': 'vitro_1000ng_10ug',

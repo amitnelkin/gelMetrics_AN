@@ -5,7 +5,7 @@ function vitro_orig_verify()
 % gives the folder, as checks for 4PP7 and Qb in sections 4 and 12) is run on the
 % re-tracked movies (..\zigzag_scratch\orig_vitro\<folder>: the movie TIFF and the
 % Mosaic trajectory CSV from BatchParticleTracker.ijm). Then:
-%  1. traces: each stored trace (in_vitro_experiments) is searched among the
+%  1. traces: each stored trace (in_vitro_experiments-old) is searched among the
 %     new traces of every folder: bit-exact (same length, max |diff| < 1e-9);
 %  2. bursts: the ORIGINAL analysis.m (f7eded0; window 13, SP 14, time vector
 %     linspace(0, 60, 360), as ExperimentalAnalysis.m) is run on the stored
@@ -40,8 +40,8 @@ for k = 1:numel(NEW)
 end
 trows = cell(0, 6); brows = cell(0, 9); prow = cell(0, 5);
 for s = 1:numel(STORED)
-    S = struct2cell(load(fullfile(repo, 'in_vitro_experiments', [STORED{s} '_data.mat']))); S = S{1}(2:end);
-    B = struct2cell(load(fullfile(repo, 'in_vitro_experiments', [STORED{s} '_background.mat']))); B = B{1}(2:end);
+    S = struct2cell(load(fullfile(repo, 'in_vitro_experiments-old', [STORED{s} '_data.mat']))); S = S{1}(2:end);
+    B = struct2cell(load(fullfile(repo, 'in_vitro_experiments-old', [STORED{s} '_background.mat']))); B = B{1}(2:end);
     for k = 1:numel(NEW)
         T = N.(NEW{k}){1}; hit = zeros(numel(S), 1);
         for i = 1:numel(S)

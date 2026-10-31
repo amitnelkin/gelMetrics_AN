@@ -23,9 +23,11 @@ movingAverageWindowSpan = 13;             % Moving average window span for signa
 stringencyParameter = 12;                 % Parameter for burst events detection
 timeVecTotal = linspace(0, 60, 361);      % Time steps vector: 361 frames, 60 min at 10 s per frame
 saveFigures = false;                      % true: save every figure as PNG in figures/
+moviesAsReplicates = false;
 
-dataFolder = './paper_data/';
-names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'vitro_1_1', 'vitro_10_1', 'vitro_100_1'};
+vivoFolder = './in_vivo_experiments/';
+vitroFolder = './in_vitro_experiments/';
+names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};
 labels = {'PP7 4x', 'PP7-FUS 4x', 'PP7 30x', 'PP7-FUS 30x', 'Q\beta 5x', 'Q\beta 10x', 'vitro 1:1', 'vitro 10:1', 'vitro 100:1'};
 csvNames = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};   % names in analysis_outputs/
 nVivo = 6;                                % the first six datasets are in vivo
@@ -33,9 +35,13 @@ colors = [0 0.447 0.698; 0 0.620 0.451; 0 0.447 0.698; 0 0.620 0.451; 0.835 0.36
           0.4 0.4 0.4; 0.4 0.4 0.4; 0.4 0.4 0.4];    % PP7 blue, PP7-FUS green, Qbeta orange, in vitro grey
 
 % Load every dataset; keep the traces of at least 180 frames (30 min), as the analysis does
-D = struct('name', names, 'S', [], 'B', [], 'G', [], 'X', [], 'movie', []);
+D = struct('name', names, 'S', [], 'B', [], 'G', [], 'X', [], 'replicate', []);
 for c = 1:numel(names)
-    folder = [dataFolder names{c} '/'];
+    if c <= nVivo
+        folder = [vivoFolder names{c} '/'];
+    else
+        folder = [vitroFolder names{c} '/'];
+    end
     signals = struct2cell(load([folder 'data.mat']));
     backgrounds = struct2cell(load([folder 'background.mat']));
     spotSums = struct2cell(load([folder 'spotsum.mat']));
@@ -49,10 +55,14 @@ for c = 1:numel(names)
             D(c).B{end+1, 1} = double(backgrounds{k}(:));                      % background
             D(c).G{end+1, 1} = double(spotSums{k}(:));                         % spot sum (granule above background)
             D(c).X{end+1, 1} = double(spotSums{k}(:)) + double(backgrounds{k}(:));   % spot sum + background, as analysis.m expects
-            D(c).movie(end+1, 1) = movies.movieId(k);
+            if moviesAsReplicates
+                D(c).replicate(end+1, 1) = movies.movieId(k);
+            else
+                D(c).replicate(end+1, 1) = numel(D(c).S);
+            end
         end
     end
-    fprintf('%s: %d granules, %d movies\n', names{c}, numel(D(c).S), numel(unique(D(c).movie)));
+    fprintf('%s: %d granules, %d replicates\n', names{c}, numel(D(c).S), numel(unique(D(c).replicate)));
 end
 if saveFigures && ~exist('figures', 'dir')
     mkdir('figures');
@@ -158,7 +168,7 @@ end
 % one after the other) and the longest trace of the corrected extraction. The corrected
 % traces have the camera offset (200) removed; it is added back here for the same scale.
 % (b) The first 16 time points of the original trace.
-old = struct2cell(load('./in_vivo_experiments/4PP7_data.mat'));
+old = struct2cell(load('./in_vivo_experiments-old/4PP7_data.mat'));
 old = old{1};
 oldTrace = double(old{50}(:));           % trace 49 (the first cell is empty), movie 007
 lengths = zeros(numel(D(1).S), 1);
@@ -506,15 +516,15 @@ for m = 1:2
         end
         perGranule{m, c} = counts;
         excess(m, c) = (sum(counts(:, 1)) - sum(counts(:, 2))) / sum(counts(:, 3));
-        % 95% CI: resample movies, then granules within each chosen movie
-        movieList = unique(D(c).movie);
+        % 95% CI: resample replicates, then granules within each chosen replicate
+        replicateList = unique(D(c).replicate);
         boot = zeros(nBoot, 1);
         for b = 1:nBoot
             picks = [];
-            chosenMovies = movieList(randi(numel(movieList), numel(movieList), 1));
-            for q = 1:numel(chosenMovies)
-                granulesOfMovie = find(D(c).movie == chosenMovies(q));
-                picks = [picks; granulesOfMovie(randi(numel(granulesOfMovie), numel(granulesOfMovie), 1))]; %#ok<AGROW>
+            chosenReplicates = replicateList(randi(numel(replicateList), numel(replicateList), 1));
+            for q = 1:numel(chosenReplicates)
+                granulesOfReplicate = find(D(c).replicate == chosenReplicates(q));
+                picks = [picks; granulesOfReplicate(randi(numel(granulesOfReplicate), numel(granulesOfReplicate), 1))]; %#ok<AGROW>
             end
             boot(b) = (sum(counts(picks, 1)) - sum(counts(picks, 2))) / sum(counts(picks, 3));
         end
@@ -522,21 +532,21 @@ for m = 1:2
         excessHi(m, c) = prctile(boot, 97.5);
     end
 end
-% PP7-FUS vs PP7 (4x): shuffle whole movies between the two conditions (two-sided p)
+% PP7-FUS vs PP7 (4x): shuffle whole replicates between the two conditions (two-sided p)
 pFus = zeros(1, 2);
 nPerm = 2000;
 for m = 1:2
     countsBoth = [perGranule{m, 2}; perGranule{m, 1}];
-    [~, ~, movieA] = unique(D(2).movie);
-    [~, ~, movieB] = unique(D(1).movie);
-    movieBoth = [movieA; movieB + max(movieA)];
-    nA = max(movieA);
+    [~, ~, replicateA] = unique(D(2).replicate);
+    [~, ~, replicateB] = unique(D(1).replicate);
+    replicateBoth = [replicateA; replicateB + max(replicateA)];
+    nA = max(replicateA);
     observed = excess(m, 2) - excess(m, 1);
     rng(1);
     countExtreme = 0;
     for p = 1:nPerm
-        order = randperm(max(movieBoth));
-        inA = ismember(movieBoth, order(1:nA));
+        order = randperm(max(replicateBoth));
+        inA = ismember(replicateBoth, order(1:nA));
         dA = (sum(countsBoth(inA, 1)) - sum(countsBoth(inA, 2))) / sum(countsBoth(inA, 3));
         dB = (sum(countsBoth(~inA, 1)) - sum(countsBoth(~inA, 2))) / sum(countsBoth(~inA, 3));
         if abs(dA - dB) >= abs(observed) - 1e-12
@@ -572,7 +582,7 @@ end
 % (bootstrap test of the difference between the halves).
 first = zeros(2, numel(names)); second = zeros(2, numel(names)); pHalves = zeros(2, numel(names));
 for c = 1:numel(names)
-    M = burstMeasures(D(c).S, D(c).B, D(c).G, D(c).movie, 20, 1, movingAverageWindowSpan, stringencyParameter, numel(timeVecTotal));
+    M = burstMeasures(D(c).S, D(c).B, D(c).G, D(c).replicate, 20, 1, movingAverageWindowSpan, stringencyParameter, numel(timeVecTotal));
     first(:, c) = [M.turnover1; M.net1];
     second(:, c) = [M.turnover2; M.net2];
     pHalves(:, c) = [M.pHalvesTurnover; M.pHalvesNet];

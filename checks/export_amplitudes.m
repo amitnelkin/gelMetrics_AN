@@ -7,9 +7,9 @@ repoDir = fileparts(fileparts(mfilename('fullpath')));
 addpath(repoDir); addpath(fullfile(repoDir, 'legacy')); addpath(fullfile(repoDir, 'analysis')); addpath(fullfile(repoDir, 'checks'));
 outDir = fullfile(repoDir, 'analysis_outputs', 'mle_real');
 R2 = 'in_vivo_reextracted/after_R2_offset';
-D = {'protein_RNA_1_1','in_vitro_experiments',12; 'protein_RNA_10_1','in_vitro_experiments',12;
-     'protein_RNA_100_1','in_vitro_experiments',12; '4PP7',R2,10; '4PP7-FUS',R2,10;
-     '30PP7',R2,12; '30PP7-FUS',R2,12; '5Qb','in_vivo_experiments',14; '10Qb','in_vivo_experiments',14};
+D = {'protein_RNA_1_1','in_vitro_experiments-old',12; 'protein_RNA_10_1','in_vitro_experiments-old',12;
+     'protein_RNA_100_1','in_vitro_experiments-old',12; '4PP7',R2,10; '4PP7-FUS',R2,10;
+     '30PP7',R2,12; '30PP7-FUS',R2,12; '5Qb','in_vivo_experiments-old',14; '10Qb','in_vivo_experiments-old',14};
 tVec = (0:360) * 10/60; win = 13;
 ds = {}; sg = {}; tr = []; amp = [];
 for d = 1:size(D,1)

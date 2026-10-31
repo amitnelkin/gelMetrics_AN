@@ -28,7 +28,7 @@ for d = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'}
     jobs(end+1,:) = {d{1}, 'spotsum', SU, [d{1} '_spotsum'], true}; %#ok<AGROW>
 end
 for d = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}
-    if doVitro, jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments', d{1}, false}; end %#ok<AGROW>
+    if doVitro, jobs(end+1,:) = {d{1}, 'mean', 'in_vitro_experiments-old', d{1}, false}; end %#ok<AGROW>
 end
 taus = [1 2 3 6 12 18 30 45 60]; rows = cell(0, 8);
 for j = 1:size(jobs,1)

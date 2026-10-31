@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 
 out = os.path.join('analysis_outputs', 'net_loss'); os.makedirs(out, exist_ok=True)
 rng = np.random.default_rng(22)
-R2, SU, IV = 'in_vivo_reextracted/after_R2_offset', 'in_vivo_reextracted/after_R2_sums', 'in_vitro_experiments'
+R2, SU, IV = 'in_vivo_reextracted/after_R2_offset', 'in_vivo_reextracted/after_R2_sums', 'in_vitro_experiments-old'
 VIVO = ['4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb']
 VITRO = ['protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1']
 COMPS = [('4PP7-FUS', '4PP7'), ('30PP7-FUS', '30PP7'), ('5Qb', '4PP7'), ('10Qb', '30PP7'), ('30PP7', '4PP7'),
