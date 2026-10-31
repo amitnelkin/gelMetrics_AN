@@ -199,6 +199,35 @@ Everything downstream of extraction:
 - **High SP, slow changes, time halves:** `checks/example_traces_sp.m`, `high_sp.py`, `sim_high_sp.m`, `sim_high_sp_plot.py` (section 34); `checks/slow_changes.py [--absolute]`, `slow_changes_test.py`, `win_sp.py` (section 35); `checks/halves.py` (section 36).
 - **Deck and summary page:** `checks/make_deck.py`, `checks/deck_notes.py` → `analysis_outputs/deck/`; `analysis_outputs/summary/index.html`.
 
+## Regenerating the manuscript figures with the repo scripts (Figs. 5-18, Table I)
+Figs. 1-4 are done (the user is satisfied with them); do not regenerate them. The manuscript figures themselves were drawn by `checks/ms_figures.py` (Python); the table below is how to get every remaining figure from the plain user-facing MATLAB scripts (section 66 state). Run from the repo root (the scripts load `./in_vivo_experiments/...`). The scripts do not save figures: save each with `exportgraphics(gcf, 'figures/<name>.png', 'Resolution', 300)` (and `.pdf`).
+
+Abbreviations: **EA** `ExperimentalAnalysis.m`, **CC** `compareConditions.m`, **AF** `AppendixFigures.m` (run its first section, then the figure's section), **Sim** `SimulationRunWithAnalysis.m`.
+
+| figure | what it shows | how to make it |
+|---|---|---|
+| **5** | WS fit fails (lambda wrong, k0 trades off with lambda); lambda*k0 = mean burst size is stable; all measures on simulated data | **Sim** with `lambdaList = [1 2 4]`, `snrList = [0.5 5]`, `histSNR = 0.5`, `nFits = 20`, `numTracks = 200`, `stringencyParameter = 15` (the MS simulation SP). Check first: the (g-i) panel letters (line ~206 uses `char('g' + j)`, which gives h-j; `char('f' + j)` gives g-i), the (b) axis labels (x = lambda_est, y = k0_est), and the (c) legend. |
+| **Table I** | per dataset: granules (replicates), brightness, frame noise, burst size of granules vs copies, beyond noise, mean burst size, turnover, net change | **EA** printed numbers: once with `dataFolder = './in_vivo_experiments/'` and the six in vivo conditions, once with `'./in_vitro_experiments/'` and `{'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'}`. |
+| **6** | in vitro: (a-c) burst sizes, granules vs copies, per protein:RNA ratio; (d-f) mean burst size, turnover, net change | **EA**, in vitro folder and the three `protein_RNA_*` conditions; (a-c) = "Burst sizes" figure, (d-f) = "Summary" figure |
+| **7** | PP7 4x and 30x: granule bursts look like their noise copies | **EA**, `conditions = {'4PP7', '30PP7'}`, "Burst sizes" figure |
+| **8** | Qbeta 5x and 10x: clear excess beyond noise | **EA**, `conditions = {'5Qb', '10Qb'}`, "Burst sizes" figure |
+| **9** | PP7-FUS: (a, b) burst sizes; (c) FUS granules are dimmer; (d) the 4x burst-size gap: total, explained by noise, beyond noise | (a, b): **EA**, `conditions = {'4PP7-FUS', '30PP7-FUS'}`. (c): **CC**, `pairs = {'4PP7-FUS', '4PP7'; '30PP7-FUS', '30PP7'}`; the MS panel uses the per-granule medians, i.e. `brightnessPooled` (add it back to `measures`, and to `plotMeasures` to draw it). (d): **CC**, same pairs, the second figure, panel (b) (total bar + stacked noise / beyond-noise bar, p values of `sizeBeyond`). |
+| **10** | (a) phase-diagram sketch (drawing, not code); (b-d) mean burst size, turnover, net change of all in vivo conditions | **EA**, the six in vivo conditions, "Summary" figure; p values from **CC** with the pairs wanted |
+| **11** | WS fit of the in vivo data: WS flat over lambda, best k0 falls as lambda rises | **AF**, Appendix C, Fig. 11 |
+| **12** | PP7 vs PP7-FUS burst amplitudes at SP 10, 12, 14 | **AF**, Appendix C, Fig. 12 |
+| **13** | the original pipeline read two-channel movies frame by frame (zigzag) | **AF**, Appendix D, Fig. 13 (reads `in_vivo_experiments-old/4PP7_data.mat`) |
+| **14** | noise floor: (a) copies reproduce most PP7 bursts; (b) real noise 2-6x camera noise; (c) a static granule reads ~0 turnover | **AF**, Appendix E, Fig. 14 (about 5 min); (b, c) are read from committed CSVs (they need the raw movies) |
+| **15** | no window or SP removes the noise; at high SP the real bursts disappear too; detection limit on simulations | **AF**, Appendix F, Fig. 15 (about 17 min) |
+| **16** | the fit returns lambda ~2-3 whatever the true lambda | **AF**, Appendix G, Fig. 16 (about 4 min); five scores, not six (the likelihood is undefined for the zero-truncated model; the MS caption says six) |
+| **17** | large slow changes: FUS shows more >= 30% changes relative to itself, not as a fixed amount of light | **AF**, Appendix H, Fig. 17 |
+| **18** | first vs second 30 min: in vivo stable, in vitro changes | **AF**, Appendix H, Fig. 18 |
+
+**Settings that decide whether the numbers match the manuscript** (report any difference to the user; do not tune to match):
+1. **Replicates:** the manuscript uses movies. Set `moviesAsReplicates = true` in EA, CC and AF; the default (granules) gives narrower CIs and smaller p values (4x FUS `sizeBeyond` one-sided p 0.035 with granules vs ~0.09 with movies).
+2. **Copies:** the manuscript numbers used 1 copy per granule with the paper seeds (4PP7 18, 4PP7-FUS 19, 30PP7 20, 30PP7-FUS 21, 5Qb 22, 10Qb 23; in vitro 18, 19, 20); the scripts use `nCopies = 20`, `seed = 1`. Burst sizes can differ by up to ~2 points; the 4x FUS one-sided p is 0.031 in the MS vs ~0.09 with 20 copies and movies.
+3. **Outlier rule:** the user's `analysis.m` uses `filloutliers(..., 'nearest', 'mean')`; the manuscript numbers used `'movmedian'` (small differences, `local_outlier_test/` on the laptop).
+4. Detection: window 13, SP 12 for all experimental figures (SP 15 only for the simulations of Figs. 5 and 16).
+
 ## Session notes
 - Remote Control drops when the app restarts the session (PC sleep, app update). Re-enable it with the ccd_session_mgmt `set_remote_control` tool when the user asks. The app setting "Connect new sessions to Remote Control" is on.
 - Another chat may push to `revision` in parallel: fetch before committing, and merge (never force-push or reset).
