@@ -1,0 +1,4 @@
+name,nGranules,nReplicates,nBursts,nFrac,brightness,brightnessPooled,frameNoise,meanBurst,meanBurst_lo,meanBurst_hi,medianBurst,sizeGranules,sizeCopies,sizeBeyond,sizeBeyond_lo,sizeBeyond_hi,turnover,turnover_lo,turnover_hi,net,net_lo,net_hi,noiseShare,turnover1,turnover2,pHalvesTurnover,net1,net2,pHalvesNet
+protein_RNA_1_1,46,12,102,83,929.4,914.7,13.69,127.5,47.4,337.4,47.8,13.69,9.90,3.78,0.23,9.70,16.34,6.36,31.33,0.58,-17.22,21.78,0.490,17.02,15.50,0.9320,1.13,4.07,0.8490
+protein_RNA_10_1,37,4,92,56,1725.7,1709.1,15.99,231.7,65.7,403.7,78.1,13.05,11.40,1.65,-1.08,21.47,16.68,-1.73,40.91,13.86,2.89,41.03,0.463,32.54,-2.37,0.1900,20.01,3.73,0.5760
+protein_RNA_100_1,31,8,88,61,1609.4,1693.8,10.53,1084.0,116.1,3196.3,122.4,14.44,10.33,4.11,-0.68,14.44,29.67,4.85,63.27,16.19,-13.72,37.92,0.525,-12.17,78.90,0.0250,35.11,3.10,0.3660

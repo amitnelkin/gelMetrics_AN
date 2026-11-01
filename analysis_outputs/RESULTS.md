@@ -2501,3 +2501,13 @@ At the user's request, in the plain style of the original scripts:
 - **compareConditions.m (user's edits):** condition names as table columns, two-sided and one-sided p; summary figure with p brackets; a new figure: (a) median burst size of A and B, (b) the gap A - B as one bar and as a stacked bar (explained by noise + beyond noise), with CIs from each condition's bootstrap and the beyond-noise p values.
 - **Replicate unit matters for the 4x FUS claim:** `sizeBeyond` gap 2.3 points; one-sided p = 0.035 with granules as replicates (200 shuffles), about 0.09 with movies (20 copies, seed 1). The manuscript's 0.031 used movies with 1 copy per granule and the movmedian outlier rule.
 - **AppendixFigures.m** reads the new folders (in vitro names now `protein_RNA_*`; Fig. 13 from `in_vivo_experiments-old/`); quick headless run passes.
+
+## 67. Numbers behind the lab PC's regenerated figures, for the text check (laptop, 2026-11-01)
+The figures the lab PC put into the MS (2026-11-01) were made with the current scripts: 20 copies per granule, seed 1, window 13, SP 12, the user's `analysis.m`; **in vivo with granules as replicates, in vitro with movies** (checked: Fig. 7 turnover CI [0.0, 7.8] is the granule CI; Fig. 6 turnover CI [6.4, 31.3] is the movie CI). Rerun here with the same settings: `analysis_outputs/ms_numbers_v2/invivo_granules.csv`, `invitro_movies.csv` (all Table I values), compareConditions (10,000 shuffles) and AppendixFigures (full).
+- 4x FUS vs PP7 (granules): burst size 17.5 vs 11.3 % (p < 0.001), copies 15.3 vs 11.5, beyond noise 2.3 points (one-sided p = 0.031, two-sided 0.057), brightness 3036 vs 5640 (p < 0.001), net change -6.6 vs +0.7 %/h (p = 0.021).
+- 30x FUS vs PP7: burst size 17.3 vs 15.2 % (p = 0.016) but beyond noise 0.4 (p = 0.58); brightness 3436 vs 3998 (p = 0.020); net change one-sided p = 0.048.
+- Qbeta vs PP7: turnover p = 0.010 (5x vs 4x), p < 0.001 (10x vs 30x); 10x net change +8.9 vs -5.1 (p < 0.001).
+- In vitro (movies): 100:1 vs 10:1 mean burst size one-sided p = 0.025 (two-sided 0.36); 100:1 vs 1:1 beyond noise 0.91, turnover 0.37, net 0.32, median burst a.u. 0.093.
+- Fig. 15(a) minimum 0.70; Fig. 15(c) false share at j = 12: 78% (PP7 noise); Fig. 17 p = 0.0005; Fig. 18 (in vivo, granules): PP7 30x turnover p = 0.048, FUS 4x net p = 0.012, FUS 30x net p = 0.023, Qbeta 10x net p < 0.001; in vitro (movies): only 100:1 turnover, -12 -> 79 %/h, p = 0.025.
+- Fig. 5: turnover beyond noise is below the true value at both SNRs (e.g. lambda 1: 1.9 vs ~6 at SNR 0.5, 4.3 vs ~6 at SNR 5); the mean burst size matches the truth at SNR 5 but is 1.4-2.8x too high at SNR 0.5.
+The list of text changes was given to the user in chat (the user edits the MS).
