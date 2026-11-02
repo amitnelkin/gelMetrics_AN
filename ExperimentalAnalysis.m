@@ -131,7 +131,7 @@ for c = 1:nCond
     fprintf('  burst size, granules / copies (%%)    %.1f / %.1f\n', M{c}.sizeGranules, M{c}.sizeCopies);
     fprintf('  burst size beyond noise (%% points)   %.1f [%.1f, %.1f]\n', M{c}.sizeBeyond, M{c}.sizeBeyond_lo, M{c}.sizeBeyond_hi);
     fprintf('  turnover beyond noise (%%/h)          %.1f [%.1f, %.1f]\n', M{c}.turnover, M{c}.turnover_lo, M{c}.turnover_hi);
-    fprintf('  net change beyond bleaching (%%/h)    %.1f [%.1f, %.1f]\n', M{c}.net, M{c}.net_lo, M{c}.net_hi);
+    fprintf('  net change beyond bleaching (1e-2/h) %.1f [%.1f, %.1f]\n', M{c}.net, M{c}.net_lo, M{c}.net_hi);
     fprintf('  first vs second 30 min: turnover %.1f -> %.1f (p = %.3f), net %.1f -> %.1f (p = %.3f)\n', ...
         M{c}.turnover1, M{c}.turnover2, M{c}.pHalvesTurnover, M{c}.net1, M{c}.net2, M{c}.pHalvesNet);
 end
@@ -163,7 +163,7 @@ end
 figure('Name', 'Summary', 'Units', 'inches', 'Position', [1 1 7 2.6], 'Color', 'w');
 tiledlayout(1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 measures = {'meanBurst', 'turnover', 'net'};
-labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', 'Net change beyond bleaching (%/h)'};
+labels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Turnover beyond noise (%/h)', 'Net change beyond bleaching (10^{-2} h^{-1})'};
 for j = 1:3
     nexttile; hold on;
     for c = 1:nCond

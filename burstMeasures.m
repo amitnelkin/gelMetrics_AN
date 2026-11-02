@@ -222,7 +222,7 @@ function [] = hists(ampPos,ampNeg,ampVar,title_str)
 end
 
 function r = netChange(y, framesPerHour)
-% Net change beyond photobleaching, %/h: the robust (Theil-Sen) slope of
+% Net change beyond photobleaching, in 10^-2 /h (an exponential rate; e.g. -70 = half lost per hour): the robust (Theil-Sen) slope of
 % ln(granule / background), i.e. the median of the slopes between all pairs of frames.
 % NaN if more than 10% of the frames are <= 0.
 tmpCheck = isfinite(y) & y > 0; % Granule must be brighter than background

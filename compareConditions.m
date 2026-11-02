@@ -109,7 +109,7 @@ end
 
 %% Figure: every condition (95% CI) and the significant pairs
 plotMeasures = {'meanBurst', 'sizeBeyond', 'turnover', 'net'};
-plotLabels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Median burst beyond noise (a.u.)', 'Turnover beyond noise (%/h)', 'Net change beyond bleaching (%/h)'};
+plotLabels = {'Mean burst size, \lambda\cdotk_0 (a.u.)', 'Median burst beyond noise (a.u.)', 'Turnover beyond noise (%/h)', 'Net change beyond bleaching (10^{-2} h^{-1})'};
 figure('Units', 'inches', 'Position', [1 1 7 2.8], 'Color', 'w');
 tiledlayout(1, numel(plotMeasures), 'TileSpacing', 'compact', 'Padding', 'compact');
 for j = 1:numel(plotMeasures)

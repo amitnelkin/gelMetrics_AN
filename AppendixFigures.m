@@ -591,7 +591,7 @@ end
 % --- figure
 f = figure('Units', 'inches', 'Position', [1 1 6.5 2.6], 'Color', 'w');
 tiledlayout(1, 2, 'TileSpacing', 'compact');
-yLabels = {'Turnover beyond noise (%/h)', 'Net change beyond bleaching (%/h)'};
+yLabels = {'Turnover beyond noise (%/h)', 'Net change beyond bleaching (10^{-2} h^{-1})'};
 for j = 1:2
     nexttile; hold on;
     for c = 1:numel(names)

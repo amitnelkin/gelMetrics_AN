@@ -79,7 +79,7 @@ for si = 1:nSNR
         fprintf('    burst size, granules / copies (%%)    %.1f / %.1f   (true %.1f)\n', Mc.sizeGranules, Mc.sizeCopies, T.size);
         fprintf('    burst size beyond noise (%% points)   %.1f [%.1f, %.1f]\n', Mc.sizeBeyond, Mc.sizeBeyond_lo, Mc.sizeBeyond_hi);
         fprintf('    turnover beyond noise (%%/h)          %.1f [%.1f, %.1f]   (true %.1f)\n', Mc.turnover, Mc.turnover_lo, Mc.turnover_hi, T.turnover);
-        fprintf('    net change beyond bleaching (%%/h)    %.1f [%.1f, %.1f]   (true %.1f)\n', Mc.net, Mc.net_lo, Mc.net_hi, T.net);
+        fprintf('    net change beyond bleaching (1e-2/h) %.1f [%.1f, %.1f]   (true %.1f)\n', Mc.net, Mc.net_lo, Mc.net_hi, T.net);
     end
 end
 
@@ -176,7 +176,7 @@ end      % fewer than three lambdas: empty tiles
 
 % (g-i) all measures of every condition, as ExperimentalAnalysis.m; black dots: true values
 measures = {'meanBurst', 'turnover', 'net'};
-labels = {'Mean burst size [\lambda \cdot k_0 (a.u.)]', 'Turnover beyond noise (%/h)', sprintf('Net change beyond bleaching (%%/h)')};
+labels = {'Mean burst size [\lambda \cdot k_0 (a.u.)]', 'Turnover beyond noise (%/h)', 'Net change beyond bleaching (10^{-2} h^{-1})'};
 trueField = {'meanBurst', 'turnover', 'net'};
 for j = 1:3
     ax = nexttile(t); hold(ax, 'on'); box on;
@@ -233,7 +233,7 @@ for i = 1:numTracks
     if numel(frames) < 0.9 * trackLength
         nets(i) = NaN;
     else
-        nets(i) = median(slopes) * 360 * 100;            % %/h
+        nets(i) = median(slopes) * 360 * 100;            % 10^-2 /h (exponential rate)
     end
     % bursts
     u = signals(i, :) ./ exp(-expConst * t);             % granule without bleaching
@@ -250,7 +250,7 @@ hours = numTracks * trackLength / 360;
 T.meanBurst = mean(amps);                                % a.u.
 T.size = 100 * median(fractions);                        % % of the granule
 T.turnover = 100 * sum(fractions) / hours;               % %/h
-T.net = mean(nets, 'omitnan');                                    % %/h 
+T.net = mean(nets, 'omitnan');                                    % 10^-2 /h (exponential rate) 
 end
 
 function plotBurstHist(ax, M)

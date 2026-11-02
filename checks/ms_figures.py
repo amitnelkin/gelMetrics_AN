@@ -227,7 +227,7 @@ def fig6():
     cols = [HIST] * 3
     for j, (c, lo, hi, yl) in enumerate([('meanBurst', 'meanBurst_lo', 'meanBurst_hi', 'Mean burst size, $\\lambda\\cdot k_0$ (a.u.)'),
                                          ('turnover', 'turnover_lo', 'turnover_hi', 'Turnover beyond noise (%/h)'),
-                                         ('net', 'net_lo', 'net_hi', 'Net change beyond\nbleaching (%/h)')]):
+                                         ('net', 'net_lo', 'net_hi', 'Net change beyond\nbleaching (10$^{-2}$ h$^{-1}$)')]):
         a = fig.add_subplot(gs[1, j]); ci_bars(a, VITRO, c, lo, hi, cols, yl)
         a.set_xlabel('protein:RNA'); label(a, 'def'[j])
     fig.tight_layout(h_pad=1.0)
@@ -297,7 +297,7 @@ def fig10():
     cols = [COL[k] for k in keys]
     for j, (c, lo, hi, yl) in enumerate([('meanBurst', 'meanBurst_lo', 'meanBurst_hi', 'Mean burst size,\n$\\lambda\\cdot k_0$ (a.u.)'),
                                          ('turnover', 'turnover_lo', 'turnover_hi', 'Turnover beyond\nnoise (%/h)'),
-                                         ('net', 'net_lo', 'net_hi', 'Net change beyond\nbleaching (%/h)')]):
+                                         ('net', 'net_lo', 'net_hi', 'Net change beyond\nbleaching (10$^{-2}$ h$^{-1}$)')]):
         a = ax[j]
         y = CT.loc[keys, c].values; e = [y - CT.loc[keys, lo].values, CT.loc[keys, hi].values - y]
         x = np.array([0, 1, 2.4, 3.4, 4.8, 5.8])
@@ -537,7 +537,7 @@ def fig22():
     print('halves measures:', h.measure.unique())
     keys = VIVO + VITRO
     fig, ax = plt.subplots(1, 2, figsize=(6.5, 2.4))
-    for j, (meas, yl) in enumerate([('turn', 'Turnover beyond noise (%/h)'), ('net', 'Net change beyond bleaching (%/h)')]):
+    for j, (meas, yl) in enumerate([('turn', 'Turnover beyond noise (%/h)'), ('net', 'Net change beyond bleaching (10$^{-2}$ h$^{-1}$)')]):
         d = h[h.measure == meas].set_index('dataset')
         a = ax[j]; x = np.arange(len(keys))
         a.plot(x - 0.12, d.loc[keys, 'first'], 'o', color=BLUE, mfc='none', ms=4, label='first 30 min')
