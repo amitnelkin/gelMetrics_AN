@@ -46,9 +46,6 @@ function [signals, backgroundSignals] = generateSim(numTracks, trackLength, type
                     if rand < 0.025 && distFromBurst > 18 % 2.5% chance of a burst at each point
                         currentBurstPos = j; 
                         change = k * poissrnd(lambda);
-                        % We noticed a positive bias in our simulated signals
-                        % we counter this by giving a higher chance for a
-                        % negative burst which reduces signal intensity
                         if rand < 0.5
                             change = -change; % symmetric: 50% chance of being negative
                         end
