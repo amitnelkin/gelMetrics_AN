@@ -1,4 +1,4 @@
-% Fig. 17 split into drops and rises (section 75). Local copy of AppendixFigures.m: the settings section
+% Fig. 17 split into drops and rises (section 76). Local copy of AppendixFigures.m: the settings section
 % (movies as replicates) and the Fig. 17 section counting drops and rises separately; saves the staged
 % .fig files and numbers that compose_ms_figs (local) turns into Fig17_drops / Fig17_rises. Run from the repo root.
 %% Settings and data - run this section first (a few seconds)
