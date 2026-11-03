@@ -4,6 +4,8 @@ This file lets a new chat continue the revision work. The full narrative with ev
 
 **Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 
+**Done on the lab PC (2026-11-03, section 75): Fig. 17 split into drops (`figures/ms_revision_lab/Fig17_drops.*`, (a) relative, (b) absolute) and rises (`Fig17_rises.*`, (c), (d)); the user may use only the drops. TO DO on the laptop: only when the user decides which to place.**
+
 **Done on the lab PC (2026-11-03, section 74): Fig. 15 now has only (a) and (b), stacked, one column wide (3.25 x 5.2 in; `figures/ms_revision_lab/Fig15.*`). TO DO on the laptop: replace Fig. 15 in the MS at single-column width; remove references to Fig. 15(c).**
 
 **Done on the lab PC (2026-11-03, section 73): one-colour bar plots grey (Figs. 6(d-f), 9(c), 10, 17), Fig. 9(d) grey/orange/green, Fig. 2 recoloured to Okabe-Ito (`figures/ms_revision_lab/Fig2.*`, from the MS's own SVG). TO DO on the laptop: replace Figs. 2, 6, 9, 10, 17 in the MS.**

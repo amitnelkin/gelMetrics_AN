@@ -2586,3 +2586,23 @@ User's change to section 72:
 ## 75. Fig. 15 single column in the MS; script colours match the MS (laptop, 2026-11-03)
 - **MS:** Fig. 15 swapped (PNG + SVG) at one-column width (3.00 x 4.94 in). Its section was full width; it is now part of one two-column section with the Appendix C text (the section break after that text was removed; the figure section set to 2 columns, untracked layout change). Caption: the (c) sentence deleted as a tracked change (author GelMetrics figure check). No other text refers to Fig. 15(c). TEMP copy, hash check, backup MS_revised_tracked - backup - 031126 before fig15 column.docx.
 - **Scripts:** colours only, to match the MS figures (sampled from figures/ms_revision_lab/*.png and sections 72-73): AppendixFigures.m (constructs PP7 orange / PP7-FUS green / Qbeta blue; Fig. 12 red / Okabe-Ito blue; Fig. 13 orange / green; Fig. 14 granules orange, copies, background and static granule green, and the two colour-key strings; Fig. 15(a) white-to-orange colormap with black numbers, (c) green / orange; Fig. 16 colororder orange, green, sky blue, blue, purple; Fig. 17 grey; Fig. 18 orange / green), ExperimentalAnalysis.m and compareConditions.m (summary bars grey; Fig. 9(d) total grey, noise orange). Two colormap/colororder lines added (Figs. 15(a), 16), as colours cannot be set there otherwise. Not matched: Fig. 14(a) layout (MS grouped bars, script lines) and Fig. 15 layout (MS one column), which are not colours. Comments left as they were at the users request, so three are now stale (colors line, colors14 block, partColors). PaperFigures_revised.m (legacy) not changed. checkcode: same warnings as before. Not run (laptop cannot draw).
+
+## 75. Fig. 17 split into drops and rises (lab PC, 2026-11-03)
+
+- Same analysis as Fig. 17 (changes >= 30% within 15 min, no run rule, 5 burst-free copies per granule, movies as replicates, 95% CI from movies then granules, PP7-FUS vs PP7 4x by shuffling movies), but drops and rises counted separately.
+- Files: `figures/ms_revision_lab/Fig17_drops.*` (panels (a) relative, (b) absolute) and `Fig17_rises.*` (panels (c), (d)). Script: `checks/local_figwork/fig17_drops_rises.m`. "Same amount of light" is now labelled "absolute".
+- Excess events per granule-hour (granules minus copies), [95% CI]:
+
+| dataset | drops, relative | drops, absolute | rises, relative | rises, absolute |
+|---|---|---|---|---|
+| PP7 4x | 0.00 [0.00, 0.00] | 0.43 [-0.15, 1.06] | 0.06 [-0.07, 0.21] | 0.30 [-0.14, 0.72] |
+| PP7-FUS 4x | 0.26 [0.05, 0.51] | 0.47 [0.07, 0.82] | 0.43 [0.17, 0.72] | 0.06 [-0.18, 0.27] |
+| PP7 30x | 0.12 [0.01, 0.29] | 0.39 [-0.04, 0.87] | 0.40 [0.13, 0.70] | 0.35 [-0.11, 1.03] |
+| PP7-FUS 30x | 0.16 [0.02, 0.34] | 0.10 [-0.05, 0.28] | 0.45 [0.19, 0.70] | 0.12 [0.00, 0.25] |
+| Qβ 5x | 0.01 [0.00, 0.04] | 4.62 [3.68, 5.75] | -0.05 [-0.15, 0.07] | -0.18 [-1.48, 0.98] |
+| Qβ 10x | 0.03 [0.00, 0.06] | 6.10 [4.82, 7.48] | 0.05 [-0.06, 0.15] | 0.86 [-0.78, 2.08] |
+| PP7-FUS vs PP7 4x, p | 0.020 | 0.90 | 0.003 | 0.19 |
+
+- PP7 4x: no drop >= 30% of itself in any granule or copy (0 and 0), hence the zero bar.
+- Relative to the granule, the 4x FUS excess is there for both drops (p = 0.020) and rises (p = 0.003); as an absolute amount of light it is not (p = 0.90, 0.19). Same picture as the combined figure (section 35).
+- Qβ: the absolute excess is all drops (4.6 and 6.1 per granule-hour); absolute rises are not above noise. Qβ granules lose large amounts of light in steps but do not gain them back in steps of the same size.
