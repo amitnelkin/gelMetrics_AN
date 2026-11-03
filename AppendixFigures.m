@@ -199,24 +199,26 @@ end
 %  ======================================================================================
 
 %% Appendix E, Fig. 14 - noise floor (about 5 min)
-% (a) Negative bursts in the burst-free copies (5 per granule) divided by those in the
-% granules, for stringency 10-20 (window 13); in vivo solid, in vitro dotted.
-% (b) Measured noise / noise predicted from camera and photon statistics, and
+% (a) Number of negative bursts detected in the granules (filled markers, solid lines) and in
+% their burst-free copies (open markers, dashed lines; 5 copies per granule, divided by 5, so
+% one full set of copies), for stringency 10-20 (window 13). Log scale.
+% (b) Measured noise / noise expected from camera and photon statistics, and
 % (c) turnover beyond noise of real and of static synthetic granules: both need the raw
 % movies, so they are read from analysis_outputs/ (checks/noise_from_background.m and
-% checks/static_control.m, run on the lab PC).
+% checks/static_control.m, run on the lab PC). The static control was run for PP7 4x,
+% PP7-FUS 4x and in vitro only; panel (c) shows only the datasets that have it.
 spList = 10:2:20;
 nCopies = 5;
-ratio = zeros(numel(names), numel(spList));
+burstsReal = zeros(numel(names), numel(spList));
+burstsCopy = zeros(numel(names), numel(spList));
 for c = 1:numel(names)
     rng(c);
     [C, BC] = burstFreeCopies(D(c).X, D(c).B, nCopies);
     for s = 1:numel(spList)
         [~, ~, ~, ~, ~, ~, segReal] = analysis(D(c).X, D(c).B, timeVecTotal, movingAverageWindowSpan, spList(s), 0, 0);
         [~, ~, ~, ~, ~, ~, segCopy] = analysis(C, BC, timeVecTotal, movingAverageWindowSpan, spList(s), 0, 0);
-        nReal = sum(segReal(:, 2) < 0 & segReal(:, 6) > 0);          % negative bursts (as burstMeasures.m counts them)
-        nCopy = sum(segCopy(:, 2) < 0 & segCopy(:, 6) > 0) / nCopies;
-        ratio(c, s) = nCopy / nReal;
+        burstsReal(c, s) = sum(segReal(:, 2) < 0 & segReal(:, 6) > 0);           % negative bursts (as burstMeasures.m counts them)
+        burstsCopy(c, s) = sum(segCopy(:, 2) < 0 & segCopy(:, 6) > 0) / nCopies; % per full set of copies
     end
 end
 noiseVivo = readtable('analysis_outputs/noise_background/summary.csv', 'TextType', 'string');
@@ -234,7 +236,7 @@ for c = 1:numel(names)
     noiseGranule(c) = str2double(strtok(row.ratioSum));                 % "4.14 [3.90-4.52]" -> 4.14
     noiseCell(c) = str2double(strtok(row.ratioCell));
     row = staticTable(staticTable.dataset == csvNames{c}, :);
-    if isempty(row)                      % the static control was run for 4PP7, 4PP7-FUS and in vitro only
+    if isempty(row)                      % no static control for this dataset
         realExcess(c) = NaN; staticExcess(c) = NaN; staticSE(c) = NaN;
     else
         realExcess(c) = row.real_excess_w13;
@@ -243,44 +245,61 @@ for c = 1:numel(names)
     end
 end
 
+% Okabe-Ito colours, the same as in Fig. 10: PP7 4x orange, PP7-FUS 4x bluish green,
+% PP7 30x blue, PP7-FUS 30x yellow, Qbeta 5x vermillion, Qbeta 10x reddish purple; in vitro black.
+% Markers: circle 4x (5x for Qbeta), square 30x (10x for Qbeta); in vitro triangles.
+colors14 = [0.902 0.624 0; 0 0.620 0.451; 0 0.447 0.698; 0.941 0.894 0.259; 0.835 0.369 0; 0.800 0.475 0.655; ...
+            0 0 0; 0 0 0; 0 0 0];
+markers14 = {'o', 'o', 's', 's', 'o', 's', '^', 'v', 'd'};
+
 % --- figure
-f = figure('Units', 'inches', 'Position', [1 1 7.2 2.6], 'Color', 'w');
+f = figure('Units', 'inches', 'Position', [1 1 7.2 2.8], 'Color', 'w');
 tiledlayout(1, 3, 'TileSpacing', 'compact');
 nexttile; hold on;
 for c = 1:numel(names)
-    if c <= nVivo
-        style = '-o';
-    else
-        style = ':o';
-    end
-    plot(spList, ratio(c, :), style, 'Color', colors(c, :), 'MarkerSize', 3, 'DisplayName', labels{c});
+    plot(spList, burstsReal(c, :), '-', 'Color', colors14(c, :), 'Marker', markers14{c}, 'MarkerSize', 4, ...
+        'MarkerFaceColor', colors14(c, :), 'DisplayName', labels{c});
+    plot(spList, burstsCopy(c, :), '--', 'Color', colors14(c, :), 'Marker', markers14{c}, 'MarkerSize', 4, ...
+        'MarkerFaceColor', 'w', 'HandleVisibility', 'off');
 end
-yline(1, 'k--');
-xlabel('Stringency parameter j'); ylabel('Bursts in copies / bursts in granules');
-legend('Location', 'northwest', 'Box', 'off', 'FontSize', 5, 'NumColumns', 2); title('(a)');
+plot(NaN, NaN, 'k-', 'DisplayName', 'granules');                % key for the line styles
+plot(NaN, NaN, 'k--', 'DisplayName', 'burst-free copies');
+set(gca, 'YScale', 'log', 'FontSize', 7);
+xlim([spList(1) - 0.5, spList(end) + 0.5]);
+xlabel('Stringency parameter j'); ylabel('Negative bursts detected');
+legend('Location', 'southwest', 'Box', 'off', 'FontSize', 5, 'NumColumns', 2); title('(a)');
 nexttile; hold on;
 for c = 1:numel(names)
-    bar(c - 0.18, noiseGranule(c), 0.36, 'FaceColor', colors(c, :), 'EdgeColor', 'none');
+    bar(c - 0.18, noiseGranule(c), 0.36, 'FaceColor', colors14(c, :), 'EdgeColor', 'none');
     bar(c + 0.18, noiseCell(c), 0.36, 'FaceColor', [0.75 0.75 0.75], 'EdgeColor', 'none');
 end
 yline(1, 'k--');
 set(gca, 'XTick', 1:numel(names), 'XTickLabel', labels, 'XTickLabelRotation', 45, 'FontSize', 7);
-ylabel('Measured / camera-predicted noise');
-text(0.03, 0.95, 'coloured: granule (spot sum); grey: background', 'Units', 'normalized', 'FontSize', 6);
+ylabel({'Measured noise /', 'noise expected from the camera'});
+text(0.03, 0.95, 'coloured: granule; grey: background', 'Units', 'normalized', 'FontSize', 6);
 title('(b)');
 nexttile; hold on;
-for c = 1:numel(names)
-    bar(c - 0.18, realExcess(c), 0.36, 'FaceColor', colors(c, :), 'EdgeColor', 'none');
-    bar(c + 0.18, staticExcess(c), 0.36, 'FaceColor', [0.75 0.75 0.75], 'EdgeColor', 'none');
-    errorbar(c + 0.18, staticExcess(c), 1.96 * staticSE(c), 'k', 'LineStyle', 'none', 'CapSize', 2);
+shown = find(~isnan(staticExcess));      % only the datasets with a static control
+for i = 1:numel(shown)
+    c = shown(i);
+    bar(i - 0.18, realExcess(c), 0.36, 'FaceColor', colors14(c, :), 'EdgeColor', 'none');
+    bar(i + 0.18, staticExcess(c), 0.36, 'FaceColor', [0.75 0.75 0.75], 'EdgeColor', 'none');
+    errorbar(i + 0.18, staticExcess(c), 1.96 * staticSE(c), 'k', 'LineStyle', 'none', 'CapSize', 2);
 end
 yline(0, 'k');
-set(gca, 'XTick', 1:numel(names), 'XTickLabel', labels, 'XTickLabelRotation', 45, 'FontSize', 7);
+set(gca, 'XTick', 1:numel(shown), 'XTickLabel', labels(shown), 'XTickLabelRotation', 45, 'FontSize', 7);
+xlim([0.4, numel(shown) + 0.6]);
 ylabel('Turnover beyond noise (%/h)');
 text(0.03, 0.95, 'coloured: granules; grey: static synthetic granule', 'Units', 'normalized', 'FontSize', 6);
 title('(c)');
 if saveFigures
     exportgraphics(f, 'figures/AppendixFig14.png', 'Resolution', 300);
+end
+fprintf('Fig. 14(a), negative bursts: granules / one set of copies\n');
+for c = 1:numel(names)
+    fprintf('  %-12s', names{c});
+    fprintf('  %4d / %6.1f', [burstsReal(c, :); burstsCopy(c, :)]);
+    fprintf('\n');
 end
 
 

@@ -2522,3 +2522,17 @@ Net change is the Theil-Sen slope of ln(spot sum / background) per granule, time
 - Only the net-change axis label changed: panels 5(i), 6(f), 10(e), 18(b) now read `Net change beyond bleaching (10⁻² h⁻¹)` (two lines in 5(i)). They were drawn from the same script runs as the figures now in the MS (section 67: 20 copies, seed 1, window 13, SP 12, in vivo granules / in vitro movies), with only the label renamed, so every bar, CI and p bracket is identical (checked against `analysis_outputs/ms_numbers_v2/`, e.g. Fig. 10(e) 4x PP7 +0.7, 4x FUS -6.6, 30x PP7 -5.1, 10x Qbeta +8.9; brackets p = 0.021, 0.048 one-sided, < 0.001).
 - Layout and style as the other MS figures (Figs. 7-9, 11-17 unchanged).
 - Laptop, 2026-11-02: the four redrawn figures were put into `revision_docs/MS_revised_tracked.docx` by swapping the image files (PNG + SVG) inside the existing figure runs, which are already tracked insertions by "Roee Amit Lab" (2026-11-01). The width was kept and the height set to the new aspect ratio (Fig. 18 3.00 -> 2.79 in; others within 0.1 in). Text unchanged (checked); TEMP copy, hash check, backup `MS_revised_tracked - backup - 021126 before net-change figures.docx`.
+
+## 70. Fig. 14 redesigned (laptop, 2026-11-03; to be drawn on the lab PC)
+The old Fig. 14(a) showed copies/granules burst ratios; at SP 18-20 the PP7 granules have 2-9 bursts in total, so the ratio jumped (PP7 30x 2.40 at SP 20 = 2 real bursts vs 4.8 per copy set), and PP7 4x and 30x had the same colour and line. Counts (window 13, 5 copies per granule, seeds rng(c), granules / one set of copies):
+
+| SP | 4PP7 | 4PP7-FUS | 30PP7 | 30PP7-FUS | 5Qb | 10Qb |
+|---|---|---|---|---|---|---|
+| 10 | 156 / 146.8 | 197 / 188.4 | 319 / 300.4 | 227 / 232.8 | 492 / 322.0 | 718 / 466.2 |
+| 12 | 106 / 87.8 | 130 / 116.0 | 191 / 191.6 | 131 / 145.2 | 317 / 194.2 | 460 / 278.8 |
+| 14 | 43 / 33.0 | 55 / 40.4 | 80 / 71.4 | 54 / 52.4 | 132 / 78.4 | 188 / 106.8 |
+| 16 | 17 / 17.0 | 28 / 19.8 | 35 / 36.4 | 17 / 22.0 | 76 / 30.2 | 88 / 42.0 |
+| 18 | 4 / 6.6 | 8 / 7.2 | 9 / 13.2 | 7 / 8.6 | 36 / 11.0 | 33 / 18.4 |
+| 20 | 2 / 2.2 | 3 / 2.8 | 2 / 4.8 | 3 / 3.6 | 18 / 4.2 | 15 / 5.8 |
+
+Changes in `AppendixFigures.m` (Fig. 14 section, at the user's request): (a) counts, granules (filled, solid) and one set of copies (open, dashed), log axis; Okabe-Ito colours as Fig. 10 and markers per construct; (b) y label 'Measured noise / noise expected from the camera'; (c) only datasets with a static control (PP7 4x, PP7-FUS 4x, in vitro). Not drawn on the laptop (test stopped at the user's request); the lab PC draws it (CLAUDE.md). The MS caption and text ("copies produced 73-111% as many bursts") still describe the ratio; the user updates them. Fig. 15(b) has the same same-colour problem for 4x/30x (not changed).
