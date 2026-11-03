@@ -2567,3 +2567,11 @@ At the user's request (the PI found the figures too colourful): one palette (Oka
 - Only colours and the Fig. 14(a) layout changed; every value is the same (drawn from the same saved runs). Made by the local figure composer (not in the repo); the repo scripts still draw the old colours.
 - All of Figs. 5-18 are now in `figures/ms_revision_lab/` (svg, pdf, png).
 - Laptop, 2026-11-03: the recoloured Figs. 6-12 and 14-18 placed in revision_docs/MS_revised_tracked.docx by swapping the images (PNG + SVG) inside the existing figure runs; widths kept, heights to the new aspect ratios. Fig. 13 not swapped (the user has deleted it in the MS); Fig. 5 unchanged. Text unchanged (checked); TEMP copy, hash check, backup MS_revised_tracked - backup - 031126 before recoloured figures.docx. Caption colour words to update (user): Fig. 9(d) purple -> light blue; Fig. 14 (a) grouped bars, (b, c) coloured/grey -> orange/green; Fig. 15(c) blue -> green.
+
+## 73. One-colour plots grey; Fig. 9(d) grey/orange/green; Fig. 2 in Okabe-Ito (lab PC, 2026-11-03)
+User's change to section 72:
+- **One-colour bar plots are now plain grey** ([0.6 0.6 0.6]): Figs. 6(d-f), 9(c), 10(b-e), 17.
+- **Fig. 9(d):** total grey, explained by noise orange, beyond noise green.
+- **Fig. 2** (not drawn by any repo script): the picture in the MS (SVG) recoloured to Okabe-Ito: red -> orange #E69F00 (negative bursts in (b) and (c); the noisy trace in (a), still semi-transparent), green -> #009E73 (positive bursts, smoothed trace), blue -> #0072B2 (steps in (a), flat segments in (c)); the measured trace in (c) (was orange) -> grey #808080, so that the now-orange negative segments stay visible. PNG (2x) and PDF rendered from the SVG with Edge headless. Source: the Fig. 2 SVG in the lab PC's copy of the tracked MS (2026-11-01).
+- The rest of section 72 stands (two series orange/green, histograms red, red/blue for two histograms). Fig. 13(b) stays orange: it is the orange trace of 13(a), enlarged.
+- Changed files in `figures/ms_revision_lab/`: Fig2 (new), Fig6, Fig9, Fig10, Fig14 (redrawn, unchanged), Fig17.

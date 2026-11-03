@@ -4,6 +4,8 @@ This file lets a new chat continue the revision work. The full narrative with ev
 
 **Done on the laptop (2026-10-26, section 55): `CLAUDE_laptop_spotsum.md` (finished brief). The in vitro spot-sum results are in the MS, Table I, letter and control file (tracked, backups `* - backup - 261026 before spot sum.docx`). New: `checks/vitro_area_test.py` (area growth 21 / 49 / 85 %/h, 100:1 vs 1:1 p = 0.013, log trend p = 0.031; Flory-Huggins now refers to it); Fig. 14(b) uses the spot sum (`ms_figures.py --vitro-spotsum`).**
 
+**Done on the lab PC (2026-11-03, section 73): one-colour bar plots grey (Figs. 6(d-f), 9(c), 10, 17), Fig. 9(d) grey/orange/green, Fig. 2 recoloured to Okabe-Ito (`figures/ms_revision_lab/Fig2.*`, from the MS's own SVG). TO DO on the laptop: replace Figs. 2, 6, 9, 10, 17 in the MS.**
+
 **Done on the lab PC (2026-11-03, section 72): Figs. 5-18 recoloured (one Okabe-Ito palette, as few colours as possible; rule in section 72) and Fig. 14(a) redrawn as grouped bars; the full set is in `figures/ms_revision_lab/` (svg, pdf, png). TO DO on the laptop: replace Figs. 6 and 9-18 in the MS (5, 7, 8 unchanged).**
 
 **Done on the lab PC (2026-11-03, section 71): Fig. 14 redrawn from the redesigned `AppendixFigures.m` section (section 70), `figures/ms_revision_lab/Fig14.svg/.pdf/.png`; two rows now (height 4.6 in). Panel (c) has all nine datasets: the static control for 30x and Qbeta already existed (`steady/static_control_more.csv`, section 24) and `checks/static_control_summary.py` now reads it too. TO DO on the laptop: place Fig. 14 in the MS; the user updates the caption and Appendix E text.**

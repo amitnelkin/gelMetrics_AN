@@ -633,7 +633,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="42,503.063 296,503.063 " />
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M601428,3.40175e+06 L601428,5.03063e+06 L964285,5.03063e+06 L964285,3.40175e+06 L601428,3.40175e+06"/>
@@ -653,7 +653,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="76.2857,333.435 80.2857,333.435 " />
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M1.20619e+06,4.15384e+06 L1.20619e+06,5.03063e+06 L1.56905e+06,5.03063e+06 L1.56905e+06,4.15384e+06 L1.20619e+06,4.15384e+06"/>
@@ -673,7 +673,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="136.762,404.57 140.762,404.57 " />
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M1.81095e+06,3.87604e+06 L1.81095e+06,5.03063e+06 L2.17381e+06,5.03063e+06 L2.17381e+06,3.87604e+06 L1.81095e+06,3.87604e+06"/>
@@ -693,7 +693,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="197.238,354.695 201.238,354.695 " />
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M2.41571e+06,4.03838e+06 L2.41571e+06,5.03063e+06 L2.77857e+06,5.03063e+06 L2.77857e+06,4.03838e+06 L2.41571e+06,4.03838e+06"/>
@@ -914,7 +914,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="361,509 615,509 " />
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M3.9275e+06,4.01543e+06 L3.9275e+06,5.09e+06 L4.245e+06,5.09e+06 L4.245e+06,4.01543e+06 L3.9275e+06,4.01543e+06"/>
@@ -940,7 +940,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="406.625,369.767 410.625,369.767 " />
 </g>
 
-<g fill="#56b4e9" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M4.32438e+06,4.41179e+06 L4.32438e+06,5.09e+06 L4.64188e+06,5.09e+06 L4.64188e+06,4.41179e+06 L4.32438e+06,4.41179e+06"/>
@@ -1013,7 +1013,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
  >p = 0.057 (two-sided)</text>
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M5.11813e+06,4.71192e+06 L5.11813e+06,5.09e+06 L5.43563e+06,5.09e+06 L5.43563e+06,4.71192e+06 L5.11813e+06,4.71192e+06"/>
@@ -1039,7 +1039,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="525.688,438.83 529.688,438.83 " />
 </g>
 
-<g fill="#56b4e9" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M5.515e+06,4.77752e+06 L5.515e+06,5.09e+06 L5.8325e+06,5.09e+06 L5.8325e+06,4.77752e+06 L5.515e+06,4.77752e+06"/>
@@ -1227,7 +1227,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <polyline fill="none" vector-effect="none" points="361,509 615,509 " />
 </g>
 
-<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#999999" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M5.08013e+06,3.1325e+06 L5.08013e+06,3.2075e+06 L5.26741e+06,3.2075e+06 L5.26741e+06,3.1325e+06 L5.08013e+06,3.1325e+06"/>
@@ -1239,7 +1239,7 @@ font-family="Arial" font-size="9" font-weight="400" font-style="normal"
 <path vector-effect="none" fill-rule="evenodd" d="M508.013,320.75 L508.013,313.25 L526.741,313.25 L526.741,320.75 L508.013,320.75"/>
 </g>
 
-<g fill="#56b4e9" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
+<g fill="#e69f00" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
 font-family="Arial" font-size="9" font-weight="400" font-style="normal" 
 >
 <path vector-effect="none" fill-rule="evenodd" d="M5.08013e+06,3.2375e+06 L5.08013e+06,3.3125e+06 L5.26741e+06,3.3125e+06 L5.26741e+06,3.2375e+06 L5.08013e+06,3.2375e+06"/>
