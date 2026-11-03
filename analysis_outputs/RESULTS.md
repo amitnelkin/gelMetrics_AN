@@ -2576,3 +2576,9 @@ User's change to section 72:
 - The rest of section 72 stands (two series orange/green, histograms red, red/blue for two histograms). Fig. 13(b) stays orange: it is the orange trace of 13(a), enlarged.
 - Changed files in `figures/ms_revision_lab/`: Fig2 (new), Fig6, Fig9, Fig10, Fig14 (redrawn, unchanged), Fig17.
 - Laptop, 2026-11-03: Figs. 2, 6, 9, 10 and 17 of section 73 placed in revision_docs/MS_revised_tracked.docx (image swap, PNG + SVG; sizes unchanged). Fig. 14 not swapped (redrawn but identical). Fig. 2 is original-manuscript content, not a tracked insertion, so its new picture shows no tracked change. Text unchanged (checked); TEMP copy, hash check, backup MS_revised_tracked - backup - 031126 before grey figures.docx. Caption colour words for the user: Fig. 2 (red/green/blue/orange -> orange/green/blue/grey), Fig. 9(d) (total grey, explained by noise orange, beyond noise green).
+
+## 74. Fig. 15 with panels (a) and (b) only, one column wide (lab PC, 2026-11-03)
+
+- The user dropped Fig. 15(c) (detection limit on simulations).
+- Fig. 15 is now (a) the copies/granules heat map above (b) the burst counts vs stringency, 3.25 x 5.2 in, to sit in one text column like Fig. 3. Same data, colours and fonts as before.
+- Files: `figures/ms_revision_lab/Fig15.svg/.pdf/.png`. The caption and any text pointing to Fig. 15(c) need updating (user).
