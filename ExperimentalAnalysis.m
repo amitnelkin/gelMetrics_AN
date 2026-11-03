@@ -170,7 +170,7 @@ for j = 1:3
         y = M{c}.(measures{j});
         lo = M{c}.([measures{j} '_lo']);
         hi = M{c}.([measures{j} '_hi']);
-        bar(c, y, 0.6, 'FaceColor', OKI(c), 'EdgeColor', 'none');
+        bar(c, y, 0.6, 'FaceColor', [0.6 0.6 0.6], 'EdgeColor', 'none');
         errorbar(c, y, y - lo, hi - y, 'k', 'LineStyle', 'none', 'LineWidth', 0.8, 'CapSize', 3);
     end
     yline(0, 'k', 'LineWidth', 0.5);

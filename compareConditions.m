@@ -119,7 +119,7 @@ for j = 1:numel(plotMeasures)
         y = allM{c}.(plotMeasures{j}); 
         lo = allM{c}.([plotMeasures{j} '_lo']); 
         hi = allM{c}.([plotMeasures{j} '_hi']);
-        bar(c, y, 0.6, 'FaceColor', OKI(c), 'EdgeColor', 'none');
+        bar(c, y, 0.6, 'FaceColor', [0.6 0.6 0.6], 'EdgeColor', 'none');
         errorbar(c, y, y - lo, hi - y, 'k', 'LineStyle', 'none', 'CapSize', 3);
         top = max(top, hi); bottom = min(bottom, lo);
     end
@@ -150,7 +150,7 @@ end
 % median burst size of A and B
 % the difference split into noise and beyond noise
 
-partColors = [204/255, 121/255, 167/255; 0/255, 158/255, 115/255];               % noise purple, beyond noise green
+partColors = [230/255, 159/255, 0/255; 0/255, 158/255, 115/255];               % noise purple, beyond noise green
 figure('Units', 'inches', 'Position', [1 1 7 2.8], 'Color', 'w');
 tiledlayout(1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 axA = nexttile; hold on;
@@ -177,7 +177,7 @@ for q = 1:size(pairs, 1)
     ciTotal = prctile(MA.boot.sizeGranules - MB.boot.sizeGranules, [2.5 97.5]);   % each condition resampled on its own
     ciNoise = prctile(MA.boot.sizeCopies - MB.boot.sizeCopies, [2.5 97.5]);
     ciBeyond = prctile(MA.boot.sizeBeyond - MB.boot.sizeBeyond, [2.5 97.5]);
-    hTotal = bar(axB, x(1), total, 0.8, 'FaceColor', [213/255, 94/255, 0]);
+    hTotal = bar(axB, x(1), total, 0.8, 'FaceColor', [0.6 0.6 0.6]);
     errorbar(axB, x(1), total, total - ciTotal(1), ciTotal(2) - total, 'k', 'LineStyle', 'none', 'CapSize', 3);
     hParts = bar(axB, x(2), [noise beyond], 0.8, 'stacked');
     hParts(1).FaceColor = partColors(1, :);

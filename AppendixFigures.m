@@ -31,7 +31,7 @@ names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1
 labels = {'PP7 4x', 'PP7-FUS 4x', 'PP7 30x', 'PP7-FUS 30x', 'Q\beta 5x', 'Q\beta 10x', 'vitro 1:1', 'vitro 10:1', 'vitro 100:1'};
 csvNames = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};   % names in analysis_outputs/
 nVivo = 6;                                % the first six datasets are in vivo
-colors = [0 0.447 0.698; 0 0.620 0.451; 0 0.447 0.698; 0 0.620 0.451; 0.835 0.369 0; 0.835 0.369 0; ...
+colors = [0.902 0.624 0; 0 0.620 0.451; 0.902 0.624 0; 0 0.620 0.451; 0 0.447 0.698; 0 0.447 0.698; ...
           0.4 0.4 0.4; 0.4 0.4 0.4; 0.4 0.4 0.4];    % PP7 blue, PP7-FUS green, Qbeta orange, in vitro grey
 
 % Load every dataset; keep the traces of at least 180 frames (30 min), as the analysis does
@@ -133,7 +133,7 @@ end
 % --- figure
 f = figure('Units', 'inches', 'Position', [1 1 6.5 3.6], 'Color', 'w');
 tiledlayout(2, 3, 'TileSpacing', 'compact');
-barColors = {[1 0 0], [0 0 1]};
+barColors = {[1 0 0], [0 0.447 0.698]};
 for r = 1:2
     for s = 1:numel(spList)
         nexttile; hold on;
@@ -182,12 +182,12 @@ newTrace = D(1).S{longest} + 200;
 f = figure('Units', 'inches', 'Position', [1 1 6.5 2.2], 'Color', 'w');
 tiledlayout(1, 4, 'TileSpacing', 'compact');
 nexttile([1 3]); hold on;
-plot((0:numel(oldTrace) - 1) / 6, oldTrace, 'Color', [1 0.4 0.4], 'LineWidth', 0.5, 'DisplayName', 'original extraction (two-channel movie)');
-plot((0:numel(newTrace) - 1) / 6, newTrace, 'Color', [0 0.447 0.741], 'LineWidth', 0.6, 'DisplayName', 'corrected extraction (fluorescence only)');
+plot((0:numel(oldTrace) - 1) / 6, oldTrace, 'Color', [0.902 0.624 0], 'LineWidth', 0.5, 'DisplayName', 'original extraction (two-channel movie)');
+plot((0:numel(newTrace) - 1) / 6, newTrace, 'Color', [0 0.620 0.451], 'LineWidth', 0.6, 'DisplayName', 'corrected extraction (fluorescence only)');
 xlim([0 60]); xlabel('Time (min)'); ylabel('Spot intensity (a.u.)');
 legend('Location', 'east', 'FontSize', 7); title('(a)');
 nexttile;
-plot(1:16, oldTrace(1:16), 'o-', 'Color', [1 0.4 0.4], 'MarkerSize', 3);
+plot(1:16, oldTrace(1:16), 'o-', 'Color', [0.902 0.624 0], 'MarkerSize', 3);
 xlabel('Time point'); ylabel('Spot intensity (a.u.)'); title('(b)');
 if saveFigures
     exportgraphics(f, 'figures/AppendixFig13.png', 'Resolution', 300);
@@ -248,8 +248,8 @@ end
 % Okabe-Ito colours, the same as in Fig. 10: PP7 4x orange, PP7-FUS 4x bluish green,
 % PP7 30x blue, PP7-FUS 30x yellow, Qbeta 5x vermillion, Qbeta 10x reddish purple; in vitro black.
 % Markers: circle 4x (5x for Qbeta), square 30x (10x for Qbeta); in vitro triangles.
-colors14 = [0.902 0.624 0; 0 0.620 0.451; 0 0.447 0.698; 0.941 0.894 0.259; 0.835 0.369 0; 0.800 0.475 0.655; ...
-            0 0 0; 0 0 0; 0 0 0];
+colors14 = [0.902 0.624 0; 0.902 0.624 0; 0.902 0.624 0; 0.902 0.624 0; 0.902 0.624 0; 0.902 0.624 0; ...
+            0.902 0.624 0; 0.902 0.624 0; 0.902 0.624 0];
 markers14 = {'o', 'o', 's', 's', 'o', 's', '^', 'v', 'd'};
 
 % --- figure
@@ -259,7 +259,7 @@ nexttile; hold on;
 for c = 1:numel(names)
     plot(spList, burstsReal(c, :), '-', 'Color', colors14(c, :), 'Marker', markers14{c}, 'MarkerSize', 4, ...
         'MarkerFaceColor', colors14(c, :), 'DisplayName', labels{c});
-    plot(spList, burstsCopy(c, :), '--', 'Color', colors14(c, :), 'Marker', markers14{c}, 'MarkerSize', 4, ...
+    plot(spList, burstsCopy(c, :), '--', 'Color', [0 0.620 0.451], 'Marker', markers14{c}, 'MarkerSize', 4, ...
         'MarkerFaceColor', 'w', 'HandleVisibility', 'off');
 end
 plot(NaN, NaN, 'k-', 'DisplayName', 'granules');                % key for the line styles
@@ -271,26 +271,26 @@ legend('Location', 'southwest', 'Box', 'off', 'FontSize', 5, 'NumColumns', 2); t
 nexttile; hold on;
 for c = 1:numel(names)
     bar(c - 0.18, noiseGranule(c), 0.36, 'FaceColor', colors14(c, :), 'EdgeColor', 'none');
-    bar(c + 0.18, noiseCell(c), 0.36, 'FaceColor', [0.75 0.75 0.75], 'EdgeColor', 'none');
+    bar(c + 0.18, noiseCell(c), 0.36, 'FaceColor', [0 0.620 0.451], 'EdgeColor', 'none');
 end
 yline(1, 'k--');
 set(gca, 'XTick', 1:numel(names), 'XTickLabel', labels, 'XTickLabelRotation', 45, 'FontSize', 7);
 ylabel({'Measured noise /', 'noise expected from the camera'});
-text(0.03, 0.95, 'coloured: granule; grey: background', 'Units', 'normalized', 'FontSize', 6);
+text(0.03, 0.95, 'orange: granule; green: background', 'Units', 'normalized', 'FontSize', 6);
 title('(b)');
 nexttile; hold on;
 shown = find(~isnan(staticExcess));      % only the datasets with a static control
 for i = 1:numel(shown)
     c = shown(i);
     bar(i - 0.18, realExcess(c), 0.36, 'FaceColor', colors14(c, :), 'EdgeColor', 'none');
-    bar(i + 0.18, staticExcess(c), 0.36, 'FaceColor', [0.75 0.75 0.75], 'EdgeColor', 'none');
+    bar(i + 0.18, staticExcess(c), 0.36, 'FaceColor', [0 0.620 0.451], 'EdgeColor', 'none');
     errorbar(i + 0.18, staticExcess(c), 1.96 * staticSE(c), 'k', 'LineStyle', 'none', 'CapSize', 2);
 end
 yline(0, 'k');
 set(gca, 'XTick', 1:numel(shown), 'XTickLabel', labels(shown), 'XTickLabelRotation', 45, 'FontSize', 7);
 xlim([0.4, numel(shown) + 0.6]);
 ylabel('Turnover beyond noise (%/h)');
-text(0.03, 0.95, 'coloured: granules; grey: static synthetic granule', 'Units', 'normalized', 'FontSize', 6);
+text(0.03, 0.95, 'orange: granules; green: static synthetic granule', 'Units', 'normalized', 'FontSize', 6);
 title('(c)');
 if saveFigures
     exportgraphics(f, 'figures/AppendixFig14.png', 'Resolution', 300);
@@ -382,10 +382,11 @@ f = figure('Units', 'inches', 'Position', [1 1 7.2 2.6], 'Color', 'w');
 tiledlayout(1, 3, 'TileSpacing', 'compact');
 nexttile;
 imagesc(gridMedian, [0.6 1]);
+colormap(gca, [linspace(1, 0.902, 64)', linspace(1, 0.624, 64)', linspace(1, 0, 64)']);
 set(gca, 'YDir', 'normal', 'XTick', 1:numel(windowList), 'XTickLabel', windowList, 'YTick', 1:numel(spGrid), 'YTickLabel', spGrid);
 for s = 1:numel(spGrid)
     for w = 1:numel(windowList)
-        text(w, s, sprintf('%.2f', gridMedian(s, w)), 'HorizontalAlignment', 'center', 'Color', 'w', 'FontSize', 6);
+        text(w, s, sprintf('%.2f', gridMedian(s, w)), 'HorizontalAlignment', 'center', 'Color', 'k', 'FontSize', 6);
     end
 end
 colorbar;
@@ -401,7 +402,7 @@ legend('Location', 'southwest', 'Box', 'off', 'FontSize', 5);
 text(0.97, 0.95, {'solid: granules', 'dotted: burst-free copies'}, 'Units', 'normalized', 'HorizontalAlignment', 'right', 'FontSize', 6);
 title('(b)');
 nexttile; hold on;
-simColors = [0 0.447 0.741; 0.835 0.369 0];
+simColors = [0 0.620 0.451; 0.902 0.624 0];
 simNames = {'original noise', 'PP7 noise'};
 for j = 1:2
     plot(spHigh, recall(j, :), '-o', 'Color', simColors(j, :), 'MarkerSize', 3, 'DisplayName', [simNames{j} ', bursts found']);
@@ -460,6 +461,7 @@ for l = 1:numel(lambdaSim)
         fraction(l, g) = mean(chosen(l, 1, :) == lambdaGrid(g));
     end
 end
+colororder(gca, [0.902 0.624 0; 0 0.620 0.451; 0.337 0.706 0.914; 0 0.447 0.698; 0.8 0.475 0.655]);
 bar(1:numel(lambdaSim), fraction, 0.7, 'stacked');
 set(gca, 'XTick', 1:numel(lambdaSim), 'XTickLabel', lambdaSim);
 ylim([0 1]); xlabel('\lambda_{sim}'); ylabel('Fraction of fits (WS)');
@@ -469,6 +471,7 @@ for g = 1:numel(lambdaGrid)
 end
 legend(legendText, 'Location', 'eastoutside', 'Box', 'off', 'FontSize', 6); title('(a)');
 nexttile; hold on;
+colororder(gca, [0.902 0.624 0; 0 0.620 0.451; 0.337 0.706 0.914; 0 0.447 0.698; 0.8 0.475 0.655]);
 for k = 1:numel(scoreNames)
     plot(lambdaSim, mean(chosen(:, k, :), 3), '-o', 'MarkerSize', 3, 'DisplayName', scoreNames{k});
 end
@@ -582,7 +585,7 @@ panelTitles = {'(a) relative to the granule', '(b) same amount of light'};
 for m = 1:2
     nexttile; hold on;
     for c = 1:nVivo
-        bar(c, excess(m, c), 0.65, 'FaceColor', colors(c, :), 'EdgeColor', 'none');
+        bar(c, excess(m, c), 0.65, 'FaceColor', [0.6 0.6 0.6], 'EdgeColor', 'none');
         errorbar(c, excess(m, c), excess(m, c) - excessLo(m, c), excessHi(m, c) - excess(m, c), 'k', 'LineStyle', 'none', 'CapSize', 2);
     end
     yline(0, 'k');
@@ -619,8 +622,8 @@ for j = 1:2
             text(c, max(first(j, c), second(j, c)) + 4, '*', 'HorizontalAlignment', 'center', 'FontSize', 10);
         end
     end
-    plot((1:numel(names)) - 0.12, first(j, :), 'o', 'Color', [0 0.447 0.741], 'MarkerSize', 4, 'DisplayName', 'first 30 min');
-    plot((1:numel(names)) + 0.12, second(j, :), 's', 'Color', [0.835 0.369 0], 'MarkerSize', 4, 'DisplayName', 'second 30 min');
+    plot((1:numel(names)) - 0.12, first(j, :), 'o', 'Color', [0.902 0.624 0], 'MarkerSize', 4, 'DisplayName', 'first 30 min');
+    plot((1:numel(names)) + 0.12, second(j, :), 's', 'Color', [0 0.620 0.451], 'MarkerSize', 4, 'DisplayName', 'second 30 min');
     yline(0, 'k', 'HandleVisibility', 'off');
     set(gca, 'XTick', 1:numel(names), 'XTickLabel', labels, 'XTickLabelRotation', 45, 'FontSize', 7);
     ylabel(yLabels{j}); title(['(' char('a' + j - 1) ')']);
