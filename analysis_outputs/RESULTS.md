@@ -2606,3 +2606,4 @@ User's change to section 72:
 - PP7 4x: no drop >= 30% of itself in any granule or copy (0 and 0), hence the zero bar.
 - Relative to the granule, the 4x FUS excess is there for both drops (p = 0.020) and rises (p = 0.003); as an absolute amount of light it is not (p = 0.90, 0.19). Same picture as the combined figure (section 35).
 - Qβ: the absolute excess is all drops (4.6 and 6.1 per granule-hour); absolute rises are not above noise. Qβ granules lose large amounts of light in steps but do not gain them back in steps of the same size.
+- Laptop, 2026-11-03: Fig. 17 in the MS replaced by Fig17_drops (panels (a) relative, (b) absolute; image swap, PNG + SVG, size unchanged 6.50 x 2.78 in). Text unchanged (checked); TEMP copy, hash check, backup MS_revised_tracked - backup - 031126 before fig17 drops.docx. Caption and Appendix H text changes listed for the user (drops instead of changes; p = 0.020 instead of p < 0.001).
