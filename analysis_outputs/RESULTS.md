@@ -2553,3 +2553,15 @@ Changes in `AppendixFigures.m` (Fig. 14 section, at the user's request): (a) cou
   The static granule reads about 0 everywhere. Qbeta 5x is about 2 SE above 0 (3.0 ± 1.4) but a third of the real 9.3. PP7 real granules are indistinguishable from the static granule; Qbeta clearly exceeds it. The 4x rows are unchanged (1.58, 2.27); only their bootstrap SE moved slightly (3.46 -> 3.42, 3.62 -> 3.58) because the summary's random stream now also serves the new rows.
 - **Fig. 14** (`figures/ms_revision_lab/Fig14.svg`, `.pdf`, `.png`): the redesigned section of `AppendixFigures.m` (section 70); the counts printed match section 70 exactly. Layout changed to two rows so it stays readable: (a) on top with its legend to the right (inside the panel the eleven entries covered the curves); (b) and (c) below at full width (in one row the in vitro labels '10:1' and '100:1' ran together). Height 4.6 in instead of 3.0 in. Panel (b) values unchanged; (c) now has all nine datasets.
 - For the user: the caption and Appendix E text still describe the old ratio panel ("copies produced 73-111% as many bursts") and the static control "for 4x only", if worded that way.
+
+## 72. Fewer colours in Figs. 5-18; Fig. 14(a) as grouped bars (lab PC, 2026-11-03)
+At the user's request (the PI found the figures too colourful): one palette (Okabe-Ito, the orange [0.902 0.624 0] and green [0 0.620 0.451] of Fig. 5) and as few colours as possible. Rule: histograms red (two overlaid histograms red/blue), a bar plot with one series orange, two series orange/green, more series further Okabe-Ito colours (sky blue, blue, purple).
+- One colour (orange), since every bar has its own label: Fig. 6(d-f), 9(c), 10(b-e), 17.
+- Fig. 9(d): total orange, explained by noise sky blue, beyond noise green.
+- Two series, orange/green: Fig. 13 (original / corrected extraction), 14(b) granule / background, 14(c) granules / static synthetic granule, 15(c) PP7 noise / original noise, 18 first / second 30 min.
+- Constructs (Figs. 11, 15(b)): PP7 orange, PP7-FUS green, Qbeta blue (valency by line style, as before).
+- Fig. 12: red/blue (Okabe-Ito blue). Fig. 15(a): heat map white -> orange instead of the rainbow map. Fig. 16: lambda_est 1-5 and the five scores in orange, green, sky blue, blue, purple.
+- Figs. 5, 7, 8 unchanged (already red histograms and orange/green).
+- **Fig. 14(a)** redrawn after the user's sketch: per dataset, pairs of bars (granules orange, one set of burst-free copies green) at j = 10, 12, 14, 16, linear scale, full width on top; (b) and (c) below. Same counts as section 70 (j = 18, 20 not shown: 2-36 bursts). The colour keys of (b, c) now say orange/green.
+- Only colours and the Fig. 14(a) layout changed; every value is the same (drawn from the same saved runs). Made by the local figure composer (not in the repo); the repo scripts still draw the old colours.
+- All of Figs. 5-18 are now in `figures/ms_revision_lab/` (svg, pdf, png).
