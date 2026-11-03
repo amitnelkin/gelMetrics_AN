@@ -2536,3 +2536,20 @@ The old Fig. 14(a) showed copies/granules burst ratios; at SP 18-20 the PP7 gran
 | 20 | 2 / 2.2 | 3 / 2.8 | 2 / 4.8 | 3 / 3.6 | 18 / 4.2 | 15 / 5.8 |
 
 Changes in `AppendixFigures.m` (Fig. 14 section, at the user's request): (a) counts, granules (filled, solid) and one set of copies (open, dashed), log axis; Okabe-Ito colours as Fig. 10 and markers per construct; (b) y label 'Measured noise / noise expected from the camera'; (c) only datasets with a static control (PP7 4x, PP7-FUS 4x, in vitro). Not drawn on the laptop (test stopped at the user's request); the lab PC draws it (CLAUDE.md). The MS caption and text ("copies produced 73-111% as many bursts") still describe the ratio; the user updates them. Fig. 15(b) has the same same-colour problem for 4x/30x (not changed).
+
+## 71. Fig. 14 drawn; static control for all nine datasets (lab PC, 2026-11-03)
+- **Static control:** it already existed for PP7 30x, PP7-FUS 30x and both Qbeta datasets: it was run in October (section 24, `analysis_outputs/steady/static_control_more.csv`, both threshold versions), but `static_control_summary.py` read only `static_control.csv` (4x). It now reads both files (one line; the same pair that `report_params.py` and `plot_steady_static.py` already read). A rerun today (same granules, new noise draw) gave the same picture (30x PP7 -4.1, 30x FUS 0.7, 5Qb 2.3, 10Qb 2.1 %/h, all within 1-2 SE of the October values); the committed October rows are used, and the rerun was not kept in the repo.
+- Turnover beyond noise, window 13, SP 12, per-frame thresholds (published R2); real granules vs the static synthetic granule (± nested bootstrap SE):
+
+| dataset | granules | real | static |
+|---|---|---|---|
+| PP7 4x | 75 | 1.6 | 1.6 ± 3.4 |
+| PP7-FUS 4x | 91 | 3.0 | 2.3 ± 3.6 |
+| PP7 30x | 143 | 1.5 | 3.1 ± 3.2 |
+| PP7-FUS 30x | 110 | 2.2 | 0.3 ± 3.1 |
+| Qbeta 5x | 190 | 9.3 | 3.0 ± 1.4 |
+| Qbeta 10x | 273 | 9.7 | 1.6 ± 1.1 |
+
+  The static granule reads about 0 everywhere. Qbeta 5x is about 2 SE above 0 (3.0 ± 1.4) but a third of the real 9.3. PP7 real granules are indistinguishable from the static granule; Qbeta clearly exceeds it. The 4x rows are unchanged (1.58, 2.27); only their bootstrap SE moved slightly (3.46 -> 3.42, 3.62 -> 3.58) because the summary's random stream now also serves the new rows.
+- **Fig. 14** (`figures/ms_revision_lab/Fig14.svg`, `.pdf`, `.png`): the redesigned section of `AppendixFigures.m` (section 70); the counts printed match section 70 exactly. Layout changed to two rows so it stays readable: (a) on top with its legend to the right (inside the panel the eleven entries covered the curves); (b) and (c) below at full width (in one row the in vitro labels '10:1' and '100:1' ran together). Height 4.6 in instead of 3.0 in. Panel (b) values unchanged; (c) now has all nine datasets.
+- For the user: the caption and Appendix E text still describe the old ratio panel ("copies produced 73-111% as many bursts") and the static control "for 4x only", if worded that way.

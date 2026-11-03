@@ -12,7 +12,8 @@ import pandas as pd
 d = os.path.join('analysis_outputs', 'steady')
 rng = np.random.default_rng(24)
 H = 10 / 3600
-S = pd.read_csv(os.path.join(d, 'static_control.csv'))
+S = pd.concat([pd.read_csv(os.path.join(d, 'static_control.csv')),   # 4PP7, 4PP7-FUS (section 23)
+               pd.read_csv(os.path.join(d, 'static_control_more.csv'))])   # 30PP7, 30PP7-FUS, 5Qb, 10Qb (section 24)
 Dr = pd.read_csv(os.path.join(d, 'detection.csv')); Mr = pd.read_csv(os.path.join(d, 'm2b.csv'))
 VNAME = {'v0': 'per-frame (R2)', 'v31': 'steady (R4)'}
 
