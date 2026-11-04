@@ -2613,3 +2613,9 @@ User's change to section 72:
 - Citations: 32 Mendeley citations, 32 bibliography entries, consistent; the two plain-text [18] are correct.
 - Response_to_reviewers.docx: 31 tracked edits (author Final check; backup Response_to_reviewers - backup - 031126 before final.docx): figure/appendix numbers, citation numbers [17]/[20] -> [18]/[21], replicates (granules in vivo, movies in vitro), net change in h^-1, 100:1 halves -12 -> 79 %/h, removed the p ~ 0.1 clause (the MS reports one-sided p = 0.031).
 - Open for the user: the MS no longer describes the two-channel (DIC) extraction bug, the first/second-half analysis, or the lambda-estimation appendix, but the MS still cites Appendix G (3x), Appendix H (area growth), Appendix A-C (WS tuning) and Fig. 11(b).
+
+## 78. Fig. 12 histograms added to Fig. 9 as panel (c) (lab PC, 2026-11-04)
+
+- The user's request: the PP7 (red) vs PP7-FUS (blue) burst-amplitude histograms at SP 10, 12, 14 (old Fig. 12, "Experimental phase behaviors of granules made with PP7") are now Fig. 9(c), a 2 x 3 block between the burst-size panels and the bar plots. Old (c) brightness -> (d), old (d) burst-size gap -> (e).
+- Same data and colours as the old Fig. 12; y axis now labelled 'Frequency (10^-3)' instead of the x10^-3 above each axis (it ran into the (c) label). Figure 6.5 x 7.8 in.
+- Files: `figures/ms_revision_lab/Fig9.svg/.pdf/.png`. The user updates the caption of Fig. 9 (add (c), relabel (c,d) -> (d,e)) and the text references; old Fig. 12 becomes redundant.
