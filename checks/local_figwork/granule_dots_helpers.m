@@ -1,6 +1,6 @@
 % Local copy (lab PC): the two helpers added to the figure composer (compose_ms_figs.m, not in the repo)
 % for Figs. 6(d-f), 9(d, e), 10(b-e) with one dot per granule and no error bars (RESULTS section 81).
-% dotPanel: grey bar at the condition value + one dot per granule (in vitro: coloured by movie, side by side).
+% dotPanel: grey bar at the condition value + one dot per granule (in vitro: one marker shape per movie, side by side).
 % drawBrackets: the p brackets of compareConditions.m, now clearing the dots, also on log axes.
 
 function drawBrackets(ax, file, measure, br)
@@ -75,7 +75,9 @@ end
 function dotPanel(ax, bars, vals, cols, groups)
 % the bars at the condition values (grey, as before) and one dot per granule on top; no error bars.
 % vals{i}: the granule values of condition i (NaN: no dot); cols{i}: one colour per dot (rows), or
-% cols = {one colour} for all; groups{i} (optional): the movie of every dot, drawn side by side
+% cols = {one colour} for all; groups{i} (optional): the movie of every dot, drawn side by side, one
+% marker per movie: circle, square, triangle, pentagram, diamond, down triangle; filled for movies 1-6,
+% open for 7-12 (then again)
 delete(findobj(ax, 'Type', 'errorbar')); delete(findobj(ax, 'Type', 'bar')); delete(findobj(ax, 'Type', 'scatter'));
 hold(ax, 'on');
 n = numel(bars); w = 0.6;
@@ -99,7 +101,19 @@ for i = 1:n
     end
     c = cols{min(i, numel(cols))};
     if size(c, 1) > 1, c = c(ok, :); end
-    scatter(ax, x(ok), v(ok), 5, c, 'filled', 'MarkerFaceAlpha', 0.5, 'MarkerEdgeColor', 'none');
+    if isempty(groups)
+        scatter(ax, x(ok), v(ok), 5, c, 'filled', 'MarkerFaceAlpha', 0.5, 'MarkerEdgeColor', 'none');
+        continue
+    end
+    shapes = 'os^pdv'; sz = [7 7 7 11 7 7];      % the pentagram drawn larger: it looks smaller at one size
+    for j = 1:numel(u)
+        mm = ok & g == u(j); q = mod(u(j) - 1, 6) + 1;
+        if mod(floor((u(j) - 1) / 6), 2) == 0
+            scatter(ax, x(mm), v(mm), sz(q), [0 0 0], shapes(q), 'filled', 'MarkerFaceAlpha', 0.55, 'MarkerEdgeColor', 'none');
+        else
+            scatter(ax, x(mm), v(mm), sz(q), [0 0 0], shapes(q), 'MarkerEdgeAlpha', 0.75, 'LineWidth', 0.5);
+        end
+    end
 end
 xlim(ax, [0.4, n + 0.6]); ax.XTick = 1:n;
 uistack(findobj(ax, 'Type', 'constantline'), 'top');
