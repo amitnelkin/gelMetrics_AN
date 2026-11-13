@@ -2646,6 +2646,6 @@ User's change to section 72:
 - The new Figs. 6, 9, 10 (section 81) replace the old images in the user's latest MS, `revision_docs/Revised_MS_clean_RA_101126.docx` (backup `* - backup - 131126 before dot figures.docx`). Image swap only (png + svg inside the docx); text checked identical; each image keeps its old box size (aspect differs < 1%), so the pagination is unchanged (checked page by page in Word).
 - Caption changes (error bars, dots, Fig. 9(e) Option B, Fig. 10(e) off-scale granule) were given to the user to apply by hand.
 
-## 82. Fig. 9(e): 'n.s.' instead of p = 0.289 (2026-11-13)
+## 83. Fig. 9(e): 'n.s.' instead of p = 0.289 (2026-11-13)
 
 At the user's request the 30x bracket of Fig. 9(e) now reads 'n.s.' (solid line) instead of 'p = 0.289 (one-sided)'. The 4x bracket is unchanged (p = 0.031, one-sided, dashed). Rule in `drawBrackets`: a bracket with p >= 0.05 is labelled 'n.s.'. Files: `figures/ms_revision_lab/Fig9.*`.
