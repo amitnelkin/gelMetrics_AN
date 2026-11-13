@@ -2641,3 +2641,7 @@ User's change to section 72:
 - Fig. 10(b-e): (b) log axis. (e) axis stops at about -110; the one 4x PP7-FUS granule at -209 is drawn as a small triangle at the bottom edge with its value written next to it (the caption should say so). Granules without bursts have no dot in (b, c).
 - Code: the helpers are in `checks/local_figwork/granule_dots_helpers.m` (copy of the local composer's functions).
 - TO DO on the laptop: place Figs. 6, 9, 10 in the MS; captions: "dots = single granules (Fig. 6: marker shape = movie); bars = condition value; no error bars"; Fig. 9(e) caption for Option B; Fig. 10(e) the off-scale granule.
+
+## 82. Dot figures placed in the MS (laptop, 2026-11-13)
+- The new Figs. 6, 9, 10 (section 81) replace the old images in the user's latest MS, `revision_docs/Revised_MS_clean_RA_101126.docx` (backup `* - backup - 131126 before dot figures.docx`). Image swap only (png + svg inside the docx); text checked identical; each image keeps its old box size (aspect differs < 1%), so the pagination is unchanged (checked page by page in Word).
+- Caption changes (error bars, dots, Fig. 9(e) Option B, Fig. 10(e) off-scale granule) were given to the user to apply by hand.
