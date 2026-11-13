@@ -2,7 +2,7 @@
 (brightness of one granule pixel, = Table I brightness), background (one cell / dilute-phase pixel),
 above = spot mean - background (granule light per pixel above the background), area = spot sum / above
 (pixels), total = spot sum. Table: median over granules (and over movie medians for "above");
-p: shuffle whole movies (10000x), difference of movie medians. RESULTS.md section 83.
+p: shuffle whole movies (10000x), difference of movie medians. RESULTS.md section 84.
 Usage: py -3 checks/brightness_per_area.py -> analysis_outputs/granule_points/brightness_per_area.csv"""
 import scipy.io as sio, numpy as np, pandas as pd, sys
 sys.stdout.reconfigure(encoding='utf-8')

@@ -52,12 +52,14 @@ for k = 1:size(br, 1)
     end
     br(k, 5) = base + step;
     lvl = br(k, 5);
-    style = '-'; if br(k, 4), style = '--'; end
+    ns = br(k, 3) >= 0.05;                       % not significant: 'n.s.', solid bracket
+    style = '-'; if br(k, 4) && ~ns, style = '--'; end
     yy = [lvl - step / 3, lvl, lvl, lvl - step / 3]; ty = lvl;
     if isLog, yy = 10 .^ yy; ty = 10 ^ ty; end
     plot(ax, [a a b b], yy, style, 'Color', 'k', 'LineWidth', 0.5, 'HandleVisibility', 'off');
     if br(k, 3) < 0.001, s = 'p < 0.001'; else, s = sprintf('p = %.3f', br(k, 3)); end
     if br(k, 4), s = [s ' (one-sided)']; end %#ok<AGROW>
+    if ns, s = 'n.s.'; end
     text(ax, (a + b) / 2, ty, s, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', ...
         'FontName', 'Arial', 'FontSize', 6.5, 'Interpreter', 'none');
 end
