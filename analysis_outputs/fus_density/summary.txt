@@ -1,0 +1,14 @@
+
+4x  (granules: PP7 76, FUS 94; movies 9, 12)
+  brightness per pixel (a.u.)    PP7   5639.85   FUS   3035.80   ratio  0.54   p(movies) 0.000
+  cell around it (a.u.)          PP7   2997.64   FUS   1615.29   ratio  0.54   p(movies) 0.001
+  enrichment (granule / cell)    PP7      1.87   FUS      1.87   ratio  1.00   p(movies) 0.158
+  granule area (px)              PP7     47.00   FUS     38.00   ratio  0.81   p(movies) 0.098
+  total light (a.u.)             PP7 123658.29   FUS  50112.43   ratio  0.41   p(movies) 0.001
+
+30x  (granules: PP7 145, FUS 111; movies 8, 8)
+  brightness per pixel (a.u.)    PP7   3997.68   FUS   3435.59   ratio  0.86   p(movies) 0.744
+  cell around it (a.u.)          PP7   1961.13   FUS   1675.53   ratio  0.85   p(movies) 0.632
+  enrichment (granule / cell)    PP7      1.96   FUS      2.15   ratio  1.10   p(movies) 0.003
+  granule area (px)              PP7     28.00   FUS     18.00   ratio  0.64   p(movies) 0.015
+  total light (a.u.)             PP7  54091.27   FUS  34251.31   ratio  0.63   p(movies) 0.170

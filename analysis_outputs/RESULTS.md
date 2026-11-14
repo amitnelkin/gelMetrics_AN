@@ -2653,3 +2653,19 @@ At the user's request the 30x bracket of Fig. 9(e) now reads 'n.s.' (solid line)
 - `checks/brightness_per_area.py` -> `analysis_outputs/granule_points/brightness_per_area.csv` (one row per granule). The Table I brightness (spot mean) is already per pixel; above background = spot mean - background; area = spot sum / (spot mean - background) pixels.
 - Medians over granules (same granules as Table I): above background 4PP7 2575 / 4PP7-FUS 1407 / 30PP7 2021 / 30PP7-FUS 1760 / 5Qb 5245 / 10Qb 6938 / 1:1 389 / 10:1 528 / 100:1 731 a.u. per pixel; area 47 / 38 / 28 / 18 / 56 / 53 / 43 / 14 / 41 pixels.
 - Movie-shuffle p: 4x FUS vs PP7 above background p < 0.001, area p = 0.10; 30x above p = 0.85, area p = 0.018 (FUS smaller); 5Qb vs 10Qb above p = 0.001, area p = 0.84; in vitro 1:1 vs 100:1 all n.s.
+
+## 84. Is PP7-FUS dimmer because of quenching? Granule vs surrounding cell (2026-11-14)
+
+The user's reading: PP7-FUS granules are dimmer because the dye self-quenches in a denser granule. Test: if the dimming is quenching inside the granule, the granule should be dimmer *relative to the cell around it* (lower enrichment); if the whole cell is dimmer (e.g. lower expression), enrichment stays the same. `checks/fus_density.py` -> `analysis_outputs/fus_density/summary.txt`; granules of >= 30 min (the analysed set; reproduces the MS brightness 3036 vs 5640 and 3436 vs 3998), track medians, movie-level permutation p.
+
+| measure | 4x PP7 | 4x FUS | ratio | p | 30x PP7 | 30x FUS | ratio | p |
+|---|---|---|---|---|---|---|---|---|
+| brightness per pixel | 5640 | 3036 | 0.54 | <0.001 | 3998 | 3436 | 0.86 | 0.74 |
+| cell around the granule | 2998 | 1615 | 0.54 | 0.001 | 1961 | 1676 | 0.85 | 0.63 |
+| enrichment (granule/cell) | 1.87 | 1.87 | 1.00 | 0.16 | 1.96 | 2.15 | 1.10 | 0.003 |
+| area (px) | 47 | 38 | 0.81 | 0.10 | 28 | 18 | 0.64 | 0.015 |
+| total light | 123,658 | 50,112 | 0.41 | 0.001 | 54,091 | 34,251 | 0.63 | 0.17 |
+
+- 4x: the cell around a FUS granule is dimmer by exactly the same factor as the granule (0.54), so enrichment is identical. The dimming is cell-wide (lower expression, or quenching everywhere), not specific to the granule. This does not support "denser FUS granules" at 4x.
+- 30x: FUS granules are smaller and slightly more enriched (2.15 vs 1.96, p = 0.003), i.e. somewhat denser.
+- Caveat: granules are near the diffraction limit, so the mask mean of a smaller spot is diluted by blur; a smaller granule can look less enriched than it is. This cannot turn the 4x result into a clear density increase, but it limits how strongly it argues against one.
