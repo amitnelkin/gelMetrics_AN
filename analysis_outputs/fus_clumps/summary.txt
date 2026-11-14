@@ -1,0 +1,18 @@
+4x (movies: PP7 9, FUS 12); medians over movies, movie permutation p
+  cytoplasm brightness (a.u.)          PP7  1238.948  FUS   465.973  ratio  0.38  p 0.018
+  glass (a.u.)                         PP7   387.773  FUS   269.352  ratio  0.69  p 0.001
+  cytoplasm grain (CV, beyond glass)   PP7     0.109  FUS     0.079  ratio  0.72  p 0.107
+  frame noise var (a.u.^2)             PP7  3488.978  FUS  1203.234  ratio  0.34  p 0.006
+  glass static var (a.u.^2)            PP7     6.871  FUS     2.783  ratio  0.41  p 0.013
+  cell area per field (um^2)           PP7   349.798  FUS   310.643  ratio  0.89  p 0.578
+  granules per field                   PP7    21.000  FUS    30.000  ratio  1.43  p 0.213
+  granules per 100 um^2 cell           PP7     9.752  FUS     9.581  ratio  0.98  p 0.919
+30x (movies: PP7 8, FUS 8); medians over movies, movie permutation p
+  cytoplasm brightness (a.u.)          PP7   673.409  FUS   427.215  ratio  0.63  p 0.004
+  glass (a.u.)                         PP7   301.129  FUS   268.019  ratio  0.89  p 0.023
+  cytoplasm grain (CV, beyond glass)   PP7     0.091  FUS     0.079  ratio  0.86  p 0.576
+  frame noise var (a.u.^2)             PP7  1833.596  FUS  1167.482  ratio  0.64  p 0.004
+  glass static var (a.u.^2)            PP7     3.968  FUS     0.643  ratio  0.16  p 0.020
+  cell area per field (um^2)           PP7  1063.667  FUS   262.272  ratio  0.25  p 0.005
+  granules per field                   PP7    37.500  FUS    27.000  ratio  0.72  p 0.058
+  granules per 100 um^2 cell           PP7     4.912  FUS     9.249  ratio  1.88  p 0.013

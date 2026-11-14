@@ -2656,6 +2656,8 @@ At the user's request the 30x bracket of Fig. 9(e) now reads 'n.s.' (solid line)
 
 ## 85. Is PP7-FUS dimmer because of quenching? Granule vs surrounding cell (2026-11-14)
 
+**WITHDRAWN (section 87): the 'cell around the granule' is the lower multithresh class of the 15 x 15 window, mostly the granule's own blur; it rises with the granule (correlation 0.97-0.99, slope ~1, enrichment 1.7-2.2 in every condition). The equal 0.54 factors and the constant enrichment are built into the measure, so this test cannot tell lower expression from quenching.**
+
 The user's reading: PP7-FUS granules are dimmer because the dye self-quenches in a denser granule. Test: if the dimming is quenching inside the granule, the granule should be dimmer *relative to the cell around it* (lower enrichment); if the whole cell is dimmer (e.g. lower expression), enrichment stays the same. `checks/fus_density.py` -> `analysis_outputs/fus_density/summary.txt`; granules of >= 30 min (the analysed set; reproduces the MS brightness 3036 vs 5640 and 3436 vs 3998), track medians, movie-level permutation p.
 
 | measure | 4x PP7 | 4x FUS | ratio | p | 30x PP7 | 30x FUS | ratio | p |
@@ -2673,3 +2675,12 @@ The user's reading: PP7-FUS granules are dimmer because the dye self-quenches in
 ## 86. Same camera settings for PP7 and PP7-FUS (2026-11-14)
 
 The settings of all 37 in vivo PP7 movies (4x, 4x FUS, 30x, 30x FUS) were read from the raw .nd2 files (`checks/nd2_camera_settings.py`; `showinf` for the channel assignment). Red channel (585 nm laser) in every movie: exposure 250 ms, EM gain 159, conversion gain 3, readout 1 MHz, laser 585 nm at 50%, Andor DU-897, 100x/1.4 objective. Two-channel movies also have a DIC channel (100 ms, EM gain 209, conversion gain 1, transmitted lamp). So the 2x dimmer PP7-FUS signal at 4x (section 85) is not an acquisition difference.
+
+## 87. Cytoplasm grain and granule number, PP7 vs PP7-FUS; correction of section 85 (2026-11-14)
+
+The user's reading: mCherry-FUS is stickier, forms small clumps everywhere, and the clumps quench. `checks/fus_clumps.py` (raw red movies, first 40 frames) -> `analysis_outputs/fus_clumps/` (movies.csv, summary.txt, masks.png, fields_4x.png).
+
+- **Section 85 withdrawn.** The extraction's "cell" level rises with the granule (correlation of log values 0.97-0.99, slope 0.99-1.27, enrichment 1.7-2.2 with a narrow spread in all six conditions): it is the granule's blur halo, not the cytoplasm. So nothing so far says whether the cells are dimmer.
+- **Cells cannot be outlined reliably.** The 4x FUS movies have no DIC channel; in the 4x PP7 movies the cells are hardly visible in red (round bright granules with halos and haze), while the 4x FUS fields show many dim rod-shaped objects (whole cells or elongated granules; `fields_4x.png`). The cell masks (Otsu on the smoothed image) follow the granule halos in PP7 4x. Granules per cell cannot be counted; per field: 4x PP7 21, FUS 30 (p = 0.21); per fluorescent area 9.8 vs 9.6 (p = 0.92; area unreliable). 30x per area 4.9 vs 9.2 (p = 0.013; FUS cell area missed many dim cells, unreliable).
+- **Grain** (static fine structure beyond the glass, covariance of even- vs odd-frame means after a 2-px high-pass, relative to brightness): 4x PP7 0.109, FUS 0.079 (p = 0.11); 30x 0.091 vs 0.079 (p = 0.58). No sign of more clumping in FUS, but the cytoplasm mask is poor in PP7 4x.
+- Conclusion: the dimming of FUS granules is unexplained by these data; neither lower expression nor quenching is supported or excluded. A western blot or FLIM would decide.
