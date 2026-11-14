@@ -2654,7 +2654,7 @@ At the user's request the 30x bracket of Fig. 9(e) now reads 'n.s.' (solid line)
 - Medians over granules (same granules as Table I): above background 4PP7 2575 / 4PP7-FUS 1407 / 30PP7 2021 / 30PP7-FUS 1760 / 5Qb 5245 / 10Qb 6938 / 1:1 389 / 10:1 528 / 100:1 731 a.u. per pixel; area 47 / 38 / 28 / 18 / 56 / 53 / 43 / 14 / 41 pixels.
 - Movie-shuffle p: 4x FUS vs PP7 above background p < 0.001, area p = 0.10; 30x above p = 0.85, area p = 0.018 (FUS smaller); 5Qb vs 10Qb above p = 0.001, area p = 0.84; in vitro 1:1 vs 100:1 all n.s.
 
-## 84. Is PP7-FUS dimmer because of quenching? Granule vs surrounding cell (2026-11-14)
+## 85. Is PP7-FUS dimmer because of quenching? Granule vs surrounding cell (2026-11-14)
 
 The user's reading: PP7-FUS granules are dimmer because the dye self-quenches in a denser granule. Test: if the dimming is quenching inside the granule, the granule should be dimmer *relative to the cell around it* (lower enrichment); if the whole cell is dimmer (e.g. lower expression), enrichment stays the same. `checks/fus_density.py` -> `analysis_outputs/fus_density/summary.txt`; granules of >= 30 min (the analysed set; reproduces the MS brightness 3036 vs 5640 and 3436 vs 3998), track medians, movie-level permutation p.
 
