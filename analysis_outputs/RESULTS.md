@@ -2669,3 +2669,7 @@ The user's reading: PP7-FUS granules are dimmer because the dye self-quenches in
 - 4x: the cell around a FUS granule is dimmer by exactly the same factor as the granule (0.54), so enrichment is identical. The dimming is cell-wide (lower expression, or quenching everywhere), not specific to the granule. This does not support "denser FUS granules" at 4x.
 - 30x: FUS granules are smaller and slightly more enriched (2.15 vs 1.96, p = 0.003), i.e. somewhat denser.
 - Caveat: granules are near the diffraction limit, so the mask mean of a smaller spot is diluted by blur; a smaller granule can look less enriched than it is. This cannot turn the 4x result into a clear density increase, but it limits how strongly it argues against one.
+
+## 86. Same camera settings for PP7 and PP7-FUS (2026-11-14)
+
+The settings of all 37 in vivo PP7 movies (4x, 4x FUS, 30x, 30x FUS) were read from the raw .nd2 files (`checks/nd2_camera_settings.py`; `showinf` for the channel assignment). Red channel (585 nm laser) in every movie: exposure 250 ms, EM gain 159, conversion gain 3, readout 1 MHz, laser 585 nm at 50%, Andor DU-897, 100x/1.4 objective. Two-channel movies also have a DIC channel (100 ms, EM gain 209, conversion gain 1, transmitted lamp). So the 2x dimmer PP7-FUS signal at 4x (section 85) is not an acquisition difference.
