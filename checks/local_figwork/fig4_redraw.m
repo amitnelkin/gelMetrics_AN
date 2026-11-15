@@ -6,7 +6,7 @@
 repoDir = 'C:\Users\roeeamit-lab\Desktop\AN\GelMetrics\gelMetrics_AN';
 addpath(repoDir); warning('off', 'MATLAB:polyfit:RepeatedPointsOrRescale'); warning('off', 'MATLAB:polyfit:PolyNotUnique');
 outDir = fullfile(repoDir, 'figures', 'ms_revision_lab');
-nTr = 1000; T = 360; noiseSD = 40; expC = 0.0026; lam = 2; win = 13; SP = 15;
+nTr = 1000; T = 360; noiseSD = 40; expC = 0.0005; lam = 2; win = 13; SP = 15;
 tVec = linspace(0, 60, T);
 types = [3 1 2]; letters = {'a', 'b'; 'c', 'd'; 'e', 'f'};
 col = [65 109 172; 213 162 57; 75 155 117] / 255;        % blue, orange, green as in the MS figure

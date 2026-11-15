@@ -2696,3 +2696,4 @@ The user's reading: mCherry-FUS is stickier, forms small clumps everywhere, and 
 - (a, c, e): blue and orange now clearly apart.
 - The histograms changed too, since the bleaching is stronger: noise-free signals give sharp spikes (whole units of 60 in (b)); the noisy version gives the broad green distribution.
 - TO DO on the laptop: replace Fig. 4 in the MS; check the caption still matches (bleaching constant).
+- **Update (user, same day):** redrawn with bleaching 0.0005/min, the value of the original MS figure (3% in 60 min). Blue and orange still separate in (a) and (c) because the whole signal now bleaches; (e) barely. Histograms almost unchanged. The committed Fig4.* is this version; set `expC = 0.0026` in the script for the measured value.
