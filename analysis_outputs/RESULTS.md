@@ -2684,3 +2684,15 @@ The user's reading: mCherry-FUS is stickier, forms small clumps everywhere, and 
 - **Cells cannot be outlined reliably.** The 4x FUS movies have no DIC channel; in the 4x PP7 movies the cells are hardly visible in red (round bright granules with halos and haze), while the 4x FUS fields show many dim rod-shaped objects (whole cells or elongated granules; `fields_4x.png`). The cell masks (Otsu on the smoothed image) follow the granule halos in PP7 4x. Granules per cell cannot be counted; per field: 4x PP7 21, FUS 30 (p = 0.21); per fluorescent area 9.8 vs 9.6 (p = 0.92; area unreliable). 30x per area 4.9 vs 9.2 (p = 0.013; FUS cell area missed many dim cells, unreliable).
 - **Grain** (static fine structure beyond the glass, covariance of even- vs odd-frame means after a 2-px high-pass, relative to brightness): 4x PP7 0.109, FUS 0.079 (p = 0.11); 30x 0.091 vs 0.079 (p = 0.58). No sign of more clumping in FUS, but the cytoplasm mask is poor in PP7 4x.
 - Conclusion: the dimming of FUS granules is unexplained by these data; neither lower expression nor quenching is supported or excluded. A western blot or FLIM would decide.
+
+## 88. Fig. 4 redrawn in the manuscript layout, bleaching visible (2026-11-15)
+
+**Request (user):** recreate Fig. 4 as it is in the MS, but make the base signal (blue) in (a) clearly separate from the bleached one (orange).
+
+**Why they overlapped:** the MS figure was drawn with the original code: bleaching 0.0005/min (3% in 60 min), and in the bursty trace only the bursts bleached, not the whole signal.
+
+**Now** (`checks/local_figwork/fig4_redraw.m` -> `figures/ms_revision_lab/Fig4.{png,pdf,svg}`): same layout and colours; corrected `generateSim` (whole signal bleaches); bleaching 0.0026/min, the measured median (section 3, about 14% in 60 min), the value the revised Sec. III numbers already use; noise 40, lambda 2, window 13, SP 15; 1000 traces per version, seeded. Histograms: all detected amplitudes (positive, negative, unclassified) of base / + bleaching / + noise, probability.
+
+- (a, c, e): blue and orange now clearly apart.
+- The histograms changed too, since the bleaching is stronger: noise-free signals give sharp spikes (whole units of 60 in (b)); the noisy version gives the broad green distribution.
+- TO DO on the laptop: replace Fig. 4 in the MS; check the caption still matches (bleaching constant).
