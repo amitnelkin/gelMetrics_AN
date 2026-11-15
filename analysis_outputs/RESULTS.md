@@ -2697,3 +2697,9 @@ The user's reading: mCherry-FUS is stickier, forms small clumps everywhere, and 
 - The histograms changed too, since the bleaching is stronger: noise-free signals give sharp spikes (whole units of 60 in (b)); the noisy version gives the broad green distribution.
 - TO DO on the laptop: replace Fig. 4 in the MS; check the caption still matches (bleaching constant).
 - **Update (user, same day):** redrawn with bleaching 0.0005/min, the value of the original MS figure (3% in 60 min). Blue and orange still separate in (a) and (c) because the whole signal now bleaches; (e) barely. Histograms almost unchanged. The committed Fig4.* is this version; set `expC = 0.0026` in the script for the measured value.
+
+## 89. How often is lambda*k0 recovered? (laptop, 2026-11-15)
+- `checks/lambda_k0_product_recovery.m` -> `analysis_outputs/lambda_k0_product/recovery.csv`; `checks/lambda_k0_product_summary.py`. Same simulation and seeds as the Sec. II.D numbers (200 tracks, k0 60, SP 15, window 13, true lambda 1-5, 20 sets), WS fit; noise 40 (SNR 1.5, the MS setting) plus SNR 5 and 0.5. Recovered = within +-20% of the truth (for lambda on the 1-5 grid = exact hit).
+- Share recovered (SNR 0.5 / 1.5 / 5): lambda 39 / 41 / 40%; k0 32 / 45 / 33%; WS lambda*k0 2 / 66 / 82%; mean detected burst size 2 / 53 / 76%.
+- The product fails at small lambda (true 1: overestimated 1.3-2.7x; the smallest bursts are lost in the noise); at lambda 3-5 and SNR >= 1.5 it is within 20% in every fit (mean bias 3-13%).
+- WS alone gives a 41% exact lambda hit here; the MS's 31% is the average over five scores (the product was computed for WS only).
