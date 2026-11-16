@@ -2703,3 +2703,8 @@ The user's reading: mCherry-FUS is stickier, forms small clumps everywhere, and 
 - Share recovered (SNR 0.5 / 1.5 / 5): lambda 39 / 41 / 40%; k0 32 / 45 / 33%; WS lambda*k0 2 / 66 / 82%; mean detected burst size 2 / 53 / 76%.
 - The product fails at small lambda (true 1: overestimated 1.3-2.7x; the smallest bursts are lost in the noise); at lambda 3-5 and SNR >= 1.5 it is within 20% in every fit (mean bias 3-13%).
 - WS alone gives a 41% exact lambda hit here; the MS's 31% is the average over five scores (the product was computed for WS only).
+
+## 90. PCP/QCP terminology in the MS; figures to relabel (laptop, 2026-11-16)
+- User's decision: proteins and granules are PCP, PCP-FUS and QCP throughout; PP7/Qβ stay only where the Abstract and Introduction define the abbreviations (and in a reference title).
+- `revision_docs/Revised_MS_clean_AN_151126.docx` (backup `* - backup - 161126 before PCP-QCP terminology.docx`): 41 tracked replacements (author 'Terminology PCP/QCP'), all in the captions of Figs. 7-10, the Discussion and Appendices B-E (PP7 -> PCP, PP7-FUS -> PCP-FUS, Qβ -> QCP; 'FUS-fused PP7 protein' -> 'FUS-fused PCP', 'PP7, PP7-FUS or Qβ proteins' -> 'PCP, PCP-FUS or QCP'). Made directly in the docx XML (Word COM hung twice); every changed paragraph differs from the original only by these replacements.
+- Figures still labelled PP7/Qβ: lab files Fig7, Fig8, Fig9, Fig10, Fig14 (MS Fig. 11), Fig15 (MS Fig. 12), Fig17_drops (MS Fig. 13). Relabelling task for the lab PC at the top of CLAUDE.md. Figs. 1-6 and 10(a) have no such labels.
