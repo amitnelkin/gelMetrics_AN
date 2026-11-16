@@ -2715,3 +2715,7 @@ Task of section 90. Label text only; data, layout, colours and figure sizes unch
 - Fig. 14 (MS Fig. 11): the old figure shortened 'PP7-FUS' to 'FUS' because nine bars leave no room; with 'PCP-FUS' the tick labels of all three panels are now three lines ('PCP-' / 'FUS' / valency; the other bars leave the middle line empty so the valencies line up). The PNG is 5 px (0.02 in) shorter; the figure size is the same.
 - Scripts: `AppendixFigures.m` (labels, 'PCP noise', 'PCP-FUS vs PCP (4x)'), `checks/local_figwork/fig17_drops_rises.m` (labels, p text). The local composer (not in the repo) renames all titles, tick labels, texts and legends of the staged figures, so the slow appendix scripts were not rerun.
 - TO DO on the laptop: replace MS Figs. 7, 8, 9, 10(b-e), 11, 12, 13 with these files.
+
+## 92. Relabelled figures placed in the MS (laptop, 2026-11-16)
+- Section 91's files replace MS Figs. 7 (Fig7), 8 (Fig8), 9 (Fig9, which also brings the 30x 'n.s.' bracket of section 83), 10(b-e) (Fig10), 11 (Fig14), 12 (Fig15) and 13 (Fig17_drops) in `revision_docs/Revised_MS_clean_AN_151126.docx` (backup `* - backup - 161126 before PCP-QCP figures.docx`). Image swap only; text identical.
+- Each image keeps its box on the page, except Fig. 9: the box in the MS had a different shape (aspect 1.20 vs 1.18 for the new image), so its height went from 6.86 to 6.73 in at the same width. Page breaks unchanged (checked page by page in Word).
