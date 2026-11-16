@@ -2726,3 +2726,20 @@ Task of section 90. Label text only; data, layout, colours and figure sizes unch
 - Letter `Response_to_reviewers - final check 041126.docx` (backup `* - backup - 161126 before PCP-QCP fissioning.docx`): 15 tracked edits, PP7/Qbeta -> PCP/QCP (defined at first use), a sentence on the fissioning interpretation in the opening response to Referee 2, 'brittle solid' -> fissioning in 10a, and point 4b aligned with the MS (lambda 1-5, five scores, 31% vs 20%; lambda*k0 within 20% in 66% / 82%).
 - Figure comments (Figs. 2(c), 3, 4(a), 10(a) label) -> lab PC task at the top of CLAUDE.md.
 - Note: Word's author name on the laptop (HKCU Office UserInfo) was left as 'Final check' / 'Terminology PCP/QCP' by earlier COM runs; the user's own edits since then carry those names. The user should reset it (File > Options > General > User name).
+
+## 94. Fig. 6 in vitro: which movie each burst comes from; 10:1 sub-populations (lab PC, 2026-11-16)
+`checks/local_figwork/fig6b_bins.m` (bursts per 2.5% bin by movie and granule, Fig. 6(a-c)) and `fig6b_turn.m` (turnover beyond noise per group). Data: the staged EA in vitro results (20 copies, seed 1, window 13, SP 12, spot sum).
+- **10:1 (Fig. 6(b)):** the second population (bursts of 30-47%) comes entirely from **movie 2**: 8 of its 11 granules have at least one burst > 30%; movies 1, 3, 4 (26 granules) have none above 30%.
+- **100:1 (Fig. 6(c)):** the last bar (>= 57.5%) holds 8 bursts, 6 of them from 3 granules of movie 8. **1:1:** no single-movie cluster.
+- **Turnover beyond noise, 10:1 (%/h, 95% CI over granules):**
+
+| group | granules | median burst, granules vs copies (%) | turnover beyond noise |
+|---|---|---|---|
+| all | 37 | 13.0 vs 11.4 | 16.7 [7.4, 27.3] |
+| large-burst granules (any burst > 30%; all movie 2) | 8 | 37.7 vs 11.4 | 60.6 [42.2, 76.5] |
+| small-burst granules (bursts, all <= 30%) | 20 | 11.6 vs 11.5 | 11.2 [4.9, 17.3] |
+| small-burst + no-burst granules | 29 | 11.6 vs 11.4 | 3.5 [-2.5, 9.8] |
+| movie 2 | 11 | 37.0 vs 11.4 | 46.8 [25.6, 65.9] |
+| movies 1, 3, 4 | 26 | 11.4 vs 11.3 | 4.1 [-2.5, 10.3] |
+
+- Grouping granules by their own bursts biases both groups (granules picked for having bursts read high; their copies are not picked). The fair split is by movie, or large vs everything else: without the large-burst granules (or without movie 2), 10:1 turnover beyond noise is about 4 %/h, CI includes 0. Movie 2 not yet checked on the raw frames (focus / stage jump?).
