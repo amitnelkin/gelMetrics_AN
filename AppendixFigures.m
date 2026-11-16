@@ -28,7 +28,7 @@ moviesAsReplicates = false;
 vivoFolder = './in_vivo_experiments/';
 vitroFolder = './in_vitro_experiments/';
 names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};
-labels = {'PP7 4x', 'PP7-FUS 4x', 'PP7 30x', 'PP7-FUS 30x', 'Q\beta 5x', 'Q\beta 10x', 'vitro 1:1', 'vitro 10:1', 'vitro 100:1'};
+labels = {'PCP 4x', 'PCP-FUS 4x', 'PCP 30x', 'PCP-FUS 30x', 'QCP 5x', 'QCP 10x', 'vitro 1:1', 'vitro 10:1', 'vitro 100:1'};
 csvNames = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};   % names in analysis_outputs/
 nVivo = 6;                                % the first six datasets are in vivo
 colors = [0.902 0.624 0; 0 0.620 0.451; 0.902 0.624 0; 0 0.620 0.451; 0 0.447 0.698; 0 0.447 0.698; ...
@@ -403,7 +403,7 @@ text(0.97, 0.95, {'solid: granules', 'dotted: burst-free copies'}, 'Units', 'nor
 title('(b)');
 nexttile; hold on;
 simColors = [0 0.620 0.451; 0.902 0.624 0];
-simNames = {'original noise', 'PP7 noise'};
+simNames = {'original noise', 'PCP noise'};
 for j = 1:2
     plot(spHigh, recall(j, :), '-o', 'Color', simColors(j, :), 'MarkerSize', 3, 'DisplayName', [simNames{j} ', bursts found']);
     plot(spHigh, falseShare(j, :), ':', 'Color', simColors(j, :), 'LineWidth', 1, 'DisplayName', [simNames{j} ', false share']);
@@ -591,7 +591,7 @@ for m = 1:2
     yline(0, 'k');
     set(gca, 'XTick', 1:nVivo, 'XTickLabel', labels(1:nVivo), 'XTickLabelRotation', 45, 'FontSize', 7);
     ylabel({'Excess changes >= 30%', 'per granule-hour'});
-    text(0.03, 0.95, sprintf('PP7-FUS vs PP7 (4x): p = %.3f', pFus(m)), 'Units', 'normalized', 'FontSize', 7);
+    text(0.03, 0.95, sprintf('PCP-FUS vs PCP (4x): p = %.3f', pFus(m)), 'Units', 'normalized', 'FontSize', 7);
     title(panelTitles{m});
 end
 if saveFigures

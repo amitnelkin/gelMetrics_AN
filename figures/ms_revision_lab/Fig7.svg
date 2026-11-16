@@ -20,11 +20,11 @@ font-family="MS Shell Dlg 2" font-size="8.25" font-weight="400" font-style="norm
 <path vector-effect="none" fill-rule="evenodd" d="M380000,300000 L380000,2.41e+06 L2.96e+06,2.41e+06 L2.96e+06,300000 L380000,300000"/>
 </g>
 
-<g fill="#212121" fill-opacity="1" stroke="#212121" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(0.75,0,0,0.75,68.6251,18.75)"
+<g fill="#212121" fill-opacity="1" stroke="#212121" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(0.75,0,0,0.75,68.2501,18.75)"
 font-family="Arial" font-size="10" font-weight="400" font-style="normal" 
 >
 <text fill="#212121" fill-opacity="1" stroke="none" xml:space="preserve" x="0" y="0" font-family="Arial" font-size="10" font-weight="400" font-style="normal" 
- >PP7 + QCP-5x/PCP-4x (n = 106)</text>
+ >PCP + QCP-5x/PCP-4x (n = 106)</text>
 </g>
 
 <g fill="#ff6666" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"
@@ -298,11 +298,11 @@ font-family="Arial" font-size="8" font-weight="400" font-style="normal"
 <path vector-effect="none" fill-rule="evenodd" d="M3.57e+06,300000 L3.57e+06,2.41e+06 L6.15e+06,2.41e+06 L6.15e+06,300000 L3.57e+06,300000"/>
 </g>
 
-<g fill="#212121" fill-opacity="1" stroke="#212121" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(0.75,0,0,0.75,320.25,18.75)"
+<g fill="#212121" fill-opacity="1" stroke="#212121" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(0.75,0,0,0.75,319.875,18.75)"
 font-family="Arial" font-size="10" font-weight="400" font-style="normal" 
 >
 <text fill="#212121" fill-opacity="1" stroke="none" xml:space="preserve" x="0" y="0" font-family="Arial" font-size="10" font-weight="400" font-style="normal" 
- >PP7 + PCP-30x (n = 191)</text>
+ >PCP + PCP-30x (n = 191)</text>
 </g>
 
 <g fill="#ff6666" fill-opacity="1" stroke="none" transform="matrix(7.5e-05,0,0,7.5e-05,0,0)"

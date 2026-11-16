@@ -14,7 +14,7 @@ moviesAsReplicates = true;
 vivoFolder = './in_vivo_experiments/';
 vitroFolder = './in_vitro_experiments/';
 names = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};
-labels = {'PP7 4x', 'PP7-FUS 4x', 'PP7 30x', 'PP7-FUS 30x', 'Q\beta 5x', 'Q\beta 10x', 'vitro 1:1', 'vitro 10:1', 'vitro 100:1'};
+labels = {'PCP 4x', 'PCP-FUS 4x', 'PCP 30x', 'PCP-FUS 30x', 'QCP 5x', 'QCP 10x', 'vitro 1:1', 'vitro 10:1', 'vitro 100:1'};
 csvNames = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb', 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};   % names in analysis_outputs/
 nVivo = 6;                                % the first six datasets are in vivo
 colors = [0 0.447 0.698; 0 0.620 0.451; 0 0.447 0.698; 0 0.620 0.451; 0.835 0.369 0; 0.835 0.369 0; ...
@@ -162,7 +162,7 @@ for m = 1:2
     set(gca, 'XTick', 1:nVivo, 'XTickLabel', labels(1:nVivo), 'XTickLabelRotation', 45, 'FontSize', 7);
     ylabel({['Excess ' directions{d} ' >= 30%'], 'per granule-hour'});
     if pFus(m) < 0.001, pText = 'p < 0.001'; else, pText = sprintf('p = %.3f', pFus(m)); end
-    text(0.03, 0.95, ['PP7-FUS vs PP7 (4x): ' pText], 'Units', 'normalized', 'FontSize', 7);
+    text(0.03, 0.95, ['PCP-FUS vs PCP (4x): ' pText], 'Units', 'normalized', 'FontSize', 7);
     title(panelTitles{m});
 end
 end
