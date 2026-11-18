@@ -7,7 +7,7 @@ function [lamWS, k0WS, WS, scores] = PoissonFit2WS(data, lambda, K0Vector, numBi
 %   Returns the best lambda and k0.
 %   Optional: WS, the weighted score of every (lambda, k0) pair (rows lambda, columns k0),
 %   and scores, the single scores on the same grid (MSE, QQ, KS, and CvM, the Cramer-von Mises
-%   score, used only in AppendixFigures.m).
+%   score).
 
 data = sort(data(:))'; 
 n = numel(data);

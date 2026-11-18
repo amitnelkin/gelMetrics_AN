@@ -20,10 +20,10 @@ OKI = ["#E69F00","#009E73","#0072B2","#F0E442","#D55E00","#CC79A7"];
 
 % Pairs to compare, one per row: A (first column) against B (second column).
 % Every condition is a folder in dataFolder with data.mat, background.mat, spotsum.mat and movies.mat.
-% in vivo:  '4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'   (in ./in_vivo_experiments/)
+% in vivo:  'PCP_4x', 'PCP-FUS_4x', 'PCP_30x', 'PCP-FUS_30x', 'QCP_5x', 'QCP_10x'   (in ./in_vivo_experiments/)
 % in vitro: 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'   (in ./in_vitro_experiments/)
 dataFolder = './in_vivo_experiments/';
-pairs = {'4PP7-FUS', '4PP7'};
+pairs = {'PCP-FUS_4x', 'PCP_4x'};
 conditions = unique(pairs(:), 'stable');  % the order of the bars; any order that holds every name in pairs
 
 % sizeGranules: median burst as a fraction of granule level

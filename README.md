@@ -1,69 +1,65 @@
 # Instructions for Use
 ## *GelMetrics: An algorithm for analyzing the dynamics of gel-like phase separated condensates*
 
-### This repository contains the code and data required to recreate the analyses of the paper.
+### This repository contains all the code and data required to recreate the analyses of the paper.
 >**Tested on Matlab R2025b**
 
 ### Prerequisites
 - Curve Fitting Toolbox
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox
-- ImageJ FIJI with the Mosaic plugin, to detect and track bright spots in the microscopy movies.
+- In addition, ImageJ FIJI (specifically, the Mosaic plugin) was used to read microscopy image files, detect bright spots, and convert to the formats required for the scripts.
 
 ### What the analysis reports
-For each condition, `burstMeasures.m` gives (the formulas are all in `summarizeGranules.m`):
+Every granule trace is compared with burst-free copies of itself: the same photobleaching trend and the same noise level, but no bursts, analyzed in the identical way. Bursts found in a copy are false, so only the part of a measure beyond its copies is attributed to the granule (the noise floor).
+For each condition, the analysis reports:
+- the number of granules (traces of at least 30 min) and of movies;
+- the brightness and the frame-to-frame noise of the granules;
+- the mean and median burst size (a.u.); the mean burst size corresponds to the product λ·k0 of the modified Poisson model;
+- the median burst size as a fraction of the granule, in the granules and in their burst-free copies, and the difference between the two (burst size beyond noise);
+- the turnover beyond noise: the fraction of the granule lost in bursts per hour, minus the same in the copies;
+- the net change beyond photobleaching: how much faster (< 0) or slower (> 0) the granule fades than its own background.
 
-| measure | meaning |
-|---|---|
-| granules (movies) | traces of at least 30 min; movies (fields of view) are the independent replicates |
-| brightness | median granule intensity (median per movie, then over movies) |
-| frame noise | frame-to-frame noise, % of the granule |
-| mean / median burst size (a.u.) | intensity lost per burst; the mean corresponds to λ·k0 of the Poisson model |
-| burst size, granules / copies | median burst size as % of the granule, in the granules and in their **burst-free copies** |
-| burst size beyond noise | the difference between the two (% points) |
-| turnover beyond noise | % of the granule exchanged in bursts per hour, minus the same in the copies |
-| net change beyond bleaching | %/h; the granule fading faster (< 0) or slower (> 0) than its own background |
-| first vs second 30 min | turnover and net change per half hour, with a test for a change |
+Every measure is given with a 95% confidence interval from resampling the replicates (granules, or movies when `moviesAsReplicates = true`). All formulas are in `summarizeGranules.m`.
 
-Every measure has a 95% confidence interval (movies resampled, then granules within movies).
-`compareConditions.m` tests two conditions by shuffling whole movies between them.
+### Modes
+- To run on simulated data, run the script: `SimulationRunWithAnalysis.m`
+  You can switch between simulation types using the `simType` variable defined within the script (1: constant, 2: increasing, 3: bursts). The script simulates granules with a known number of units per burst (λ) and intensity of one unit (k0) at different noise levels, analyzes them with the same code as the experimental data, and compares every measure with its true value.
 
-**Noise floor.** Every granule trace is compared with burst-free copies of itself: the same photobleaching trend and the same noise level, but no bursts, analyzed in the identical way. Bursts found in a copy are false. Only the part of a measure beyond its copies is attributed to the granule. The copies are random: with one copy per trace (as used for the numbers in the paper), the copy-based measures change by up to ~2 percentage points of burst size between random draws. `ExperimentalAnalysis.m` therefore uses 20 copies per trace (`nCopies` at the top of the script); `PaperFigures_revised.m` uses 1, as the paper.
+- To run on experimental data, run the script: `ExperimentalAnalysis.m`
+  Choose the data folder (`dataFolder`) and the datasets (`conditions`) at the top of the script. Each condition is reported on its own: burst plots, every measure with its confidence interval, the burst size distributions of the granules and of their copies, and a summary of mean burst size, turnover and net change.
 
-**λ and k0.** The original method fitted λ (units per burst) and k0 (intensity of one unit) with a weighted score (`modifiedPoissonFit.m`). Only their product, the mean burst size, can be estimated reliably, so the fit is no longer part of the analysis. It is kept in `legacy/` for reference.
+- To compare conditions, run the script: `compareConditions.m`
+  List pairs of conditions in `pairs`. For each pair, the script prints every measure of both conditions and the p value from randomly reassigning granules (or movies) between them.
 
-### Running the analysis
-- **Figures of the paper:** `PaperFigures_revised.m`, one section per figure (Figs. 5-9). Each section starts from the repository data, runs the same code as `ExperimentalAnalysis.m`, and saves the figure in `figures/`. It reproduces the manuscript numbers (the noise copies use the paper's seeds); Figure 5 takes about 8 min. Run it from the repository folder.
-- **Experimental data:** `ExperimentalAnalysis.m`. Reports any number of conditions (datasets of the paper or your own folders), each on its own: the original burst plots, every measure with its 95% CI, the burst size distributions (as Figs. 6-9) and a summary of mean burst size, turnover and net change (as Figs. 6 and 10).
-- **Comparing conditions:** `compareConditions.m`. List pairs of conditions; for each pair it prints every measure of both and the p value from shuffling whole movies between them.
-- **Appendix figures (algorithm debugging):** `AppendixFigures.m`, one section per appendix figure (Figs. 11-18). Run the first section, then any figure section.
-- **Simulated data:** `SimulationRunWithAnalysis.m`. Bursty and constant (burst-free) simulated granules with known parameters, through the same code.
-- **Datasets of the paper:** at the top of `ExperimentalAnalysis.m` and `compareConditions.m`, by name: `4PP7`, `4PP7-FUS`, `30PP7`, `30PP7-FUS`, `5Qb`, `10Qb` (in vivo) and `vitro_1_1`, `vitro_10_1`, `vitro_100_1` (in vitro, protein:RNA).
-  - They are in `in_vivo_experiments/<name>/` and `in_vitro_experiments/protein_RNA_<ratio>/`, in the same four files that `Collect_intensity_data.m` writes for new data. They are copies of the corrected extractions in `in_vivo_reextracted/` and `in_vitro_reextracted/same_granules_R2/` (fluorescence channel only, camera offset removed), made by `checks/make_paper_data.m`.
-  - `in_vivo_experiments-old/` and `in_vitro_experiments-old/` hold the original traces (before the corrections), for reference only.
+### Data
+Each dataset folder contains four `.mat` files: `data.mat` (granule intensity), `background.mat` (surrounding cell or dilute phase), `spotsum.mat` (integrated granule intensity) and `movies.mat` (the movie of every trace).
+
+| folder | protein | RNA |
+|---|---|---|
+| `in_vivo_experiments/PCP_4x` | PCP | QCP-5x/PCP-4x |
+| `in_vivo_experiments/PCP-FUS_4x` | PCP-FUS | QCP-5x/PCP-4x |
+| `in_vivo_experiments/PCP_30x` | PCP | PCP-30x |
+| `in_vivo_experiments/PCP-FUS_30x` | PCP-FUS | PCP-30x |
+| `in_vivo_experiments/QCP_5x` | QCP | QCP-5x/PCP-4x |
+| `in_vivo_experiments/QCP_10x` | QCP | QCP-10x |
+| `in_vitro_experiments/protein_RNA_1_1` | PCP, 1:1 protein:RNA | PCP-14x/MCP-15x |
+| `in_vitro_experiments/protein_RNA_10_1` | PCP, 10:1 protein:RNA | PCP-14x/MCP-15x |
+| `in_vitro_experiments/protein_RNA_100_1` | PCP, 100:1 protein:RNA | PCP-14x/MCP-15x |
+
+PCP: PP7 coat protein; QCP: Qβ coat protein; PCP-FUS: PCP fused to the disordered region of FUS.
 
 ### New data pipeline
-1. Acquire time-lapse movies; 8-12 movies (fields of view) per condition, each about 360 time points, is usually sufficient. Movies are the replicates.
-2. In ImageJ FIJI, run the Particle Tracker 2D/3D (Mosaic plugin) to get CSV files of granule coordinates. The macro `BatchParticleTracker.ijm` does this for a folder (`Plugins` → `Macros` → `Run...`).
-   > For a detailed walkthrough of this step, see https://github.com/naorgk/slncRNA_Analysis/blob/main/Full%20pipeline%20walkthrough.pdf
-3. Run `read_tables.m` in the folder of the CSV files; it writes one `<movie>_xy.mat` per movie.
-4. Run `Collect_intensity_data.m` and select the folder containing the `.tif` movies and the `_xy.mat` files (one folder per condition).
-   - Movies and track files are paired by name. Only the fluorescence channel is read, and the camera offset (200 a.u. for our EMCCD; set `offset` at the top of `Collect_intensity_data.m` for your camera) is subtracted.
-   - It writes `data.mat` (spot intensity), `background.mat` (surrounding intensity), `spotsum.mat` (integrated granule intensity) and `movies.mat` (the movie of every trace).
-5. Put the folders of all conditions in one folder. In `ExperimentalAnalysis.m` (and `compareConditions.m`), set `dataFolder` to that folder and list the condition folders' names in `conditions` (or `pairs`).
+  1. Obtain microscopy timelapse images. From our experience, 8-12 images (each containing 360 timepoints) is mostly sufficient.
+  2. In ImageJ FIJI, use the Particle Tracker 2D/3D (included in Mosaic plugin) to generate CSV files of spatiotemporal granule coordinates. We provide a macro file (`BatchParticleTracker.ijm`) written to be run through ImageJ FIJI: `Plugins` &#8594; `Macros` &#8594; `Run...`
+     Multi-channel movies (e.g., fluorescence + DIC) are reduced to the fluorescence channel before tracking.
+      > For a detailed explanation about this part of the analysis, see our previous work in: https://github.com/naorgk/slncRNA_Analysis/blob/main/Full%20pipeline%20walkthrough.pdf
 
-### Main files
-| file | role |
-|---|---|
-| `ExperimentalAnalysis.m` | analysis of any conditions, each on its own: numbers and figures (loading and plotting are written inside the script) |
-| `burstMeasures.m` | one condition: burst-free copies, burst detection, every measure and its 95% CI |
-| `summarizeGranules.m` | the formulas of all the measures (used by the two files around it) |
-| `compareConditions.m` | movie-level tests between pairs of conditions (a script) |
-| `AppendixFigures.m` | the appendix figures 11-18 (algorithm debugging), one section per figure |
-| `PoissonFit2WS.m` | the WS fit of Eq. (1.9) (used for Fig. 5 and the appendix) |
-| `PaperFigures_revised.m` | the manuscript figures 6-9 (Fig. 5: `SimulationRunWithAnalysis.m`) |
-| `analysis.m`, `getPosition.m`, `runLengthEncode.m` | burst detection (smoothing, runs of monotone change) |
-| `Collect_intensity_data.m`, `generate_movArray.m`, `read_tables.m` (`collect_intensity.m`: the same as a function, used by `checks/`) | extraction of the granule and background intensities from the movies |
-| `generateSim.m` | simulated granules |
-| `legacy/` | the original λ/k0 fit and runners, and an earlier, more compact version of the analysis (`GelMetricsReport.m` etc.), for reference |
-| `checks/`, `analysis/`, `analysis_outputs/` | the revision analyses behind every number of the paper (see `analysis_outputs/RESULTS.md`) |
+  3. Run script `read_tables.m` on CSV files generated in step 2. The script should be in the same folder as CSV files. The script expects the specific structure of the Mosaic Particle Tracker, and saves a `<movie>_xy.mat` file for every CSV file.
+  4. Run script `Collect_intensity_data.m` on the microscopy images and the `_xy.mat` files generated in step 3 (each `.tif` is paired with the `_xy.mat` file of the same name). The camera offset (`offset`, 200 for our camera) is subtracted from all intensities. The script will generate the four `.mat` files described under Data.
+  5. Run script `ExperimentalAnalysis.m` (or `compareConditions.m`) on the folder generated in step 4.
+
+### Parameters
+- `movingAverageWindowSpan` (13 time points) and `stringencyParameter` (12) are used for all experimental datasets of the paper. Use the same values for all conditions that are compared, and compare the number of detected bursts with that found in the burst-free copies.
+- `nCopies` (20) is the number of burst-free copies per granule; `seed` sets the random copies.
+- `expConst` in `SimulationRunWithAnalysis.m` is the photobleaching rate of our setup and should be tuned to yours.

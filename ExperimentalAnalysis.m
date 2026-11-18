@@ -16,12 +16,12 @@ OKI = ["#E69F00","#009E73","#0072B2","#F0E442","#D55E00","#CC79A7"];
 
 % Load signal and background data
 % Every folder contains the four .mat files: data.mat, background.mat, spotsum.mat and movies.mat.
-% in vivo:  '4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'
+% in vivo:  'PCP_4x', 'PCP-FUS_4x', 'PCP_30x', 'PCP-FUS_30x', 'QCP_5x', 'QCP_10x'
 % in vitro: 'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'
 
 dataFolder = './in_vivo_experiments/';
 % dataFolder = './in_vitro_experiments/';
-conditions = {'4PP7', '4PP7-FUS', '30PP7', '30PP7-FUS', '5Qb', '10Qb'};
+conditions = {'PCP_4x', 'PCP-FUS_4x', 'PCP_30x', 'PCP-FUS_30x', 'QCP_5x', 'QCP_10x'};
 % conditions = {'protein_RNA_1_1', 'protein_RNA_10_1', 'protein_RNA_100_1'};
 
 % Signal plotting controls

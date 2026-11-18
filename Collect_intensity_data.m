@@ -11,7 +11,7 @@
 %         Andor iXon EMCCD).
 %
 % Outputs:
-%   signal.mat      spot mean per frame (intensity)
+%   data.mat        spot mean per frame (intensity)
 %   background.mat  mean of the surrounding cell pixels per frame (background)
 %   spotsum.mat     the integrated granule intensity (spot pixels above the cell level)
 %   movies.mat      the movie of every trace (movies are the replicates)

@@ -4,8 +4,7 @@
 % Multi-channel TIFFs (bfconvert/ImageJ hyperstacks of NIS .nd2 movies with
 % red fluorescence + DIC, pages interleaved c1,c2,c1,c2,...) are reduced to
 % one channel, so movArray(t) is time point t. Reading every page as a time
-% point made traces alternate between red and DIC pages (the PP7 "zigzag",
-% analysis_outputs/zigzag_diagnosis).
+% point made traces alternate between red and DIC pages.
 %   channel - which channel to read; default [] picks the fluorescence
 %             channel automatically: highest max/mean contrast on its first
 %             page (red ~15, DIC ~3.5, empty dark channel ~2), the same rule

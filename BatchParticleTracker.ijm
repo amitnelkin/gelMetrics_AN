@@ -16,10 +16,10 @@ displacement = 10;
 // channel) are reduced to the fluorescence channel before tracking: the
 // channel with the highest max/mean contrast on its first frame (red ~15,
 // DIC ~3.5, dark ~2; the lowest-minimum rule picked the dark channel of
-// 4PP7 012-recovered-after-corruption). Tracking the opened
+// one of the PCP 4x movies). Tracking the opened
 // 2-channel hyperstack made Mosaic walk the raw interleaved planes, so its
 // "frames" 0-360 were red/DIC planes of only the first 180 time points and it
-// detected particles on DIC (analysis_outputs/zigzag_diagnosis). The channel
+// detected particles on DIC. The channel
 // is saved as <name>.tif in outputFolder and tracked from there, so Mosaic
 // writes Traj_<name>.tif.csv next to it; frames are then time points 0-360.
 
